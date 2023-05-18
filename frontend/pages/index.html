@@ -1,0 +1,68 @@
+<html>
+
+<head>
+	<%- include('../partials/head.html'); %>
+</head>
+
+<body>
+	<%- include('../partials/header.html'); %>
+	<%- include('../partials/sidebar.html'); %>
+	<main <% if (user.name) { %> class="<%- user.school.cssColorClass %>" <% } %>>
+		<% if (user.name) { %>
+		<div class="banner" style="background-image: url('<%- vars.domain %>/images/<%=(typeof user.school.bannerUrl != 'undefined' )? user.school.bannerUrl:''%>');">
+			<img src="<%- vars.domain %>/images/<%=(typeof user.school.logoUrl != 'undefined' )? user.school.logoUrl:''%>" />
+			<h1><%=(typeof user.school.name != 'undefined' )? user.school.name:''%></h1>
+			<h3><%=(typeof user.school.type != 'undefined' )? user.school.type:''%></h3>
+			<h4><%=(typeof user.school.address != 'undefined' )? user.school.address:''%></h4>
+		</div>
+		<% } else { %>
+		<div class="banner" style="background-color: white;">
+			<img src="<%- vars.domain %>/images/vschsd-logo.png" />
+			<h1 style="color: black;"><%- vars.siteName %></h1>
+		</div>
+		<% } %>
+		<div class="content">
+			<h3>Hello, <% if (user.name) { %><%= user.name.first %><% } else { %>Guest<% } %></h3>
+			<div class="posts">
+				<a href="<%- vars.domain %>/forum/posts/post1" class="post">
+					<h4>Faisal</h4>
+					<h2>Post Title</h2>
+					<div class="tags">
+						<i class="fa-solid fa-tags"></i> English, Math
+					</div>
+				</a>
+				<a href="<%- vars.domain %>/forum/posts/post2" class="post">
+					<h4>Faisal</h4>
+					<h2>Post Title</h2>
+					<div class="tags">
+						<i class="fa-solid fa-tags"></i> English, Math
+					</div>
+				</a>
+				<a href="<%- vars.domain %>/forum/posts/post3" class="post">
+					<h4>Faisal</h4>
+					<h2>Post Title</h2>
+					<div class="tags">
+						<i class="fa-solid fa-tags"></i> English, Math
+					</div>
+				</a>
+				<a href="<%- vars.domain %>/forum/posts/post4" class="post">
+					<h4>Faisal</h4>
+					<h2>Post Title</h2>
+					<div class="tags">
+						<i class="fa-solid fa-tags"></i> English, Math
+					</div>
+				</a>
+				<a href="<%- vars.domain %>/forum/posts/post5" class="post">
+					<h4>Faisal</h4>
+					<h2>Post Title</h2>
+					<div class="tags">
+						<i class="fa-solid fa-tags"></i> English, Math
+					</div>
+				</a>
+			</div>
+		</div>
+	</main>
+</body>
+<%- include('../partials/foot.html'); %>
+
+</html>

@@ -1,0 +1,25 @@
+<html>
+
+<head>
+	<%- include('../partials/head.html'); %>
+</head>
+
+<body>
+	<%- include('../partials/header.html'); %>
+	<%- include('../partials/sidebar.html'); %>
+	<main class="loginSignup">
+		<h1>Login</h1>
+		<h3><%=(typeof alert != 'undefined' )? alert:''%></h3>
+		<form action="/login" method="post">
+			<label for="username">Username/Email:</label>
+			<input type="text" id="username" name="username" required>
+			<label for="password">Password:</label>
+			<input type="password" id="password" name="password" required>
+			<input type="submit" value="Log in">
+			<a href="/signup"><i class="fa-solid fa-arrow-right"></i> Sign up instead</a>
+		</form>
+	</main>
+</body>
+<%- include('../partials/foot.html'); %>
+
+</html>

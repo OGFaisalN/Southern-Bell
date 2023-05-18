@@ -1,0 +1,69 @@
+<html>
+
+<head>
+	<%- include('../partials/head.html'); %>
+</head>
+
+<body>
+	<%- include('../partials/header.html'); %>
+	<%- include('../partials/sidebar.html'); %>
+	<main class="forum <% if (user.name) { %><%- user.school.cssColorClass %><% } %>">
+		<% if (user.name) { %>
+		<div class="banner" style="background-image: url('<%- vars.domain %>/images/<%=(typeof user.school.bannerUrl != 'undefined' )? user.school.bannerUrl:''%>');">
+			<img src="<%- vars.domain %>/images/<%=(typeof user.school.logoUrl != 'undefined' )? user.school.logoUrl:''%>" />
+			<h1>Forum Posts</h1>
+			<h3>View posts from your piers here! You can answer their questions by replying below!</h3>
+		</div>
+		<% } else { %>
+		<div class="banner" style="background-color: white;">
+			<img src="<%- vars.domain %>/images/vschsd-logo.png" />
+			<h1 style="color: black;">Forum Posts</h1>
+			<h3>View posts from your piers here! You can answer their questions by replying below!</h3>
+		</div>
+		<% } %>
+		<div class="content">
+			<h3>Hello, <% if (user.name) { %><%= user.name.first %><% } else { %>Guest<% } %></h3>
+			<div class="posts">
+				<a href="<%- vars.domain %>/forum/posts/post1" class="post">
+					<h4>Faisal</h4>
+					<h2>Post Title</h2>
+					<div class="tags">
+						<i class="fa-solid fa-tags"></i> English, Math
+					</div>
+				</a>
+				<a href="<%- vars.domain %>/forum/posts/post2" class="post">
+					<h4>Faisal</h4>
+					<h2>Post Title</h2>
+					<div class="tags">
+						<i class="fa-solid fa-tags"></i> English, Math
+					</div>
+				</a>
+				<a href="<%- vars.domain %>/forum/posts/post3" class="post">
+					<h4>Faisal</h4>
+					<h2>Post Title</h2>
+					<div class="tags">
+						<i class="fa-solid fa-tags"></i> English, Math
+					</div>
+				</a>
+				<a href="<%- vars.domain %>/forum/posts/post4" class="post">
+					<h4>Faisal</h4>
+					<h2>Post Title</h2>
+					<div class="tags">
+						<i class="fa-solid fa-tags"></i> English, Math
+					</div>
+				</a>
+				<a href="<%- vars.domain %>/forum/posts/post5" class="post">
+					<h4>Faisal</h4>
+					<h2>Post Title</h2>
+					<div class="tags">
+						<i class="fa-solid fa-tags"></i> English, Math
+					</div>
+				</a>
+			</div>
+		</div>
+		<button>New Post</button>
+	</main>
+</body>
+<%- include('../partials/foot.html'); %>
+
+</html>

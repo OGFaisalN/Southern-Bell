@@ -1,0 +1,490 @@
+@media screen and (max-width: 800px) {
+    body {
+        display: block !important;
+        margin: 158px 0px 0px 0px !important;
+    }
+
+    header {
+        height: unset !important;
+        flex-direction: column;
+    }
+
+    header div {
+        flex-direction: column;
+    }
+
+    header .search input {
+        width: 100% !important;
+    }
+
+    header .links {
+        flex-direction: row;
+    }
+
+    sidebar {
+        width: unset !important;
+        height: unset !important;
+        position: unset !important;
+        left: unset !important;
+        top: unset !important;
+    }
+
+    sidebar h4 {
+        font-size: unset !important;
+    }
+
+    sidebar img {
+        max-width: 30vw !important;
+    }
+
+    main {
+        padding: 0 !important;
+    }
+
+    main.error .content {
+        padding: 15vw;
+    }
+
+    main.loginSignup form {
+        grid-template-columns: auto !important;
+        min-width: unset !important;
+    }
+}
+
+:root {
+    --primary: #1F4D3D;
+    --text: #ffffff;
+    --southTheme: #d0243c;
+    --centralTheme: #4054a4;
+    --northTheme: #187c3c;
+    --memorialTheme: #4054a4;
+    --background: #313338;
+    --transparent: #ffffff50;
+    --transparent2: #ffffff90;
+}
+
+@font-face {
+    font-family: "Regular";
+    src: url(../css/Regular.ttf);
+}
+
+@font-face {
+    font-family: "Bold";
+    src: url(../css/Bold.ttf);
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+}
+
+html {
+    background-color: var(--background);
+    color: var(--text);
+    font-family: "Regular";
+    scrollbar-width: none;
+}
+
+* {
+    color: var(--text);
+    font-family: "Regular";
+    scrollbar-width: none;
+}
+
+button, a, input[type=submit] {
+    transition: 0.5s;
+}
+
+body {
+    margin: 48px 0px 0px 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: end;
+    overflow-x: hidden;
+}
+
+header {
+    background-color: var(--background);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 20px;
+    position: fixed;
+    top: 0px;
+    width: calc(100vw - 40px);
+    height: 48px;
+    z-index: 1;
+    font-family: "Bold";
+    font-weight: bold;
+}
+
+header div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+header a {
+    padding: 10px;
+    color: var(--text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+header a img {
+    padding-right: 10px;
+}
+
+header .search input {
+    width: 10vw;
+    border-radius: 5px;
+    border: 1px solid var(--transparent);
+    background-color: transparent;
+    color: var(--text);
+    padding: 6px;
+}
+
+header .search input:hover,
+header .search input:focus {
+    width: 20vw;
+}
+
+header .user {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+header .user i {
+    padding-right: 10px;
+}
+
+header .links a {
+    padding-right: 2px;
+    color: var(--transparent2);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+header .links a:hover {
+    color: white;
+}
+
+sidebar {
+    background-color: var(--background);
+    width: 15vw;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 20px;
+    padding: 50px 30px;
+    text-align: left;
+    overflow-y: scroll;
+}
+
+sidebar * {
+    margin: 0px;
+}
+
+sidebar img {
+    width: 100%;
+    max-width: 10vw;
+}
+
+sidebar a {
+    width: 100%;
+}
+
+sidebar button {
+    cursor: pointer;
+}
+
+sidebar .buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 10px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+sidebar .buttons:active {
+    transform: translateY(2px);
+    box-shadow: 0 5px #666;
+}
+
+sidebar button.fill {
+    border-radius: 10px;
+    background-color: var(--text);
+    color: var(--background);
+    width: 100%;
+    height: 35px;
+    border: none;
+    font-size: 16px;
+}
+
+sidebar button.fill:hover {
+    opacity: 0.75;
+}
+
+sidebar button.transparent {
+    border-radius: 10px;
+    background-color: transparent;
+    color: var(--text);
+    width: 100%;
+    height: 35px;
+    border: none;
+    text-align: left;
+    padding-left: 10px;
+    font-size: 16px;
+}
+
+sidebar button.transparent:hover {
+    background-color: var(--transparent);
+    opacity: 0.75;
+}
+
+sidebar button.transparent i {
+    margin-right: 10px;
+}
+
+sidebar .link {
+    padding-left: 20px;
+    color: var(--transparent2);
+    text-decoration: none;
+    margin-bottom: -4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+    width: unset;
+}
+
+sidebar .link:hover {
+    color: white;
+}
+
+main {
+    width: 100vw;
+    padding-left: calc(15vw + 60px);
+    padding-bottom: 20px;
+    min-height: calc(100vh - 48px - 20px);
+}
+
+main.south {
+    background-color: var(--southTheme);
+}
+
+main.north {
+    background-color: var(--northTheme);
+}
+
+main.central {
+    background-color: var(--centralTheme);
+}
+
+main .banner {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+    padding: 25px 50px;
+    background-size: cover;
+    background-position: center;
+}
+
+main .banner * {
+    margin: 0px;
+}
+
+main .banner img {
+    height: 150px;
+    margin-bottom: 20px;
+}
+
+main .content {
+    padding: 20px 40px;
+}
+
+main .content .posts {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+main .content .posts a.post {
+    background-color: var(--transparent2);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    text-decoration: none;
+}
+
+main .content .posts a.post * {
+    margin: 0px;
+}
+
+main.loginSignup {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+main.loginSignup form {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    background-color: gray;
+    padding: 25px;
+    border-radius: 10px;
+    min-width: 350px;
+    margin: 20px;
+    gap: 10px;
+}
+
+main.loginSignup form input,
+main.loginSignup form select,
+main.loginSignup form button,
+main.loginSignup form a {
+    color: var(--text);
+    border: 1px solid var(--transparent);
+    background-color: var(--background);
+    min-width: 200px;
+    border-radius: 10px;
+    padding: 10px 0px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    font-size: small;
+}
+
+main.loginSignup form input[type=submit]:hover,
+main.loginSignup form input[type=submit]:focus {
+    min-width: 250px;
+}
+
+main.error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+}
+
+main.account .buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    justify-content: start;
+    gap: 10px;
+}
+
+main.account .buttons a {
+    text-decoration: none;
+}
+
+main.account .buttons a button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+main.account .buttons a button img {
+    height: 20px;
+    margin-right: 5px;
+}
+
+main.postCreator {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+main.postCreator form {
+	display: flex;
+	flex-direction: column;
+	align-items: start;
+	justify-content: center;
+	gap: 20px;
+	padding: 25px;
+	border-radius: 10px;
+	width: 75%;
+	margin: 20px;
+	border: 1px solid var(--transparent);
+}
+
+main.postCreator form input, main.postCreator form textarea {
+    width: 100%;
+}
+
+main.postCreator form input#name {
+	background-color: transparent;
+	border: none;
+	font-size: 50px;
+}
+
+main.postCreator form textarea#description {
+	background-color: transparent;
+	border: none;
+	font-size: 20px;
+}
+
+main.postCreator form select#tags {
+	background-color: transparent;
+	border: none;
+	font-size: 15px;
+}
+
+main.postCreator form select#tags option::before {
+    content: "> ";
+}
+
+main.postCreator form img {
+    max-height: 150px;
+}
+
+main.postCreator form input[type=submit] {
+    color: var(--text);
+    border: 1px solid var(--transparent);
+    background-color: var(--background);
+    min-width: 200px;
+    border-radius: 10px;
+    padding: 10px 0px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    font-size: small;
+}
+
+main.postCreator form input[type=submit]:hover,
+main.postCreator form input[type=submit]:focus {
+    background-color: var(--transparent);
+}
+
+main.forum button {
+    width: 200px;
+    height: 45px;
+    color: var(--background);
+    border-radius: 10px;
+    font-size: 30px;
+    margin-left: 50px;
+}

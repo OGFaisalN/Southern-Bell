@@ -1,0 +1,18 @@
+<sidebar>
+	<% if (user.name) { %>
+	<img src="<%- vars.domain %>/images/<%- user.school.logoUrl %>" />
+	<h3><%- user.school.name %></h3>
+	<% } else { %>
+	<img src="<%- vars.domain %>/images/vschsd-logo.png" />
+	<h3>Student Forum</h3>
+	<h4>Join our community to find new friends & get free homework help from students in your district!</h4>
+	<a href="<%- vars.domain %>/login"><button class="fill">Sign In</button></a>
+	<% } %>
+	<div class="buttons">
+		<a href="<%- vars.domain %>/"><button class="transparent"><i class="fa-solid fa-home"></i> Home</button></a>
+		<a href="<%- vars.domain %>/forum"><button class="transparent"><i class="fa-solid fa-comments"></i> Forum</button></a>
+		<a href="<%- vars.domain %>/forum/topics"><button class="transparent"><i class="fa-solid fa-tags"></i> Topics</button></a>
+		<%- vars.tagListHTMLSidebar %>
+		<a href="<%- vars.domain %>/account"><button class="transparent"><i class="fa-solid fa-user"></i> Account</button></a>
+	</div>
+</sidebar>

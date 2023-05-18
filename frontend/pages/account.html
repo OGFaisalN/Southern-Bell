@@ -1,0 +1,32 @@
+<html>
+
+<head>
+	<%- include('../partials/head.html'); %>
+</head>
+
+<body>
+	<%- include('../partials/header.html'); %>
+	<%- include('../partials/sidebar.html'); %>
+	<main <% if (user.name) { %> class="account <%- user.school.cssColorClass %>" <% } %>>
+		<div class="banner" style="background-image: url('<%- vars.domain %>/images/<%=(typeof user.school.bannerUrl != 'undefined' )? user.school.bannerUrl:''%>');">
+			<img src="<%- vars.domain %>/images/<%=(typeof user.school.logoUrl != 'undefined' )? user.school.logoUrl:''%>" />
+			<h1><%- user.name.first %> <%- user.name.last %></h1>
+		</div>
+		<div class="content">
+			<div class="buttons">
+				<%- buttons %>
+			</div>
+			<h3>Username: <%= user.username %></h3>
+			<h3>Email: <%= user.email %></h3>
+			<h3>First Name: <%= user.name.first %></h3>
+			<h3>Last Name: <%= user.name.last %></h3>
+			<h3>Age: <%= user.age %></h3>
+			<h3>Date of Birth: <%= user.dob %></h3>
+			<h3>School: <%= user.school.name %></h3>
+			<h3>Graduation Year: <%= user.gradyear %></h3>
+		</div>
+	</main>
+</body>
+<%- include('../partials/foot.html'); %>
+
+</html>
