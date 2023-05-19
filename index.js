@@ -5,6 +5,7 @@ const path = require('path');
 const app = express();
 const fetch = require('node-fetch');
 require('dotenv').config();
+const mysql = require('mysql');
 const port = 80;
 
 app.engine('.html', require('ejs').renderFile);
@@ -133,6 +134,7 @@ var defaults = {
     tagListHTML: "",
     tagListHTMLHeader: "",
     tagListHTMLSidebar: "",
+    tagListHTMLButtons: "",
 };
 defaults.schools.forEach(school => {
     defaults.schoolListHTML += `<option value="${school.short}">${school.name}</option>`;
@@ -153,6 +155,7 @@ defaults.tags.forEach(tag => {
     defaults.tagListHTML += `<option value="${tag.slug}">${tag.name}</option>`;
     defaults.tagListHTMLHeader += `<a href="${defaults.domain}/forum/topics/${tag.slug}">${tag.name}</a>`;
     defaults.tagListHTMLSidebar += `<a href="${defaults.domain}/forum/topics/${tag.slug}" class="link">${tag.name}</a>`;
+    defaults.tagListHTMLButtons += `<a href="${defaults.domain}/forum/topics/${tag.slug}"><button>${tag.name}</button></a>`;
 });
 
 // Environment Variables
@@ -187,16 +190,20 @@ app.get('/account', async (req, res) => {
     if (req.session.loggedinUser === true) {
         res.render('account', { vars: defaults, title: 'Account', user: req.session.userData, buttons: defaults.ssoButtonListHTML });
     } else {
-        res.redirect('/login');
+        res.redirect('/login?redirect=/account');
     };
 });
 
 app.get('/login', async (req, res) => {
     await allRoutes(req);
     if (req.session.loggedinUser === true) {
-        res.redirect('/account');
+        if (req.query.redirect) {
+            res.redirect(defaults.domain + req.query.redirect);
+        } else {
+            res.redirect('/account');
+        };
     } else {
-        res.render('login', { vars: defaults, title: 'Login', user: req.session.userData });
+        res.render('login', { vars: defaults, title: 'Login', user: req.session.userData, redirect: "?redirect=" + req.query.redirect });
     };
 });
 
@@ -235,16 +242,20 @@ app.post('/login', async (req, res) => {
                                 gradyear: db.gradyear
                             };
                             req.session.loggedinUser = true;
-                            res.redirect('/login');
+                            if (req.query.redirect) {
+                                res.redirect('/login?redirect=' + req.query.redirect);
+                            } else {
+                                res.redirect('/login');
+                            };
                         };
                     });
                 } else {
                     req.session.loggedinUser = false;
-                    res.render('login', { vars: defaults, title: 'Login', user: req.session.userData, alert: "Incorrect details!" });
+                    res.render('login', { vars: defaults, title: 'Login', user: req.session.userData, alert: "Incorrect details!", redirect: "?redirect=" + req.query.redirect });
                 };
             } else {
                 req.session.loggedinUser = false;
-                res.render('login', { vars: defaults, title: 'Login', user: req.session.userData, alert: "Incorrect details!" });
+                res.render('login', { vars: defaults, title: 'Login', user: req.session.userData, alert: "Incorrect details!", redirect: "?redirect=" + req.query.redirect });
             };
         });
 });
@@ -278,10 +289,8 @@ app.post('/signup', async (req, res) => {
             }
         );
     };
-    res.send(req.body.password.isNaN())
-    if ((req.body.username != "") && (req.body.password != "") && (req.body.email != "") && (req.body.firstname != "") && (req.body.lastname != "") && (req.body.dob != "") && (req.body.school != "") && (req.body.gradyear != "") && (req.body.email.includes("@vschsd.org")) && (req.body.gradyear.length === 4) && (req.body.password.length === 6) && (!req.body.password.isNaN()) && (!req.body.gradyear.isNaN()) && (req.body.gradyear >= new Date.getYear()) && (await getAge(req.body.dob) < 21)) {
-        console.log(`${process.env.DATABASE_URL}?do=new&username=${req.body.username}&password=${req.body.password}&email=${req.body.email}&firstname=${await toTitleCase(req.body.firstname)}&lastname=${await toTitleCase(req.body.lastname)}&age=${await getAge(req.body.dob)}&gradyear=${req.body.gradyear}&school=${req.body.school}&dob=${req.body.dob}`);
-        await fetch(`${process.env.DATABASE_URL}?do=new&username=${req.body.username}&password=${req.body.password}&email=${req.body.email}&firstname=${await toTitleCase(req.body.firstname)}&lastname=${await toTitleCase(req.body.lastname)}&age=${await getAge(req.body.dob)}&gradyear=${req.body.gradyear}&school=${req.body.school}&dob=${req.body.dob}`, {
+    if ((req.body.username != "") && (req.body.password != "") && (req.body.email != "") && (req.body.firstname != "") && (req.body.lastname != "") && (req.body.dob != "") && (req.body.school != "") && (req.body.gradyear != "") && (req.body.email === `${req.body.username.toLowerCase()}@vschsd.org`) && (req.body.gradyear.length === 4) && (req.body.password.length === 6) && (!isNaN(req.body.password)) && (!isNaN(req.body.gradyear)) && (req.body.gradyear >= new Date.getYear()) && (await getAge(req.body.dob) < 21)) {
+        await fetch(`${process.env.DATABASE_URL}?do=new&username=${req.body.username.toLowerCase()}&password=${req.body.password}&email=${req.body.email}&firstname=${await toTitleCase(req.body.firstname)}&lastname=${await toTitleCase(req.body.lastname)}&age=${await getAge(req.body.dob)}&gradyear=${req.body.gradyear}&school=${req.body.school}&dob=${req.body.dob}`, {
             method: 'GET',
             headers: {
                 Accept: '*/*',
@@ -290,7 +299,6 @@ app.post('/signup', async (req, res) => {
         })
             .then(db => db.json())
             .then(async db => {
-                console.log(db);
                 if (db.info.status === 1) {
                     req.session.loggedinUser = false;
                     res.render('signup', { vars: defaults, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "Account created." });
@@ -312,40 +320,7 @@ app.get('/logout', async (req, res) => {
 
 app.get('/forum', async (req, res) => {
     await allRoutes(req);
-    res.render('forum', { vars: defaults, title: 'Forum', user: req.session.userData });
-});
-
-app.get('/forum/posts/new', async (req, res) => {
-    await allRoutes(req);
-    if (req.session.loggedinUser === true) {
-        res.render('newpost', { vars: defaults, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML });
-    } else {
-        res.redirect('/login');
-    };
-});
-
-app.post('/forum/posts/new', async (req, res) => {
-    await allRoutes(req);
-    function convertToSlug(Text) {
-        return Text.toLowerCase()
-            .replace(/[^\w ]+/g, '')
-            .replace(/ +/g, '-');
-    };
-    var optional = "";
-    if ((req.body.tags != "") && (req.body.tags != undefined)) {
-        optional += `&tags=${req.body.tags}`;
-    };
-    if ((req.body.description != "") && (req.body.description != undefined)) {
-        optional += `&description=${req.body.description}`;
-    };
-    if ((req.body.image != "") && (req.body.image != undefined)) {
-        var imageJson = {
-            name: req.body.imagename,
-            image: req.body.image
-        };
-        optional += `&image=${JSON.stringify(imageJson)}`;
-    };
-    await fetch(`${process.env.DATABASE_URL}?do=newpost&username=${req.session.userData.username}&name=${req.body.name}&slug=${convertToSlug(req.body.name)}${optional}`, {
+    await fetch(`${process.env.DATABASE_URL}?do=allposts`, {
         method: 'GET',
         headers: {
             Accept: '*/*',
@@ -354,12 +329,95 @@ app.post('/forum/posts/new', async (req, res) => {
     })
         .then(db => db.json())
         .then(async db => {
-            if (db.info.status === 1) {
-                res.redirect(`${defaults.domain}/forum/posts/${db.data.slug}`);
-            } else {
-                res.render('newpost', { vars: defaults, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML, alert: "Post title already exists, choose another!" });
-            };
+            var postsList = "";
+            db.data.reverse().forEach(post => {
+                var tagList = "";
+                post.tags.split(`,`).forEach(tag => {
+                    defaults.tags.forEach(tags => {
+                        if (tags.slug === tag) {
+                            tagList += tags.name + ", ";
+                        };
+                    });
+                });
+                postsList += `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${post.author}</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`;
+            });
+            res.render('forum', { vars: defaults, title: 'Forum', user: req.session.userData, posts: postsList });
         });
+});
+
+app.get('/forum/posts/new', async (req, res) => {
+    await allRoutes(req);
+    if (req.session.loggedinUser === true) {
+        res.render('newpost', { vars: defaults, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML });
+    } else {
+        res.redirect('/login?redirect=/forum/posts/new');
+    };
+});
+
+app.post('/forum/posts/new', async (req, res) => {
+    await allRoutes(req);
+    // DangoID >> vschsd-student-forum >> newpost
+    var connection = mysql.createConnection({
+        host: 'portal.dangoweb.com',
+        user: 'dangoweb_vschsd-student-forum',
+        password: '8p4fascbse',
+        database: 'dangoweb_vschsd-student-forum'
+    });
+    await connection.connect();
+    var slug = req.body.name.toLowerCase().replace(/[^\w ]+/g, '').replace(/ +/g, '-');
+    await connection.query(`SELECT * FROM posts WHERE slug = '${slug}'`, async function (error, results, fields) {
+        if (!error) {
+            if (results.length != 0) {
+                slug = `${slug}-${results[0].id}`;
+            };
+            await connection.query(`SELECT MAX(id) FROM posts`, async function (error, results, fields) {
+                if (!error) {
+                    var newId = results[0]['MAX(id)'] + 1;
+                    if ((req.body.description != "") && (req.body.description != undefined)) {
+                        var temp1 = ", description";
+                        var temp2 = `, '${req.body.description}'`;
+                    } else {
+                        var temp1 = "";
+                        var temp2 = "";
+                    };
+                    if ((req.body.image != "") && (req.body.image != undefined)) {
+                        var imageJson = {
+                            name: req.body.imagename,
+                            image: req.body.image
+                        };
+                        var temp3 = ", images";
+                        var temp4 = `, '${JSON.stringify(imageJson)}'`;
+                    } else {
+                        var temp3 = "";
+                        var temp4 = "";
+                    };
+                    await connection.query(`INSERT INTO posts (id, author, name, slug, tags${temp1}${temp3}) VALUES (${newId}, '${req.session.userData.username}', '${req.body.name}', '${slug}', '${req.body.tags}'${temp2}${temp4})`, async function (error, results, fields) {
+                        if (!error) {
+                            res.redirect(`${defaults.domain}/forum/posts/${slug}`);
+                            await connection.end();
+                        } else {
+                            console.log(error);
+                            res.render('newpost', { vars: defaults, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML, alert: "There was an error!" });
+                            await connection.end();
+                        };
+                    });
+                } else {
+                    console.log(error);
+                    res.render('newpost', { vars: defaults, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML, alert: "There was an error!" });
+                    await connection.end();
+                };
+            });
+        } else {
+            console.log(error);
+            res.render('newpost', { vars: defaults, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML, alert: "There was an error!" });
+            await connection.end();
+        };
+    });
+});
+
+app.get('/forum/topics', async (req, res) => {
+    await allRoutes(req);
+    res.render('topics', { vars: defaults, title: 'Topics', user: req.session.userData, tags: defaults.tagListHTMLButtons });
 });
 
 app.get('*', async (req, res) => {

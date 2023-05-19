@@ -7,25 +7,24 @@
 <body>
 	<%- include('../partials/header.html'); %>
 	<%- include('../partials/sidebar.html'); %>
-	<main class="forum <% if (user.name) { %><%- user.school.cssColorClass %><% } %>">
+	<main class="topics <% if (user.name) { %><%- user.school.cssColorClass %><% } %>">
 		<% if (user.name) { %>
 		<div class="banner schoolBackground">
 			<img src="<%- vars.domain %>/images/<%=(typeof user.school.logoUrl != 'undefined' )? user.school.logoUrl:''%>" />
-			<h1>Forum Posts</h1>
+			<h1>Topics</h1>
 			<h3>Having trouble with homework? Send a post here for others to answer your questions! Click New Post for more info!</h3>
 		</div>
 		<% } else { %>
 		<div class="banner" style="background-color: white;">
 			<img src="<%- vars.domain %>/images/vschsd-logo.png" />
-			<h1 style="color: black;">Forum Posts</h1>
+			<h1 style="color: black;">Topics</h1>
 			<h3 style="color: black;">Having trouble with homework? Send a post here for others to answer your questions! Click New Post for more info!</h3>
 		</div>
 		<% } %>
 		<div class="content">
-			<h3>All Posts</h3>
-			<a href="/forum/posts/new"><button><i class="fa-solid fa-plus"></i> New Post</button></a>
-			<div class="posts">
-				<%- posts %>
+			<h3>All Topics</h3>
+			<div class="topics">
+				<%- vars.tagListHTMLButtons %>
 			</div>
 		</div>
 	</main>

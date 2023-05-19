@@ -8,7 +8,7 @@
 	<%- include('../partials/header.html'); %>
 	<%- include('../partials/sidebar.html'); %>
 	<main <% if (user.name) { %> class="account <%- user.school.cssColorClass %>" <% } %>>
-		<div class="banner" style="background-image: url('<%- vars.domain %>/images/<%=(typeof user.school.bannerUrl != 'undefined' )? user.school.bannerUrl:''%>');">
+		<div class="banner schoolBackground">
 			<img src="<%- vars.domain %>/images/<%=(typeof user.school.logoUrl != 'undefined' )? user.school.logoUrl:''%>" />
 			<h1><%- user.name.first %> <%- user.name.last %></h1>
 		</div>

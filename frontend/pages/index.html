@@ -9,7 +9,7 @@
 	<%- include('../partials/sidebar.html'); %>
 	<main <% if (user.name) { %> class="<%- user.school.cssColorClass %>" <% } %>>
 		<% if (user.name) { %>
-		<div class="banner" style="background-image: url('<%- vars.domain %>/images/<%=(typeof user.school.bannerUrl != 'undefined' )? user.school.bannerUrl:''%>');">
+		<div class="banner schoolBackground">
 			<img src="<%- vars.domain %>/images/<%=(typeof user.school.logoUrl != 'undefined' )? user.school.logoUrl:''%>" />
 			<h1><%=(typeof user.school.name != 'undefined' )? user.school.name:''%></h1>
 			<h3><%=(typeof user.school.type != 'undefined' )? user.school.type:''%></h3>
