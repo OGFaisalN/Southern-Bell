@@ -59,6 +59,11 @@
     header {
         height: unset !important;
         flex-direction: column;
+        background-color: var(--background);
+    }
+
+    header .main {
+        height: 200px !important;
     }
 
     header div {
@@ -79,6 +84,11 @@
         position: unset !important;
         left: unset !important;
         top: unset !important;
+        padding-top: 125px !important;
+    }
+
+    sidebar .fade {
+        margin-top: -40px !important;
     }
 
     sidebar h4 {
@@ -214,13 +224,13 @@ body {
 }
 
 .prepreheader {
-    background-color: var(--background);
-    padding: 0px 20px;
-    position: absolute;
-    margin-top: -48px;
-    width: calc(100vw - 40px);
-    height: 48px;
-    z-index: 1;
+	background-color: var(--background);
+	padding: 0px 20px;
+	position: absolute;
+	margin-top: 0px;
+	width: 100vw;
+	height: 48px;
+	z-index: 1;
 }
 
 .preheader {
@@ -228,29 +238,44 @@ body {
     position: fixed;
     top: 0px;
     width: calc(100vw - 40px);
-    height: 48px;
+    height: 96px;
 }
 
 header {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: space-between;
     padding: 0px 20px;
     position: fixed;
     top: 0px;
     width: calc(100vw - 40px);
-    height: 48px;
+    height: 96px;
     z-index: 100;
     font-weight: bold;
 }
 
-header div {
+header .announcement, header .main {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: calc(100vw - 40px);
+	height: 48px;
+}
+
+header .announcement {
+	display: flex;
+	justify-content: center;
+	width: 100vw;
+}
+
+header .main div {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-header a {
+header .main a {
     padding: 10px;
     color: var(--text);
     text-decoration: none;
@@ -259,11 +284,11 @@ header a {
     justify-content: center;
 }
 
-header a img {
+header .main a img {
     padding-right: 10px;
 }
 
-header .search input {
+header .main .search input {
     width: 10vw;
     border-radius: 5px;
     border: 1px solid var(--transparent);
@@ -273,23 +298,23 @@ header .search input {
     transition: 0.5s;
 }
 
-header .search input:hover,
-header .search input:focus {
+header .main .search input:hover,
+header .main .search input:focus {
     width: 20vw;
     transition: 0.5s;
 }
 
-header .user {
+header .main .user {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-header .user i {
+header .main .user i {
     padding-right: 10px;
 }
 
-header .links a {
+header .main .links a {
     padding-right: 2px;
     color: var(--transparent2);
     text-decoration: none;
@@ -298,7 +323,7 @@ header .links a {
     justify-content: center;
 }
 
-header .links a:hover {
+header .main .links a:hover {
     color: white;
 }
 
@@ -309,7 +334,7 @@ sidebar {
     position: fixed;
     left: 0;
     top: 0;
-    margin-top: 48px;
+    margin-top: 96px;
     display: flex;
     flex-direction: column;
     align-items: start;
@@ -440,9 +465,10 @@ sidebar .link:hover {
 }
 
 main {
+    padding-top: 48px;
     padding-left: calc(15rem + 30px);
     padding-bottom: 20px;
-    min-height: calc(100vh - 48px - 20px);
+    min-height: calc(100vh - 96px - 20px);
 }
 
 main .banner {

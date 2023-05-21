@@ -28,6 +28,7 @@ app.use(session({
 var defaults = {
     domain: "",
     siteName: "VSCHSD Student Forum",
+    announcement: "",
     schools: [
         {
             short: "south",
@@ -180,7 +181,9 @@ var defaults = {
 
 if (process.env.NODE_ENV === 'production') {
     defaults.domain = "https://acp.vschsd.faisaln.cf/vschsd-student-forum";
+    defaults.announcement = "🧪 Beta Version";
 } else {
+    defaults.announcement = "🧪 Dev Version";
     if (process.env.NODE_ENV === 'development') {
         defaults.domain = "https://beta.acp.vschsd.faisaln.cf";
     } else {

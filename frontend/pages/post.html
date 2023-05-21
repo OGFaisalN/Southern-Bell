@@ -7,7 +7,7 @@
 <body>
 	<%- include('../partials/header.html'); %>
 	<%- include('../partials/sidebar.html'); %>
-	<main class="post <% if (user.name) { %><%- user.school.cssColorClass %><% } %>">
+	<main class="post<% if (user.name) { %> <%- user.school.cssColorClass %><% } %>">
 		<div class="inner">
 			<h1><%- title %></h1>
 			<div class="info">

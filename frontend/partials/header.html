@@ -1,29 +1,34 @@
 <div class="prepreheader"></div>
-<div class="preheader <% if (user.name) { %><%- user.school.cssColorClass %><% } %>"></div>
-<header <% if (user.name) { %>class="<%- user.school.cssColorClass %><% } %>Mobile">
-	<div class="left">
-		<div class="logo">
-			<a href="<%- vars.domain %>">
-				<img src="<%- vars.domain %>/images/logo.png" alt="logo"> <%- vars.siteName %>
-			</a>
-		</div>
-		<div class="links">
-			<%- vars.tagListHTMLHeader %>
-		</div>
+<div class="preheader<% if (user.name) { %> <%- user.school.cssColorClass %><% } %>"></div>
+<header <% if (user.name) { %>class="<%- user.school.cssColorClass %>Mobile"<% } %>>
+	<div class="announcement<% if (user.name) { %> <%- user.school.cssColorClass %><% } %>">
+		<%- vars.announcement %>
 	</div>
-	<div class="right">
-		<div class="search">
-			<input type="text" placeholder="Search">
+	<div class="main">
+		<div class="left">
+			<div class="logo">
+				<a href="<%- vars.domain %>">
+					<img src="<%- vars.domain %>/images/logo.png" alt="logo"> <%- vars.siteName %>
+				</a>
+			</div>
+			<div class="links">
+				<%- vars.tagListHTMLHeader %>
+			</div>
 		</div>
-		<div class="user">
-			<a href="<%- vars.domain %>/account">
-				<i class="fa-solid fa-user"></i> <% if (user.name) { %><%= user.name.first %> <%= user.name.last %><% } else { %>Account<% } %>
-			</a>
-			<% if (user.name) { %>
-			<a href="<%- vars.domain %>/logout">
-				<i class="fa-solid fa-arrow-right-from-bracket"></i>
-			</a>
-			<% } %>
+		<div class="right">
+			<div class="search">
+				<input type="text" placeholder="Search">
+			</div>
+			<div class="user">
+				<a href="<%- vars.domain %>/account">
+					<i class="fa-solid fa-user"></i> <% if (user.name) { %><%= user.name.first %> <%= user.name.last %><% } else { %>Account<% } %>
+				</a>
+				<% if (user.name) { %>
+				<a href="<%- vars.domain %>/logout">
+					<i class="fa-solid fa-arrow-right-from-bracket"></i>
+				</a>
+				<% } %>
+			</div>
 		</div>
 	</div>
 </header>
