@@ -378,17 +378,17 @@ sidebar .image img.main {
     width: 100px;
     border-radius: 15px;
     background-color: var(--text);
-    border: 6px solid;
+    border: 4px solid;
 }
 
 sidebar .image img.icon {
-    width: 41px;
+    width: 40px;
     position: relative;
     top: -85px;
     right: 30px;
     z-index: 1;
     border-radius: 100%;
-    border: 6px solid;
+    border: 2px solid;
 }
 
 sidebar a {
