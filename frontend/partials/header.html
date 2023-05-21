@@ -1,4 +1,6 @@
-<header>
+<div class="prepreheader"></div>
+<div class="preheader <% if (user.name) { %><%- user.school.cssColorClass %><% } %>"></div>
+<header <% if (user.name) { %>class="<%- user.school.cssColorClass %><% } %>Mobile">
 	<div class="left">
 		<div class="logo">
 			<a href="<%- vars.domain %>">
@@ -6,7 +8,6 @@
 			</a>
 		</div>
 		<div class="links">
-			<a href="<%- vars.domain %>/">Home</a>
 			<%- vars.tagListHTMLHeader %>
 		</div>
 	</div>

@@ -1,11 +1,17 @@
-<sidebar>
+<sidebar <% if (user.name) { %>class="loggedin" style="background-image:url('<%- vars.domain %>/images/<%- user.school.bannerUrl %>')"<% } %>>
 	<% if (user.name) { %>
-	<img src="<%- vars.domain %>/images/<%- user.school.logoUrl %>" />
-	<h3><%- user.school.name %></h3>
+	<div class="fade"></div>
+	<div class="image">
+		<img class="main <%- user.school.cssColorClass %>Border" src="<%- vars.domain %>/images/<%- user.school.logoUrl %>" />
+		<img class="icon <%- user.school.cssColorClass %>Border" src="<%- vars.domain %>/images/<%- user.school.logoUrl %>" />
+	</div>
+	<h6><%- user.name.first %> <%- user.name.last %> <i class="fa-solid fa-<%- user.badge.icon %>"></i></h6>
 	<% } else { %>
-	<img src="<%- vars.domain %>/images/vschsd-logo.png" />
-	<h3>Student Forum</h3>
-	<h4>Join our community to find new friends & get free homework help from students in your district!</h4>
+	<div class="image">
+		<img src="<%- vars.domain %>/images/vschsd-logo.png" />
+	</div>
+	<h6>Student Forum</h6>
+	<p>Join our community to find new friends & get free homework help from students in your district!</p>
 	<a href="<%- vars.domain %>/login"><button class="fill">Sign In</button></a>
 	<% } %>
 	<div class="buttons">

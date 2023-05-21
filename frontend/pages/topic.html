@@ -7,23 +7,23 @@
 <body>
 	<%- include('../partials/header.html'); %>
 	<%- include('../partials/sidebar.html'); %>
-	<main <% if (user.name) { %> class="<%- user.school.cssColorClass %>" <% } %>>
+	<main class="forum <% if (user.name) { %><%- user.school.cssColorClass %><% } %>">
 		<% if (user.name) { %>
 		<div class="banner schoolBackground">
 			<img src="<%- vars.domain %>/images/<%=(typeof user.school.logoUrl != 'undefined' )? user.school.logoUrl:''%>" />
-			<h1><%=(typeof user.school.name != 'undefined' )? user.school.name:''%></h1>
-			<h3><%=(typeof user.school.type != 'undefined' )? user.school.type:''%></h3>
-			<h4><%=(typeof user.school.address != 'undefined' )? user.school.address:''%></h4>
+			<h1><%- longtitle %></h1>
+			<h3><%- description %></h3>
 		</div>
 		<% } else { %>
 		<div class="banner" style="background-color: white;">
 			<img src="<%- vars.domain %>/images/vschsd-logo.png" />
-			<h1 style="color: black;"><%- vars.siteName %></h1>
+			<h1 style="color: black;"><%- longtitle %></h1>
+			<h3 style="color: black;"><%- description %></h3>
 		</div>
 		<% } %>
 		<div class="content">
-			<h3>Today's Posts:</h3>
-			<a href="<%- vars.domain %>/forum/posts/new"><button><i class="fa-solid fa-plus"></i> New Post</button></a>
+			<h3>All Posts</h3>
+			<a href="/forum/posts/new"><button><i class="fa-solid fa-plus"></i> New Post</button></a>
 			<div class="posts">
 				<%- posts %>
 			</div>

@@ -14,9 +14,9 @@
 		</h3>
 		<form action="/forum/posts/new" method="post">
 			<input type="text" id="name" name="name" placeholder="Hello, class..." required>
-			<textarea type="textarea" id="description" name="description" placeholder="This is where you explain your problem... (Optional)"></textarea>
-			<label for="tags">Tags:</label>
-			<select name="tags" id="tags" multiple required>
+			<textarea type="textarea" id="description" name="description" placeholder="This is where you explain your problem..." required></textarea>
+			<label for="tags">Topic:</label>
+			<select name="tags" id="tags" required>
 				<%- tagList %>
 			</select>
 			<label for="images">Attach an image (Optional):</label>
@@ -26,6 +26,7 @@
 			<input type="submit" value="Publish">
 		</form>
 	</main>
+	<%- include('../partials/footer.html'); %>
 </body>
 <%- include('../partials/foot.html'); %>
 

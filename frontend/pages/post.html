@@ -1,0 +1,27 @@
+<html>
+
+<head>
+	<%- include('../partials/head.html'); %>
+</head>
+
+<body>
+	<%- include('../partials/header.html'); %>
+	<%- include('../partials/sidebar.html'); %>
+	<main class="post <% if (user.name) { %><%- user.school.cssColorClass %><% } %>">
+		<div class="inner">
+			<h1><%- title %></h1>
+			<div class="info">
+				<h4><%- author %> <i class="fa-solid fa-<%- badge.icon %>" alt="<%- badge.name %>"></i></h4>
+				<p><%- description %></p>
+				<h4>Tags: <%- tags %></h4>
+				<% if (imagename) { %><img src="<%- image %>" alt="<%- imagename %>" /><% } %>
+			</div>
+			<div class="posts comments">
+			</div>
+		</div>
+	</main>
+	<%- include('../partials/footer.html'); %>
+</body>
+<%- include('../partials/foot.html'); %>
+
+</html>

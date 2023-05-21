@@ -6,7 +6,7 @@
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "mysql": "^2.18.1",
-    "node-fetch": "2.6.6"
+    "node-fetch": "^2.6.6"
   },
   "name": "advanced-computer-programming-beta",
   "version": "1.0.0",

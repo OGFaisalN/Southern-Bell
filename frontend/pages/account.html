@@ -7,25 +7,35 @@
 <body>
 	<%- include('../partials/header.html'); %>
 	<%- include('../partials/sidebar.html'); %>
-	<main <% if (user.name) { %> class="account <%- user.school.cssColorClass %>" <% } %>>
+	<main class="account <%- user.school.cssColorClass %>">
 		<div class="banner schoolBackground">
-			<img src="<%- vars.domain %>/images/<%=(typeof user.school.logoUrl != 'undefined' )? user.school.logoUrl:''%>" />
 			<h1><%- user.name.first %> <%- user.name.last %></h1>
+			<h2>Class of <%- user.gradyear %></h2>
 		</div>
 		<div class="content">
+			<h3>Hello, <% if (user.name) { %><%- user.name.first %><% } else { %>Guest<% } %></h3>
+			<h4>Quick Links:</h4>
 			<div class="buttons">
 				<%- buttons %>
 			</div>
-			<h3>Username: <%= user.username %></h3>
-			<h3>Email: <%= user.email %></h3>
-			<h3>First Name: <%= user.name.first %></h3>
-			<h3>Last Name: <%= user.name.last %></h3>
-			<h3>Age: <%= user.age %></h3>
-			<h3>Date of Birth: <%= user.dob %></h3>
-			<h3>School: <%= user.school.name %></h3>
-			<h3>Graduation Year: <%= user.gradyear %></h3>
+			<h4>Account Details:</h4>
+			<h3>Username: <%- user.username %></h3>
+			<h3>Email: <%- user.email %></h3>
+			<h3>First Name: <%- user.name.first %></h3>
+			<h3>Last Name: <%- user.name.last %></h3>
+			<h3>Age: <%- user.age %></h3>
+			<h3>Date of Birth: <%- user.dob %></h3>
+			<h3>School: <%- user.school.name %></h3>
+			<h3>Graduation Year: <%- user.gradyear %></h3>
+			<h3>Badges: <%- badges %></h3>
+			<h4>Your Posts:</h4>
+			<a href="<%- vars.domain %>/forum/posts/new"><button><i class="fa-solid fa-plus"></i> New Post</button></a>
+			<div class="posts">
+				<%- posts %>
+			</div>
 		</div>
 	</main>
+	<%- include('../partials/footer.html'); %>
 </body>
 <%- include('../partials/foot.html'); %>
 

@@ -26,6 +26,7 @@ app.use(session({
 // Defaults
 
 var defaults = {
+    domain: "",
     siteName: "VSCHSD Student Forum",
     schools: [
         {
@@ -80,7 +81,7 @@ var defaults = {
         {
             name: "Infinite Campus",
             link: "https://valleystreamny.infinitecampus.org/campus/SSO/valleystream/sis?configID=1",
-            icon: "https://www.infinitecampus.com/favicon.ico",
+            icon: "https://valleystreamny.infinitecampus.org/campus/favicon.ico",
             color: "92c841",
         },
         {
@@ -113,29 +114,82 @@ var defaults = {
         {
             name: "Math",
             slug: "math",
+            icon: "calculator",
+            longtitle: "Mathematics",
+            description: "Math might not be for everyone but thats okay! We can help you out here!",
         },
         {
             name: "Science",
             slug: "science",
+            icon: "flask",
+            longtitle: "Science",
+            description: "Science is difficult for some but there is nothing wrong with that! Get further help here!",
         },
         {
             name: "English",
             slug: "english",
+            icon: "book-open",
+            longtitle: "English",
+            description: "English can be difficult but you're at the right place! We are here to help!",
         },
         {
             name: "History",
             slug: "history",
+            icon: "landmark-dome",
+            longtitle: "History",
+            description: "Learning the past is always wonderful but difficult for some! Further assistance is ok we are here to help!",
         },
         {
             name: "Other",
             slug: "other",
+            icon: "ellipsis",
+            longtitle: "Other",
+            description: "A place for help on subjects that might not've been listed!",
         },
     ],
     tagListHTML: "",
     tagListHTMLHeader: "",
     tagListHTMLSidebar: "",
     tagListHTMLButtons: "",
+    badges: [
+        {
+            name: "Admin",
+            slug: "admin",
+            icon: "screwdriver-wrench",
+        },
+        {
+            name: "Moderator",
+            slug: "moderator",
+            icon: "user-shield",
+        },
+        {
+            name: "Teacher",
+            slug: "teacher",
+            icon: "chalkboard-user",
+        },
+        {
+            name: "Student",
+            slug: "student",
+            icon: "graduation-cap",
+        },
+    ],
+    badgeListHTML: "",
 };
+
+// Environment Variables
+
+if (process.env.NODE_ENV === 'production') {
+    defaults.domain = "https://acp.vschsd.faisaln.cf/vschsd-student-forum";
+} else {
+    if (process.env.NODE_ENV === 'development') {
+        defaults.domain = "https://beta.acp.vschsd.faisaln.cf";
+    } else {
+        defaults.domain = "http://localhost";
+    };
+};
+
+// Set Defaults
+
 defaults.schools.forEach(school => {
     defaults.schoolListHTML += `<option value="${school.short}">${school.name}</option>`;
 });
@@ -155,20 +209,8 @@ defaults.tags.forEach(tag => {
     defaults.tagListHTML += `<option value="${tag.slug}">${tag.name}</option>`;
     defaults.tagListHTMLHeader += `<a href="${defaults.domain}/forum/topics/${tag.slug}">${tag.name}</a>`;
     defaults.tagListHTMLSidebar += `<a href="${defaults.domain}/forum/topics/${tag.slug}" class="link">${tag.name}</a>`;
-    defaults.tagListHTMLButtons += `<a href="${defaults.domain}/forum/topics/${tag.slug}"><button>${tag.name}</button></a>`;
+    defaults.tagListHTMLButtons += `<a href="${defaults.domain}/forum/topics/${tag.slug}"><button><i class="fa-solid fa-${tag.icon}" alt="${tag.name}"></i> ${tag.name}</button></a>`;
 });
-
-// Environment Variables
-
-if (process.env.NODE_ENV === 'production') {
-    defaults.domain = "https://acp.vschsd.faisaln.cf/vschsd-student-forum";
-} else {
-    if (process.env.NODE_ENV === 'development') {
-        defaults.domain = "https://beta.acp.vschsd.faisaln.cf";
-    } else {
-        defaults.domain = "http://localhost";
-    };
-};
 
 // Functions
 
@@ -182,13 +224,121 @@ async function allRoutes(req) {
 
 app.get('/', async (req, res) => {
     await allRoutes(req);
-    res.render('index', { vars: defaults, title: 'Home', user: req.session.userData });
+    await fetch(`${process.env.DATABASE_URL}?do=allposts`, {
+        method: 'GET',
+        headers: {
+            Accept: '*/*',
+            'User-Agent': `${defaults.siteName} (${defaults.domain})`
+        }
+    })
+        .then(db => db.json())
+        .then(db => {
+            var postsList = "";
+            var wanted = db.data.length;
+            var done = 0;
+            var sortedPosts = [];
+            db.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async post => {
+                var tagList = "";
+                post.tags.split(`,`).forEach(tag => {
+                    defaults.tags.forEach(tags => {
+                        if (tags.slug === tag) {
+                            tagList += tags.name + ", ";
+                        };
+                    });
+                });
+                await fetch(`${process.env.DATABASE_URL}?do=find&username=${post.author}`, {
+                    method: 'GET',
+                    headers: {
+                        Accept: '*/*',
+                        'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                    }
+                })
+                    .then(db => db.json())
+                    .then(db => {
+                        Date.prototype.isToday = function () {
+                            const today = new Date()
+                            return this.getDate() === today.getDate() &&
+                                this.getMonth() === today.getMonth() &&
+                                this.getFullYear() === today.getFullYear()
+                        };
+                        if ((db.info.status === 1) && (new Date(post["created_at"]).isToday())) {
+                            var authorName = db.data.firstname + " " + db.data.lastname;
+                            var authorBadge = JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1];
+                            defaults.badges.forEach(badge => {
+                                if (badge.slug === authorBadge) {
+                                    authorBadge = badge;
+                                };
+                            });
+                            sortedPosts.push({
+                                id: post.id,
+                                post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i></h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                            });
+                        };
+                        done++;
+                        if (done === wanted) {
+                            sortedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
+                            sortedPosts.forEach(async post => {
+                                postsList += post.post;
+                            });
+                            if (postsList === "") {
+                                postsList = "No posts yet.";
+                            };
+                            res.render('index', { vars: defaults, title: 'Home', user: req.session.userData, posts: postsList });
+                        };
+                    });
+            });
+        });
 });
 
 app.get('/account', async (req, res) => {
     await allRoutes(req);
     if (req.session.loggedinUser === true) {
-        res.render('account', { vars: defaults, title: 'Account', user: req.session.userData, buttons: defaults.ssoButtonListHTML });
+        var tagListHTML = "";
+        defaults.badges.forEach(badge => {
+            if (req.session.userData.badges.includes(badge.slug)) {
+                tagListHTML += `<i class="fa-solid fa-${badge.icon}" alt="${badge.name}"></i> ${badge.name}, `;
+            };
+        });
+        await fetch(`${process.env.DATABASE_URL}?do=allposts&username=${req.session.userData.username}`, {
+            method: 'GET',
+            headers: {
+                Accept: '*/*',
+                'User-Agent': `${defaults.siteName} (${defaults.domain})`
+            }
+        })
+            .then(db => db.json())
+            .then(db => {
+                if (db.data) {
+                    var postsList = "";
+                    var wanted = db.data.length;
+                    var done = 0;
+                    var sortedPosts = [];
+                    db.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async post => {
+                        var tagList = "";
+                        post.tags.split(`,`).forEach(tag => {
+                            defaults.tags.forEach(tags => {
+                                if (tags.slug === tag) {
+                                    tagList += tags.name + ", ";
+                                };
+                            });
+                        });
+                        sortedPosts.push({
+                            id: post.id,
+                            post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${req.session.userData.name.first} ${req.session.userData.name.last} <i class="fa-solid fa-${req.session.userData.badge.icon}" alt="${req.session.userData.badge.name}"></i></h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                        });
+                        done++;
+                        if (done === wanted) {
+                            sortedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
+                            sortedPosts.forEach(async post => {
+                                postsList += post.post;
+                            });
+                            res.render('account', { vars: defaults, title: 'Account', user: req.session.userData, buttons: defaults.ssoButtonListHTML, posts: postsList, badges: tagListHTML.slice(0, -2) });
+                        };
+                    });
+                } else {
+                    res.render('account', { vars: defaults, title: 'Account', user: req.session.userData, buttons: defaults.ssoButtonListHTML, posts: "No Posts", badges: tagListHTML.slice(0, -2) });
+                };
+            });
     } else {
         res.redirect('/login?redirect=/account');
     };
@@ -239,8 +389,15 @@ app.post('/login', async (req, res) => {
                                 age: db.age,
                                 school: schoolData,
                                 dob: db.dob,
-                                gradyear: db.gradyear
+                                gradyear: db.gradyear,
+                                badges: JSON.parse(db.badges),
+                                badge: JSON.parse(db.badges)[JSON.parse(db.badges).length - 1],
                             };
+                            defaults.badges.forEach(badge => {
+                                if (badge.slug === req.session.userData.badge) {
+                                    req.session.userData.badge = badge;
+                                };
+                            });
                             req.session.loggedinUser = true;
                             if (req.query.redirect) {
                                 res.redirect('/login?redirect=' + req.query.redirect);
@@ -289,8 +446,8 @@ app.post('/signup', async (req, res) => {
             }
         );
     };
-    if ((req.body.username != "") && (req.body.password != "") && (req.body.email != "") && (req.body.firstname != "") && (req.body.lastname != "") && (req.body.dob != "") && (req.body.school != "") && (req.body.gradyear != "") && (req.body.email === `${req.body.username.toLowerCase()}@vschsd.org`) && (req.body.gradyear.length === 4) && (req.body.password.length === 6) && (!isNaN(req.body.password)) && (!isNaN(req.body.gradyear)) && (req.body.gradyear >= new Date.getYear()) && (await getAge(req.body.dob) < 21)) {
-        await fetch(`${process.env.DATABASE_URL}?do=new&username=${req.body.username.toLowerCase()}&password=${req.body.password}&email=${req.body.email}&firstname=${await toTitleCase(req.body.firstname)}&lastname=${await toTitleCase(req.body.lastname)}&age=${await getAge(req.body.dob)}&gradyear=${req.body.gradyear}&school=${req.body.school}&dob=${req.body.dob}`, {
+    if ((req.body.username != "") && (req.body.password != "") && (req.body.email != "") && (req.body.firstname != "") && (req.body.lastname != "") && (req.body.dob != "") && (req.body.school != "") && (req.body.gradyear != "") && (req.body.email === `${req.body.username.toLowerCase()}@vschsd.org`) && (req.body.gradyear.length === 4) && (req.body.password.length === 6) && (!isNaN(req.body.password)) && (!isNaN(req.body.gradyear)) && (req.body.gradyear >= new Date().getYear()) && (await getAge(req.body.dob) < 21)) {
+        await fetch(`${process.env.DATABASE_URL}?do=new&username=${req.body.username.toLowerCase()}&password=${req.body.password}&email=${req.body.email}&firstname=${await toTitleCase(req.body.firstname)}&lastname=${await toTitleCase(req.body.lastname)}&age=${await getAge(req.body.dob)}&gradyear=${req.body.gradyear}&school=${req.body.school}&dob=${req.body.dob}&badges=["student"]`, {
             method: 'GET',
             headers: {
                 Accept: '*/*',
@@ -328,9 +485,12 @@ app.get('/forum', async (req, res) => {
         }
     })
         .then(db => db.json())
-        .then(async db => {
+        .then(db => {
             var postsList = "";
-            db.data.reverse().forEach(post => {
+            var wanted = db.data.length;
+            var done = 0;
+            var sortedPosts = [];
+            db.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async post => {
                 var tagList = "";
                 post.tags.split(`,`).forEach(tag => {
                     defaults.tags.forEach(tags => {
@@ -339,10 +499,47 @@ app.get('/forum', async (req, res) => {
                         };
                     });
                 });
-                postsList += `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${post.author}</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`;
+                await fetch(`${process.env.DATABASE_URL}?do=find&username=${post.author}`, {
+                    method: 'GET',
+                    headers: {
+                        Accept: '*/*',
+                        'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                    }
+                })
+                    .then(db => db.json())
+                    .then(db => {
+                        if (db.info.status === 1) {
+                            var authorName = db.data.firstname + " " + db.data.lastname;
+                            var authorBadge = JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1];
+                            defaults.badges.forEach(badge => {
+                                if (badge.slug === authorBadge) {
+                                    authorBadge = badge;
+                                };
+                            });
+                            sortedPosts.push({
+                                id: post.id,
+                                post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i></h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                            });
+                        };
+                        done++;
+                        if (done === wanted) {
+                            sortedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
+                            sortedPosts.forEach(async post => {
+                                postsList += post.post;
+                            });
+                            if (postsList === "") {
+                                postsList = "No posts yet.";
+                            };
+                            res.render('forum', { vars: defaults, title: 'Forum', user: req.session.userData, posts: postsList });
+                        };
+                    });
             });
-            res.render('forum', { vars: defaults, title: 'Forum', user: req.session.userData, posts: postsList });
         });
+});
+
+app.get('/forum/posts', async (req, res) => {
+    await allRoutes(req);
+    res.redirect('/forum');
 });
 
 app.get('/forum/posts/new', async (req, res) => {
@@ -368,7 +565,18 @@ app.post('/forum/posts/new', async (req, res) => {
     await connection.query(`SELECT * FROM posts WHERE slug = '${slug}'`, async function (error, results, fields) {
         if (!error) {
             if (results.length != 0) {
-                slug = `${slug}-${results[0].id}`;
+                function makeid(length) {
+                    let result = '';
+                    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                    const charactersLength = characters.length;
+                    let counter = 0;
+                    while (counter < length) {
+                        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+                        counter += 1;
+                    }
+                    return result;
+                };
+                slug = `${slug}-${makeid(5).toLowerCase()}`;
             };
             await connection.query(`SELECT MAX(id) FROM posts`, async function (error, results, fields) {
                 if (!error) {
@@ -415,9 +623,130 @@ app.post('/forum/posts/new', async (req, res) => {
     });
 });
 
+app.get('/forum/posts/:post', async (req, res) => {
+    await allRoutes(req);
+    await fetch(`${process.env.DATABASE_URL}?do=findpost&slug=${req.params.post}`, {
+        method: 'GET',
+        headers: {
+            Accept: '*/*',
+            'User-Agent': `${defaults.siteName} (${defaults.domain})`
+        }
+    })
+        .then(post => post.json())
+        .then(async post => {
+            if (post.data) {
+                await fetch(`${process.env.DATABASE_URL}?do=find&username=${post.data.author}`, {
+                    method: 'GET',
+                    headers: {
+                        Accept: '*/*',
+                        'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                    }
+                })
+                    .then(db => db.json())
+                    .then(db => {
+                        var authorName = db.data.firstname + " " + db.data.lastname;
+                        var tagList = "";
+                        post.data.tags.split(`,`).forEach(tag => {
+                            defaults.tags.forEach(tags => {
+                                if (tags.slug === tag) {
+                                    tagList += tags.name + ", ";
+                                };
+                            });
+                        });
+                        var authorBadge = JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1];
+                        defaults.badges.forEach(badge => {
+                            if (badge.slug === authorBadge) {
+                                authorBadge = badge;
+                            };
+                        });
+                        if (post.data.images != "{}") {
+                            res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: JSON.parse(post.data.images).image, imagename: JSON.parse(post.data.images).name, author: authorName, badge: authorBadge });
+                        } else {
+                            res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: "", imagename: "", author: authorName, badge: authorBadge });
+                        };
+                    });
+            } else {
+                res.render('404', { vars: defaults, title: '404', user: req.session.userData });
+            };
+        });
+});
+
 app.get('/forum/topics', async (req, res) => {
     await allRoutes(req);
     res.render('topics', { vars: defaults, title: 'Topics', user: req.session.userData, tags: defaults.tagListHTMLButtons });
+});
+
+app.get('/forum/topics/:topic', async (req, res) => {
+    await allRoutes(req);
+    var wanted = defaults.tags.length;
+    var done = 0;
+    defaults.tags.forEach(async tag => {
+        if (tag.slug === req.params.topic) {
+            done--;
+            await fetch(`${process.env.DATABASE_URL}?do=allposts&tag=${req.params.topic}`, {
+                method: 'GET',
+                headers: {
+                    Accept: '*/*',
+                    'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                }
+            })
+                .then(db => db.json())
+                .then(db => {
+                    if (db.data) {
+                        var postsList = "";
+                        var wanted = db.data.length;
+                        var donea = 0;
+                        var sortedPosts = [];
+                        db.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async post => {
+                            var tagList = "";
+                            post.tags.split(`,`).forEach(tag => {
+                                defaults.tags.forEach(tags => {
+                                    if (tags.slug === tag) {
+                                        tagList += tags.name + ", ";
+                                    };
+                                });
+                            });
+                            await fetch(`${process.env.DATABASE_URL}?do=find&username=${post.author}`, {
+                                method: 'GET',
+                                headers: {
+                                    Accept: '*/*',
+                                    'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                                }
+                            })
+                                .then(db => db.json())
+                                .then(db => {
+                                    if (db.info.status === 1) {
+                                        var authorName = db.data.firstname + " " + db.data.lastname;
+                                        defaults.badges.forEach(badge => {
+                                            if (badge.slug === JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1]) {
+                                                authorBadge = badge;
+                                            };
+                                        });
+                                        sortedPosts.push({
+                                            id: post.id,
+                                            post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i></h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                                        });
+                                    };
+                                    donea++;
+                                    if (donea === wanted) {
+                                        sortedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
+                                        sortedPosts.forEach(async post => {
+                                            postsList += post.post;
+                                        });
+                                        res.render('topic', { vars: defaults, title: 'Topic', user: req.session.userData, tags: defaults.tagListHTMLButtons, posts: postsList, longtitle: tag.longtitle, description: tag.description });
+                                    };
+                                });
+                        });
+                    } else {
+                        res.render('topic', { vars: defaults, title: 'Topic', user: req.session.userData, tags: defaults.tagListHTMLButtons, posts: "No Posts", longtitle: tag.longtitle, description: tag.description });
+                    };
+                });
+        };
+        done++;
+        if (done === wanted) {
+            res.render('404', { vars: defaults, title: '404', user: req.session.userData });
+        };
+    });
 });
 
 app.get('*', async (req, res) => {

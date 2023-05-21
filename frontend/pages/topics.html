@@ -12,13 +12,13 @@
 		<div class="banner schoolBackground">
 			<img src="<%- vars.domain %>/images/<%=(typeof user.school.logoUrl != 'undefined' )? user.school.logoUrl:''%>" />
 			<h1>Topics</h1>
-			<h3>Having trouble with homework? Send a post here for others to answer your questions! Click New Post for more info!</h3>
+			<h3>Want to organize your question based on subject? Here is a list of topics that may help you out!</h3>
 		</div>
 		<% } else { %>
 		<div class="banner" style="background-color: white;">
 			<img src="<%- vars.domain %>/images/vschsd-logo.png" />
 			<h1 style="color: black;">Topics</h1>
-			<h3 style="color: black;">Having trouble with homework? Send a post here for others to answer your questions! Click New Post for more info!</h3>
+			<h3 style="color: black;">Want to organize your question based on subject? Here is a list of topics that may help you out!</h3>
 		</div>
 		<% } %>
 		<div class="content">
@@ -28,6 +28,7 @@
 			</div>
 		</div>
 	</main>
+	<%- include('../partials/footer.html'); %>
 </body>
 <%- include('../partials/foot.html'); %>
 
