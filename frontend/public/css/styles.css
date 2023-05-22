@@ -234,11 +234,13 @@ body {
 }
 
 .preheader {
+	background-color: var(--background);
     padding: 0px 20px;
     position: fixed;
     top: 0px;
     width: calc(100vw - 40px);
     height: 96px;
+    z-index: 1;
 }
 
 header {
@@ -288,6 +290,10 @@ header .main a img {
     padding-right: 10px;
 }
 
+header .main .search {
+	margin: 0;
+}
+
 header .main .search input {
     width: 10vw;
     border-radius: 5px;
@@ -302,6 +308,10 @@ header .main .search input:hover,
 header .main .search input:focus {
     width: 20vw;
     transition: 0.5s;
+}
+
+header .main .search input::placeholder {
+    color: var(--text);
 }
 
 header .main .user {
@@ -495,6 +505,10 @@ main .banner * {
 main .banner img {
     height: 150px;
     margin-bottom: 20px;
+}
+
+main .banner i {
+    font-size: 75px;
 }
 
 main .content {
@@ -808,4 +822,12 @@ main.post .info input[type=submit] {
 main.post .info input[type=submit]:hover,
 main.post .info input[type=submit]:focus {
     background-color: var(--transparent);
+}
+
+footer {
+    text-align: center;
+}
+
+footer a {
+    text-decoration: none;
 }

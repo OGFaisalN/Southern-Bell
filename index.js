@@ -48,7 +48,7 @@ var defaults = {
             bannerUrl: "north-banner.png",
             address: "750 Herman Avenue, Franklin Square, NY 11010",
             website: "https://vschsd.org/schools/north-high-school/",
-            type: "Public Middle School/High School",
+            type: "Public Middle School / High School",
         },
         {
             short: "central",
@@ -181,9 +181,9 @@ var defaults = {
 
 if (process.env.NODE_ENV === 'production') {
     defaults.domain = "https://acp.vschsd.faisaln.cf/vschsd-student-forum";
-    defaults.announcement = "🧪 Beta Version";
+    defaults.announcement = `<i class="fa-solid fa-vial"></i>&nbsp;Beta Version`;
 } else {
-    defaults.announcement = "🧪 Hey, developer!";
+    defaults.announcement = `<i class="fa-solid fa-vial"></i>&nbsp;Hey, developer!`;
     if (process.env.NODE_ENV === 'development') {
         defaults.domain = "https://beta.acp.vschsd.faisaln.cf";
     } else {
@@ -223,6 +223,23 @@ async function allRoutes(req) {
     };
 };
 
+Date.prototype.isToday = function () {
+    const today = new Date()
+    return this.getDate() === today.getDate() &&
+        this.getMonth() === today.getMonth() &&
+        this.getFullYear() === today.getFullYear()
+};
+
+
+Date.prototype.isYesterday = function () {
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+    return date.getDate() === yesterday.getDate() &&
+        date.getMonth() === yesterday.getMonth() &&
+        date.getFullYear() === yesterday.getFullYear()
+};
+
+
 // Routes
 
 app.get('/', async (req, res) => {
@@ -258,12 +275,6 @@ app.get('/', async (req, res) => {
                 })
                     .then(db => db.json())
                     .then(db => {
-                        Date.prototype.isToday = function () {
-                            const today = new Date()
-                            return this.getDate() === today.getDate() &&
-                                this.getMonth() === today.getMonth() &&
-                                this.getFullYear() === today.getFullYear()
-                        };
                         if ((db.info.status === 1) && (new Date(post["created_at"]).isToday())) {
                             var authorName = db.data.firstname + " " + db.data.lastname;
                             var authorBadge = JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1];
@@ -274,7 +285,7 @@ app.get('/', async (req, res) => {
                             });
                             sortedPosts.push({
                                 id: post.id,
-                                post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i></h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                                post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })})</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
                             });
                         };
                         done++;
@@ -327,7 +338,7 @@ app.get('/account', async (req, res) => {
                         });
                         sortedPosts.push({
                             id: post.id,
-                            post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${req.session.userData.name.first} ${req.session.userData.name.last} <i class="fa-solid fa-${req.session.userData.badge.icon}" alt="${req.session.userData.badge.name}"></i></h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                            post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${req.session.userData.name.first} ${req.session.userData.name.last} <i class="fa-solid fa-${req.session.userData.badge.icon}" alt="${req.session.userData.badge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })})</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
                         });
                         done++;
                         if (done === wanted) {
@@ -536,7 +547,7 @@ app.get('/forum', async (req, res) => {
                             });
                             sortedPosts.push({
                                 id: post.id,
-                                post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i></h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                                post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })})</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
                             });
                         };
                         done++;
@@ -742,7 +753,7 @@ app.get('/forum/topics/:topic', async (req, res) => {
                                         });
                                         sortedPosts.push({
                                             id: post.id,
-                                            post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i></h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                                            post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })})</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
                                         });
                                     };
                                     donea++;
@@ -751,12 +762,12 @@ app.get('/forum/topics/:topic', async (req, res) => {
                                         sortedPosts.forEach(async post => {
                                             postsList += post.post;
                                         });
-                                        res.render('topic', { vars: defaults, title: 'Topic', user: req.session.userData, tags: defaults.tagListHTMLButtons, posts: postsList, longtitle: tag.longtitle, description: tag.description });
+                                        res.render('topic', { vars: defaults, title: 'Topic', user: req.session.userData, tags: defaults.tagListHTMLButtons, posts: postsList, longtitle: tag.longtitle, description: tag.description, icon: tag.icon });
                                     };
                                 });
                         });
                     } else {
-                        res.render('topic', { vars: defaults, title: 'Topic', user: req.session.userData, tags: defaults.tagListHTMLButtons, posts: "No Posts", longtitle: tag.longtitle, description: tag.description });
+                        res.render('topic', { vars: defaults, title: 'Topic', user: req.session.userData, tags: defaults.tagListHTMLButtons, posts: "No Posts", longtitle: tag.longtitle, description: tag.description, icon: tag.icon });
                     };
                 });
         };
@@ -765,6 +776,83 @@ app.get('/forum/topics/:topic', async (req, res) => {
             res.render('404', { vars: defaults, title: '404', user: req.session.userData });
         };
     });
+});
+
+app.get('/search', async (req, res) => {
+    await allRoutes(req);
+    if (req.query.query) {
+        await fetch(`${process.env.DATABASE_URL}?do=allposts`, {
+            method: 'GET',
+            headers: {
+                Accept: '*/*',
+                'User-Agent': `${defaults.siteName} (${defaults.domain})`
+            }
+        })
+            .then(posts => posts.json())
+            .then(async posts => {
+                var postsList = "";
+                var sortedPosts = [];
+                var wanted = 0;
+                var done = 0;
+                var done2 = 0;
+                await posts.data.forEach(async post => {
+                    if (post.name.toLowerCase().includes(req.query.query.toLowerCase()) || post.description.toLowerCase().includes(req.query.query.toLowerCase())) {
+                        wanted++;
+                    };
+                    done++;
+                    if (done === posts.data.length) {
+                        if (wanted != 0) {
+                            await posts.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async post => {
+                                if (post.name.toLowerCase().includes(req.query.query.toLowerCase()) || post.description.toLowerCase().includes(req.query.query.toLowerCase())) {
+                                    var tagList = "";
+                                    post.tags.split(`,`).forEach(tag => {
+                                        defaults.tags.forEach(tags => {
+                                            if (tags.slug === tag) {
+                                                tagList += tags.name + ", ";
+                                            };
+                                        });
+                                    });
+                                    await fetch(`${process.env.DATABASE_URL}?do=find&username=${post.author}`, {
+                                        method: 'GET',
+                                        headers: {
+                                            Accept: '*/*',
+                                            'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                                        }
+                                    })
+                                        .then(db => db.json())
+                                        .then(db => {
+                                            if (db.info.status === 1) {
+                                                var authorName = db.data.firstname + " " + db.data.lastname;
+                                                defaults.badges.forEach(badge => {
+                                                    if (badge.slug === JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1]) {
+                                                        authorBadge = badge;
+                                                    };
+                                                });
+                                                sortedPosts.push({
+                                                    id: post.id,
+                                                    post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })})</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                                                });
+                                                done2++;
+                                                if (done2 === wanted) {
+                                                    sortedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
+                                                    sortedPosts.forEach(async post => {
+                                                        postsList += post.post;
+                                                    });
+                                                    res.render('search', { vars: defaults, title: 'Search Results', user: req.session.userData, posts: postsList, query: req.query.query, results: sortedPosts.length });
+                                                };
+                                            };
+                                        });
+                                };
+                            });
+                        } else {
+                            res.render('search', { vars: defaults, title: 'Search Results', user: req.session.userData, posts: "No results", query: req.query.query, results: 0 });
+                        };
+                    };
+                });
+            });
+    } else {
+        res.redirect('/forum');
+    };
 });
 
 app.get('*', async (req, res) => {

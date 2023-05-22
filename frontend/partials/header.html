@@ -16,9 +16,9 @@
 			</div>
 		</div>
 		<div class="right">
-			<div class="search">
-				<input type="text" placeholder="Search">
-			</div>
+			<form class="search" action="/search">
+				<input type="text" placeholder="Search" name="query">
+			</form>
 			<div class="user">
 				<a href="<%- vars.domain %>/account">
 					<i class="fa-solid fa-user"></i> <% if (user.name) { %><%= user.name.first %> <%= user.name.last %><% } else { %>Account<% } %>

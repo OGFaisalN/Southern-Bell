@@ -10,15 +10,15 @@
 	<main class="forum <% if (user.name) { %><%- user.school.cssColorClass %><% } %>">
 		<% if (user.name) { %>
 		<div class="banner schoolBackground">
-			<i class="fa-solid fa-<%- icon %>"></i>
-			<h1><%- longtitle %></h1>
-			<h3><%- description %></h3>
+			<i class="fa-solid fa-magnifying-glass"></i>
+			<h1>Search results for "<%- query %>"</h1>
+			<h3><%- results %> Results</h3>
 		</div>
 		<% } else { %>
 		<div class="banner" style="background-color: white;">
-			<i class="fa-solid fa-<%- icon %>" style="color: black;"></i>
-			<h1 style="color: black;"><%- longtitle %></h1>
-			<h3 style="color: black;"><%- description %></h3>
+			<i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
+			<h1 style="color: black;">Search results for "<%- query %>"</h1>
+			<h3 style="color: black;"><%- results %> Results</h3>
 		</div>
 		<% } %>
 		<div class="content">
