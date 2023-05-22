@@ -360,6 +360,7 @@ sidebar .fade {
 }
 
 sidebar.loggedin h6,
+sidebar.loggedin p,
 sidebar.loggedin .image {
     margin-left: 10px;
     z-index: 0;

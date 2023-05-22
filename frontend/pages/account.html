@@ -11,6 +11,7 @@
 		<div class="banner schoolBackground">
 			<h1><%- user.name.first %> <%- user.name.last %></h1>
 			<h2>Class of <%- user.gradyear %></h2>
+			<h3><%- user.posts %> Posts</h3>
 		</div>
 		<div class="content">
 			<h3>Hello, <% if (user.name) { %><%- user.name.first %><% } else { %>Guest<% } %></h3>

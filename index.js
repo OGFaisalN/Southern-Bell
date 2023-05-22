@@ -379,7 +379,7 @@ app.post('/login', async (req, res) => {
             if (db.info.status === 1) {
                 db = db.data;
                 if (req.body.password === db.password) {
-                    defaults.schools.forEach(school => {
+                    defaults.schools.forEach(async school => {
                         if (school.short === db.school) {
                             var schoolData = school;
                             req.session.userData = {
@@ -401,6 +401,21 @@ app.post('/login', async (req, res) => {
                                     req.session.userData.badge = badge;
                                 };
                             });
+                            await fetch(`${process.env.DATABASE_URL}?do=allposts&username=${req.session.userData.username}`, {
+                                method: 'GET',
+                                headers: {
+                                    Accept: '*/*',
+                                    'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                                }
+                            })
+                                .then(db => db.json())
+                                .then(db => {
+                                    if (db.data) {
+                                        req.session.userData.posts = db.data.length;
+                                    } else {
+                                        req.session.userData.posts = 0;
+                                    };
+                                });
                             req.session.loggedinUser = true;
                             if (req.query.redirect) {
                                 res.redirect('/login?redirect=' + req.query.redirect);
