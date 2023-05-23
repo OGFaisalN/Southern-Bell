@@ -7,6 +7,7 @@ const fetch = require('node-fetch');
 require('dotenv').config();
 const mysql = require('mysql');
 const port = 80;
+const facultyList = require(path.join(__dirname, 'frontend/public/js/faculty.json'));
 
 app.engine('.html', require('ejs').renderFile);
 app.set('view engine', 'html');
@@ -175,6 +176,7 @@ var defaults = {
         },
     ],
     badgeListHTML: "",
+    faculty: facultyList,
 };
 
 // Environment Variables
@@ -230,7 +232,6 @@ Date.prototype.isToday = function () {
         this.getFullYear() === today.getFullYear()
 };
 
-
 Date.prototype.isYesterday = function () {
     const yesterday = new Date()
     yesterday.setDate(yesterday.getDate() - 1)
@@ -239,6 +240,25 @@ Date.prototype.isYesterday = function () {
         date.getFullYear() === yesterday.getFullYear()
 };
 
+function getAge(dateString) {
+    var today = new Date();
+    var birthDate = new Date(dateString);
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+};
+
+async function toTitleCase(str) {
+    return str.replace(
+        /\w\S*/g,
+        function (txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        }
+    );
+};
 
 // Routes
 
@@ -257,6 +277,7 @@ app.get('/', async (req, res) => {
             var wanted = db.data.length;
             var done = 0;
             var sortedPosts = [];
+            var pinnedPosts = [];
             db.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async post => {
                 var tagList = "";
                 post.tags.split(`,`).forEach(tag => {
@@ -283,13 +304,24 @@ app.get('/', async (req, res) => {
                                     authorBadge = badge;
                                 };
                             });
-                            sortedPosts.push({
-                                id: post.id,
-                                post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })})</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
-                            });
+                            if (post.pinned) {
+                                pinnedPosts.push({
+                                    id: post.id,
+                                    post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })}) <i class="fa-solid fa-thumbtack"></i></h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                                });
+                            } else {
+                                sortedPosts.push({
+                                    id: post.id,
+                                    post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })})</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                                });
+                            };
                         };
                         done++;
                         if (done === wanted) {
+                            pinnedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
+                            pinnedPosts.forEach(async post => {
+                                postsList += post.post;
+                            });
                             sortedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
                             sortedPosts.forEach(async post => {
                                 postsList += post.post;
@@ -327,6 +359,7 @@ app.get('/account', async (req, res) => {
                     var wanted = db.data.length;
                     var done = 0;
                     var sortedPosts = [];
+                    var pinnedPosts = [];
                     db.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async post => {
                         var tagList = "";
                         post.tags.split(`,`).forEach(tag => {
@@ -336,12 +369,23 @@ app.get('/account', async (req, res) => {
                                 };
                             });
                         });
-                        sortedPosts.push({
-                            id: post.id,
-                            post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${req.session.userData.name.first} ${req.session.userData.name.last} <i class="fa-solid fa-${req.session.userData.badge.icon}" alt="${req.session.userData.badge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })})</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
-                        });
+                        if (post.pinned) {
+                            pinnedPosts.push({
+                                id: post.id,
+                                post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${req.session.userData.name.first} ${req.session.userData.name.last} <i class="fa-solid fa-${req.session.userData.badge.icon}" alt="${req.session.userData.badge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })}) <i class="fa-solid fa-thumbtack"></i></h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                            });
+                        } else {
+                            sortedPosts.push({
+                                id: post.id,
+                                post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${req.session.userData.name.first} ${req.session.userData.name.last} <i class="fa-solid fa-${req.session.userData.badge.icon}" alt="${req.session.userData.badge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })})</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                            });
+                        };
                         done++;
                         if (done === wanted) {
+                            pinnedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
+                            pinnedPosts.forEach(async post => {
+                                postsList += post.post;
+                            });
                             sortedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
                             sortedPosts.forEach(async post => {
                                 postsList += post.post;
@@ -457,42 +501,37 @@ app.get('/signup', async (req, res) => {
 
 app.post('/signup', async (req, res) => {
     await allRoutes(req);
-    async function getAge(dateString) {
-        var today = new Date();
-        var birthDate = new Date(dateString);
-        var age = today.getFullYear() - birthDate.getFullYear();
-        var m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        return age;
-    };
-    async function toTitleCase(str) {
-        return str.replace(
-            /\w\S*/g,
-            function (txt) {
-                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-            }
-        );
-    };
-    if ((req.body.username != "") && (req.body.password != "") && (req.body.email != "") && (req.body.firstname != "") && (req.body.lastname != "") && (req.body.dob != "") && (req.body.school != "") && (req.body.gradyear != "") && (req.body.email === `${req.body.username.toLowerCase()}@vschsd.org`) && (req.body.gradyear.length === 4) && (req.body.password.length === 6) && (!isNaN(req.body.password)) && (!isNaN(req.body.gradyear)) && (req.body.gradyear >= new Date().getYear()) && (await getAge(req.body.dob) < 21)) {
-        await fetch(`${process.env.DATABASE_URL}?do=new&username=${req.body.username.toLowerCase()}&password=${req.body.password}&email=${req.body.email}&firstname=${await toTitleCase(req.body.firstname)}&lastname=${await toTitleCase(req.body.lastname)}&age=${await getAge(req.body.dob)}&gradyear=${req.body.gradyear}&school=${req.body.school}&dob=${req.body.dob}&badges=["student"]`, {
-            method: 'GET',
-            headers: {
-                Accept: '*/*',
-                'User-Agent': `${defaults.siteName} (${defaults.domain})`
-            }
-        })
-            .then(db => db.json())
-            .then(async db => {
-                if (db.info.status === 1) {
-                    req.session.loggedinUser = false;
-                    res.render('signup', { vars: defaults, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "Account created." });
-                } else {
-                    req.session.loggedinUser = false;
-                    res.render('signup', { vars: defaults, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "Account already exists or there was an error!" });
-                };
-            });
+    if ((req.body.username != "") && (req.body.password != "") && (req.body.email != "") && (req.body.firstname != "") && (req.body.lastname != "") && (req.body.dob != "") && (req.body.school != "") && (req.body.gradyear != "") && (req.body.email === `${req.body.username.toLowerCase()}@vschsd.org`) && (req.body.gradyear.length === 4) && (req.body.password.length === 6) && (!isNaN(req.body.password)) && (!isNaN(req.body.gradyear))) {
+        var badges = "student";
+        var wanted = defaults.faculty.length;
+        var done = 0;
+        var teacher = [];
+        defaults.faculty.forEach(async faculty => {
+            if ((faculty.name.first === req.body.firstname) && (faculty.name.last === req.body.lastname) && (req.body.gradyear < new Date().getFullYear() - 3) && (getAge(req.body.dob) > 21)) {
+                badges = "teacher";
+                teacher = faculty;
+            };
+            done++;
+            if (done === wanted) {
+                await fetch(`${process.env.DATABASE_URL}?do=new&username=${req.body.username.toLowerCase()}&password=${req.body.password}&email=${req.body.email}&firstname=${await toTitleCase(req.body.firstname)}&lastname=${await toTitleCase(req.body.lastname)}&age=${getAge(req.body.dob)}&gradyear=${req.body.gradyear}&school=${req.body.school}&dob=${req.body.dob}&badges=["${badges}"]`, {
+                    method: 'GET',
+                    headers: {
+                        Accept: '*/*',
+                        'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                    }
+                })
+                    .then(db => db.json())
+                    .then(async db => {
+                        if (db.info.status === 1) {
+                            req.session.loggedinUser = false;
+                            res.render('signup', { vars: defaults, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "Account created." });
+                        } else {
+                            req.session.loggedinUser = false;
+                            res.render('signup', { vars: defaults, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "Account already exists or there was an error!" });
+                        };
+                    });
+            };
+        });
     } else {
         req.session.loggedinUser = false;
         res.render('signup', { vars: defaults, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "Fill in all fields correctly!" });
@@ -519,6 +558,7 @@ app.get('/forum', async (req, res) => {
             var wanted = db.data.length;
             var done = 0;
             var sortedPosts = [];
+            var pinnedPosts = [];
             db.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async post => {
                 var tagList = "";
                 post.tags.split(`,`).forEach(tag => {
@@ -545,13 +585,24 @@ app.get('/forum', async (req, res) => {
                                     authorBadge = badge;
                                 };
                             });
-                            sortedPosts.push({
-                                id: post.id,
-                                post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })})</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
-                            });
+                            if (post.pinned) {
+                                pinnedPosts.push({
+                                    id: post.id,
+                                    post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })}) <i class="fa-solid fa-thumbtack"></i></h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                                });
+                            } else {
+                                sortedPosts.push({
+                                    id: post.id,
+                                    post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })})</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                                });
+                            };
                         };
                         done++;
                         if (done === wanted) {
+                            pinnedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
+                            pinnedPosts.forEach(async post => {
+                                postsList += post.post;
+                            });
                             sortedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
                             sortedPosts.forEach(async post => {
                                 postsList += post.post;
@@ -689,9 +740,9 @@ app.get('/forum/posts/:post', async (req, res) => {
                             };
                         });
                         if (post.data.images != "{}") {
-                            res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: JSON.parse(post.data.images).image, imagename: JSON.parse(post.data.images).name, author: authorName, badge: authorBadge });
+                            res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: JSON.parse(post.data.images).image, imagename: JSON.parse(post.data.images).name, author: authorName, badge: authorBadge, pinned: post.data.pinned });
                         } else {
-                            res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: "", imagename: "", author: authorName, badge: authorBadge });
+                            res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: "", imagename: "", author: authorName, badge: authorBadge, pinned: post.data.pinned });
                         };
                     });
             } else {
@@ -726,6 +777,7 @@ app.get('/forum/topics/:topic', async (req, res) => {
                         var wanted = db.data.length;
                         var donea = 0;
                         var sortedPosts = [];
+                        var pinnedPosts = [];
                         db.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async post => {
                             var tagList = "";
                             post.tags.split(`,`).forEach(tag => {
@@ -751,13 +803,24 @@ app.get('/forum/topics/:topic', async (req, res) => {
                                                 authorBadge = badge;
                                             };
                                         });
-                                        sortedPosts.push({
-                                            id: post.id,
-                                            post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })})</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
-                                        });
+                                        if (post.pinned) {
+                                            pinnedPosts.push({
+                                                id: post.id,
+                                                post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })}) <i class="fa-solid fa-thumbtack"></i></h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                                            });
+                                        } else {
+                                            sortedPosts.push({
+                                                id: post.id,
+                                                post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })})</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                                            });
+                                        };
                                     };
                                     donea++;
                                     if (donea === wanted) {
+                                        pinnedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
+                                        pinnedPosts.forEach(async post => {
+                                            postsList += post.post;
+                                        });
                                         sortedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
                                         sortedPosts.forEach(async post => {
                                             postsList += post.post;
@@ -792,6 +855,7 @@ app.get('/search', async (req, res) => {
             .then(async posts => {
                 var postsList = "";
                 var sortedPosts = [];
+                var pinnedPosts = [];
                 var wanted = 0;
                 var done = 0;
                 var done2 = 0;
@@ -828,12 +892,23 @@ app.get('/search', async (req, res) => {
                                                         authorBadge = badge;
                                                     };
                                                 });
-                                                sortedPosts.push({
-                                                    id: post.id,
-                                                    post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })})</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
-                                                });
+                                                if (post.pinned) {
+                                                    pinnedPosts.push({
+                                                        id: post.id,
+                                                        post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })}) <i class="fa-solid fa-thumbtack"></i></h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                                                    });
+                                                } else {
+                                                    sortedPosts.push({
+                                                        id: post.id,
+                                                        post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })})</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                                                    });
+                                                };
                                                 done2++;
                                                 if (done2 === wanted) {
+                                                    pinnedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
+                                                    pinnedPosts.forEach(async post => {
+                                                        postsList += post.post;
+                                                    });
                                                     sortedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
                                                     sortedPosts.forEach(async post => {
                                                         postsList += post.post;

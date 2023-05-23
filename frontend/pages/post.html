@@ -9,7 +9,7 @@
 	<%- include('../partials/sidebar.html'); %>
 	<main class="post<% if (user.name) { %> <%- user.school.cssColorClass %><% } %>">
 		<div class="inner">
-			<h1><%- title %></h1>
+			<h1><%- title %><% if (pinned) { %> <i class="fa-solid fa-thumbtack"></i><% } %></h1>
 			<div class="info">
 				<h4><%- author %> <i class="fa-solid fa-<%- badge.icon %>" alt="<%- badge.name %>"></i></h4>
 				<p><%- description %></p>
