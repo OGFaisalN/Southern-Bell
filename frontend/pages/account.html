@@ -34,6 +34,7 @@
 			<div class="posts">
 				<%- posts %>
 			</div>
+			<% if (posts != "No Posts") { %><a href="<%- vars.domain %>/forum/posts/new"><button><i class="fa-solid fa-plus"></i> New Post</button></a><% } %>
 		</div>
 		<%- include('../partials/footer.html'); %>
 	</main>
