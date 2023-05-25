@@ -2,7 +2,7 @@
 	<% if (user.name) { %>
 	<div class="fade"></div>
 	<div class="image">
-		<img class="main <%- user.school.cssColorClass %>Border" src="<%- vars.domain %>/images/<%- user.school.logoUrl %>" />
+		<img class="main <%- user.school.cssColorClass %>Border" src="<% if (user.pfp) {%><%- user.pfp %><% } else { %><%- vars.domain %>/images/<%- user.school.logoUrl %><% } %>" />
 		<img class="icon <%- user.school.cssColorClass %>Border" src="<%- vars.domain %>/images/<%- user.school.logoUrl %>" />
 	</div>
 	<h6><%- user.name.first %> <%- user.name.last %> &nbsp;<i class="fa-solid fa-<%- user.badge.icon %>"></i></h6>
@@ -18,7 +18,7 @@
 	<div class="buttons">
 		<a href="<%- vars.domain %>/"><button class="transparent"><i class="fa-solid fa-home"></i> Home</button></a>
 		<a href="<%- vars.domain %>/forum"><button class="transparent"><i class="fa-solid fa-comments"></i> Forum</button></a>
-		<a href="<%- vars.domain %>/forum/topics"><button class="transparent"><i class="fa-solid fa-tags"></i> Topics</button></a>
+		<a href="<%- vars.domain %>/forum/topics"><button class="transparent"><i class="fa-solid fa-hashtag"></i> Topics</button></a>
 		<%- vars.tagListHTMLSidebar %>
 		<a href="<%- vars.domain %>/account"><button class="transparent"><i class="fa-solid fa-user"></i> Account</button></a>
 	</div>

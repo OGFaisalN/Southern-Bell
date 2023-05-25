@@ -9,19 +9,19 @@
 	<%- include('../partials/sidebar.html'); %>
 	<main class="post<% if (user.name) { %> <%- user.school.cssColorClass %><% } %>">
 		<div class="content">
-			<h1><%- title %><% if (pinned) { %> <i class="fa-solid fa-thumbtack"></i><% } %></h1>
+			<h1><%- title %><% if (pinned) { %> <i class="fa-solid fa-thumbtack"></i><% } %><% if (imagename) { %> <i class="fa-solid fa-image"></i><% } %></h1>
 			<div class="info">
-				<h4><%- author %> <i class="fa-solid fa-<%- badge.icon %>" alt="<%- badge.name %>"></i></h4>
+				<h4><%- author %> <i class="fa-solid fa-<%- badge.icon %>" alt="<%- badge.name %>"></i> <i class="fa-solid fa-at"></i></h4>
 				<h6><%- date %></h6>
 				<p><%- description %></p>
 				<h4>Topic: <%- tags %></h4>
 				<% if (imagename) { %><img src="<%- image %>" alt="<%- imagename %>" /><% } %>
 			</div>
-			<a href="<%- vars.domain %>/forum/comments/new"><button><i class="fa-solid fa-plus"></i> New Comment</button></a>
+			<a href="<%- vars.domain %>/forum/comments/new?post=<%- id %>"><button><i class="fa-solid fa-plus"></i> New Comment</button></a>
 			<div class="comments">
 				<%- comments %>
 			</div>
-			<% if (comments != "No comments yet.") { %><a href="<%- vars.domain %>/forum/comments/new"><button><i class="fa-solid fa-plus"></i> New Comment</button></a><% } %>
+			<% if (comments != "No comments yet.") { %><a href="<%- vars.domain %>/forum/comments/new?post=<%- id %>"><button><i class="fa-solid fa-plus"></i> New Comment</button></a><% } %>
 		</div>
 		<%- include('../partials/footer.html'); %>
 	</main>

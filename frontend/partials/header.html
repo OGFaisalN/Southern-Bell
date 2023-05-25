@@ -1,6 +1,6 @@
 <div class="prepreheader"></div>
 <div class="preheader<% if (user.name) { %> <%- user.school.cssColorClass %><% } %>"></div>
-<header <% if (user.name) { %>class="<%- user.school.cssColorClass %>Mobile"<% } %>>
+<header <% if (user.name) { %>class="<%- user.school.cssColorClass %>Mobile" <% } %>>
 	<div class="announcement<% if (user.name) { %> <%- user.school.cssColorClass %><% } %>">
 		<%- vars.announcement %>
 	</div>
@@ -21,7 +21,7 @@
 			</form>
 			<div class="user">
 				<a href="<%- vars.domain %>/account">
-					<i class="fa-solid fa-user"></i> <% if (user.name) { %><%= user.name.first %> <%= user.name.last %><% } else { %>Account<% } %>
+					<% if (user.name) { %><img class="rounded" src="<% if (user.pfp) {%><%- user.pfp %><% } else { %><%- vars.domain %>/images/<%- user.school.logoUrl %><% } %>" />&nbsp;&nbsp;<%= user.name.first %> <%= user.name.last %><% } else { %><i class="fa-regular fa-circle-user"></i> Account<% } %>
 				</a>
 				<% if (user.name) { %>
 				<a href="<%- vars.domain %>/logout">

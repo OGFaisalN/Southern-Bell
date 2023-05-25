@@ -9,7 +9,7 @@
 	<%- include('../partials/sidebar.html'); %>
 	<main class="loginSignup">
 		<h1>Login</h1>
-		<h3><%=(typeof alert != 'undefined' )? alert:''%></h3>
+		<h3><% if (((typeof alert !='undefined' )? alert:'') != '') { %><i class="fa-solid fa-circle-exclamation"></i> <%- alert %><% } %></h3>
 		<form action="/login<%=(typeof redirect != undefined && redirect != '?redirect=undefined' )? redirect:''%>" method="post">
 			<label for="username">Username/Email:</label>
 			<input type="text" id="username" name="username" required>

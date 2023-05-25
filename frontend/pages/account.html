@@ -9,6 +9,7 @@
 	<%- include('../partials/sidebar.html'); %>
 	<main class="account <%- user.school.cssColorClass %>">
 		<div class="banner schoolBackground">
+			<img class="main <%- user.school.cssColorClass %>Border" src="<% if (user.pfp) {%><%- user.pfp %><% } else { %><%- vars.domain %>/images/<%- user.school.logoUrl %><% } %>" />
 			<h1><%- user.name.first %> <%- user.name.last %></h1>
 			<h2>Class of <%- user.gradyear %></h2>
 			<h3><%- user.posts %> Posts</h3>
@@ -30,11 +31,15 @@
 			<h3>Graduation Year: <%- user.gradyear %></h3>
 			<h3>Badges: <%- badges %></h3>
 			<h4>Your Posts:</h4>
-			<a href="<%- vars.domain %>/forum/posts/new"><button><i class="fa-solid fa-plus"></i> New Post</button></a>
+			<a href="<%- vars.domain %>/forum/posts/new"><button><i class="fa-solid fa-pen-to-square"></i> New Post</button></a>
 			<div class="posts">
 				<%- posts %>
 			</div>
-			<% if (posts != "No Posts") { %><a href="<%- vars.domain %>/forum/posts/new"><button><i class="fa-solid fa-plus"></i> New Post</button></a><% } %>
+			<% if (posts != "No Posts") { %><a href="<%- vars.domain %>/forum/posts/new"><button><i class="fa-solid fa-pen-to-square"></i> New Post</button></a><% } %>
+			<h4>Your Comments:</h4>
+			<div class="comments">
+				<%- comments %>
+			</div>
 		</div>
 		<%- include('../partials/footer.html'); %>
 	</main>

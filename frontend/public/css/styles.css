@@ -156,6 +156,7 @@ html {
     color: var(--text);
     font-family: "Inter", sans-serif;
     scrollbar-width: none;
+    scroll-behavior: smooth;
 }
 
 * {
@@ -305,7 +306,7 @@ header .main a {
     justify-content: center;
 }
 
-header .main a img {
+header .main .logo a img {
     padding-right: 10px;
 }
 
@@ -341,6 +342,12 @@ header .main .user {
 
 header .main .user i {
     padding-right: 10px;
+}
+
+header .main .user img {
+    height: 25px;
+    width: 25px;
+    border-radius: 100%;
 }
 
 header .main .links a {
@@ -634,12 +641,24 @@ main.loginSignup form input[type=submit]:focus {
     min-width: 250px;
 }
 
+main.loginSignup form img {
+    max-height: 150px;
+}
+
 main.error {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 50vh;
+}
+
+main.account .banner img {
+    width: 100px;
+    height: 100px;
+    border-radius: 15px;
+    background-color: var(--text);
+    border: 4px solid;
 }
 
 main.account .buttons {
@@ -677,6 +696,28 @@ main.account .content h4 {
     margin-top: 30px;
 }
 
+main.account .comments {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+main.account .comments .comment {
+    padding: 20px;
+    border: 1px solid var(--transparent);
+    border-radius: 10px;
+    transition: 0.25s;
+    text-decoration: none;
+}
+
+main.account .comments .comment * {
+    margin: 0px;
+}
+
+main.account .comments .comment h4:nth-of-type(2) {
+    font-weight: normal;
+}
+
 main.postCreator {
     min-height: 100%;
     display: flex;
@@ -709,6 +750,12 @@ main.postCreator form input#name {
 }
 
 main.postCreator form textarea#description {
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+}
+
+main.postCreator form textarea#content {
     background-color: transparent;
     border: none;
     font-size: 20px;
@@ -826,7 +873,8 @@ main.post .info h4 option::before {
     content: "> ";
 }
 
-main.post .info img {
+main.post .info img,
+main.post .comments img {
     max-height: 150px;
 }
 
@@ -855,13 +903,11 @@ main.post .comments {
 }
 
 main.post .comments .comment {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
     padding: 20px;
     border: 1px solid var(--transparent);
     border-radius: 10px;
     transition: 0.25s;
+    text-decoration: none;
 }
 
 main.post .comments .comment * {
