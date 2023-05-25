@@ -7,7 +7,7 @@
 <body>
 	<%- include('../partials/header.html'); %>
 	<%- include('../partials/sidebar.html'); %>
-	<main <% if (user.name) { %> class="<%- user.school.cssColorClass %>" <% } %>>
+	<main<% if (user.name) { %> class="<%- user.school.cssColorClass %>" <% } %>>
 		<% if (user.name) { %>
 		<div class="banner schoolBackground">
 			<img src="<%- vars.domain %>/images/<%=(typeof user.school.logoUrl != 'undefined' )? user.school.logoUrl:''%>" />

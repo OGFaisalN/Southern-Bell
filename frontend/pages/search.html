@@ -7,7 +7,7 @@
 <body>
 	<%- include('../partials/header.html'); %>
 	<%- include('../partials/sidebar.html'); %>
-	<main class="forum <% if (user.name) { %><%- user.school.cssColorClass %><% } %>">
+	<main class="search<% if (user.name) { %> <%- user.school.cssColorClass %><% } %>">
 		<% if (user.name) { %>
 		<div class="banner schoolBackground">
 			<i class="fa-solid fa-magnifying-glass"></i>
@@ -26,6 +26,12 @@
 			<a href="/forum/posts/new"><button><i class="fa-solid fa-pen-to-square"></i> New Post</button></a>
 			<div class="posts">
 				<%- posts %>
+			</div>
+			<br />
+			<h3>All Comments</h3>
+			<br />
+			<div class="comments">
+				<%- comments %>
 			</div>
 		</div>
 		<%- include('../partials/footer.html'); %>

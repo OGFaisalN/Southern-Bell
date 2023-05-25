@@ -123,6 +123,30 @@
     main.account .buttons a button {
         margin-bottom: unset;
     }
+
+    main.post .info {
+        flex-direction: column !important;
+    }
+
+    main.post .info img {
+        margin: 0 0 10px 0 !important;
+    }
+
+    main.post .info .inner {
+        width: unset !important;
+    }
+
+    main.post .comments .comment {
+        flex-direction: column !important;
+    }
+
+    main.post .comments .comment img {
+        margin: 0 0 10px 0 !important;
+    }
+
+    main.post .comments .comment a {
+        width: unset !important;
+    }
 }
 
 :root {
@@ -601,6 +625,44 @@ main .content .posts a.post h4 {
     font-family: 'Regular';
 }
 
+main .content .comments {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+main .content .comments .comment {
+    display: flex;
+    flex-direction: row;
+}
+
+main .content .comments .comment img.pfp {
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    background-color: var(--text);
+    border: 1px solid;
+    margin-right: 10px;
+    margin-left: -62px;
+}
+
+main .content .comments .comment a {
+    padding: 20px;
+    border: 1px solid var(--transparent);
+    border-radius: 10px;
+    transition: 0.25s;
+    text-decoration: none;
+    width: 100%;
+}
+
+main .content .comments .comment a * {
+    margin: 0px;
+}
+
+main .content .comments .comment a h4:nth-of-type(2) {
+    font-weight: normal;
+}
+
 main.loginSignup {
     min-height: 100%;
     display: flex;
@@ -708,6 +770,7 @@ main.account .comments .comment {
     border-radius: 10px;
     transition: 0.25s;
     text-decoration: none;
+    flex-direction: column;
 }
 
 main.account .comments .comment * {
@@ -716,6 +779,11 @@ main.account .comments .comment * {
 
 main.account .comments .comment h4:nth-of-type(2) {
     font-weight: normal;
+}
+
+main.account .comments .comment img {
+    height: 150px;
+    width: 150px;    
 }
 
 main.postCreator {
@@ -840,6 +908,21 @@ main.post .content {
 
 main.post .info {
     display: flex;
+    flex-direction: row;
+}
+
+main.post .info img {
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    background-color: var(--text);
+    border: 1px solid;
+    margin-right: 10px;
+    margin-left: -62px;
+}
+
+main.post .info .inner {
+    display: flex;
     flex-direction: column;
     align-items: start;
     justify-content: center;
@@ -847,38 +930,39 @@ main.post .info {
     padding: 25px;
     border-radius: 10px;
     background-color: var(--transparent2);
+    width: 100%;
 }
 
-main.post .info * {
+main.post .info .inner * {
     margin: 0px;
 }
 
-main.post .info h1 {
+main.post .info .inner h1 {
     font-size: 50px;
 }
 
-main.post .info p {
+main.post .info .inner p {
     font-size: 20px;
 }
 
-main.post .info h4 {
+main.post .info .inner h4 {
     font-size: 15px;
 }
 
-main.post .info h6 {
+main.post .info .inner h6 {
     font-size: 13px;
 }
 
-main.post .info h4 option::before {
+main.post .info .inner h4 option::before {
     content: "> ";
 }
 
-main.post .info img,
-main.post .comments img {
+main.post .info .inner img,
+main.post .comments .comment a img {
     max-height: 150px;
 }
 
-main.post .info input[type=submit] {
+main.post .info .inner input[type=submit] {
     color: var(--text);
     border: 1px solid var(--transparent);
     background-color: var(--background);
@@ -891,8 +975,8 @@ main.post .info input[type=submit] {
     font-size: small;
 }
 
-main.post .info input[type=submit]:hover,
-main.post .info input[type=submit]:focus {
+main.post .info .inner input[type=submit]:hover,
+main.post .info .inner input[type=submit]:focus {
     background-color: var(--transparent);
 }
 
@@ -903,19 +987,39 @@ main.post .comments {
 }
 
 main.post .comments .comment {
+    display: flex;
+    flex-direction: row;
+}
+
+main.post .comments .comment img.pfp {
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    background-color: var(--text);
+    border: 1px solid;
+    margin-right: 10px;
+    margin-left: -62px;
+}
+
+main.post .comments .comment a {
     padding: 20px;
     border: 1px solid var(--transparent);
     border-radius: 10px;
     transition: 0.25s;
     text-decoration: none;
+    width: 100%;
 }
 
-main.post .comments .comment * {
+main.post .comments .comment a * {
     margin: 0px;
 }
 
-main.post .comments .comment h4:nth-of-type(2) {
+main.post .comments .comment a h4:nth-of-type(2) {
     font-weight: normal;
+}
+
+main.post .comments .comment a img {
+    margin-top: 10px;
 }
 
 footer {
