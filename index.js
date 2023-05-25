@@ -1283,6 +1283,10 @@ app.get('/search', async (req, res) => {
     };
 });
 
+app.get('test', async (req, res) => {
+    res.send('test');
+});
+
 app.get('*', async (req, res) => {
     await allRoutes(req);
     res.render('404', { vars: defaults, title: '404', user: req.session.userData });
