@@ -915,6 +915,10 @@ main.post .content {
     margin: 20px;
 }
 
+main.post .content .modactions a {
+    text-decoration: none;
+}
+
 main.post .info {
     display: flex;
     flex-direction: row;
