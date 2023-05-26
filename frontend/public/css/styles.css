@@ -901,6 +901,15 @@ main.post {
     padding-top: 100px;
 }
 
+main.post .alert {
+	width: 100%;
+	border-radius: 10px;
+	max-width: 75%;
+	padding: 20px;
+	border: 3px solid var(--text);
+    box-shadow: 5px 5px var(--text);
+}
+
 main.post .content {
     width: 75%;
     margin: 20px;
