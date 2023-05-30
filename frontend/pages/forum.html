@@ -7,7 +7,7 @@
 <body>
 	<%- include('../partials/header.html'); %>
 	<%- include('../partials/sidebar.html'); %>
-	<main class="forum<% if (user.name) { %> <%- user.school.cssColorClass %><% } %>">
+	<main class="forum<% if (user.name) { %> loggedin <%- user.school.cssColorClass %><% } %>">
 		<% if (user.name) { %>
 		<div class="banner schoolBackground">
 			<img src="<%- vars.domain %>/images/<%=(typeof user.school.logoUrl != 'undefined' )? user.school.logoUrl:''%>" />
@@ -15,10 +15,10 @@
 			<h3>Having trouble with homework? Send a post here for others to answer your questions! Click New Post for more info!</h3>
 		</div>
 		<% } else { %>
-		<div class="banner" style="background-color: white;">
+		<div class="banner" style="background-image: url('<%- vars.domain %>/images/vschsd-banner.gif');">
 			<img src="<%- vars.domain %>/images/vschsd-logo.png" />
-			<h1 style="color: black;">Forum Posts</h1>
-			<h3 style="color: black;">Having trouble with homework? Send a post here for others to answer your questions! Click New Post for more info!</h3>
+			<h1>Forum Posts</h1>
+			<h3>Having trouble with homework? Send a post here for others to answer your questions! Click New Post for more info!</h3>
 		</div>
 		<% } %>
 		<div class="content">

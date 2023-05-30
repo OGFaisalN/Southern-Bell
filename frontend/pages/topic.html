@@ -7,7 +7,7 @@
 <body>
 	<%- include('../partials/header.html'); %>
 	<%- include('../partials/sidebar.html'); %>
-	<main class="forum<% if (user.name) { %> <%- user.school.cssColorClass %><% } %>">
+	<main class="forum<% if (user.name) { %> loggedin <%- user.school.cssColorClass %><% } %>">
 		<% if (user.name) { %>
 		<div class="banner schoolBackground">
 			<i class="fa-solid fa-<%- icon %>"></i>
@@ -15,10 +15,10 @@
 			<h3><%- description %></h3>
 		</div>
 		<% } else { %>
-		<div class="banner" style="background-color: white;">
-			<i class="fa-solid fa-<%- icon %>" style="color: black;"></i>
-			<h1 style="color: black;"><%- longtitle %></h1>
-			<h3 style="color: black;"><%- description %></h3>
+		<div class="banner" style="background-image: url('<%- vars.domain %>/images/vschsd-banner.gif');">
+			<i class="fa-solid fa-<%- icon %>"></i>
+			<h1><%- longtitle %></h1>
+			<h3><%- description %></h3>
 		</div>
 		<% } %>
 		<div class="content">

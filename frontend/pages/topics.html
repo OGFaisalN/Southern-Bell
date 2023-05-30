@@ -7,7 +7,7 @@
 <body>
 	<%- include('../partials/header.html'); %>
 	<%- include('../partials/sidebar.html'); %>
-	<main class="topics<% if (user.name) { %> <%- user.school.cssColorClass %><% } %>">
+	<main class="topics<% if (user.name) { %> loggedin <%- user.school.cssColorClass %><% } %>">
 		<% if (user.name) { %>
 		<div class="banner schoolBackground">
 			<img src="<%- vars.domain %>/images/<%=(typeof user.school.logoUrl != 'undefined' )? user.school.logoUrl:''%>" />
@@ -15,10 +15,10 @@
 			<h3>Want to organize your question based on subject? Here is a list of topics that may help you out!</h3>
 		</div>
 		<% } else { %>
-		<div class="banner" style="background-color: white;">
+		<div class="banner" style="background-image: url('<%- vars.domain %>/images/vschsd-banner.gif');">
 			<img src="<%- vars.domain %>/images/vschsd-logo.png" />
-			<h1 style="color: black;">Topics</h1>
-			<h3 style="color: black;">Want to organize your question based on subject? Here is a list of topics that may help you out!</h3>
+			<h1>Topics</h1>
+			<h3>Want to organize your question based on subject? Here is a list of topics that may help you out!</h3>
 		</div>
 		<% } %>
 		<div class="content">

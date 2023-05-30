@@ -1,4 +1,4 @@
-<sidebar<% if (user.name) { %> class="loggedin" style="background-image:url('<%- vars.domain %>/images/<%- user.school.bannerUrl %>')"<% } %>>
+<sidebar<% if (user.name) { %> class="loggedin" style="background-image:url('<%- vars.domain %>/images/<%- user.school.bannerUrl %>')" <% } %>>
 	<% if (user.name) { %>
 	<div class="fade"></div>
 	<div class="image">
@@ -6,7 +6,7 @@
 		<img class="icon <%- user.school.cssColorClass %>Border" src="<%- vars.domain %>/images/<%- user.school.logoUrl %>" />
 	</div>
 	<h6><%- user.name.first %> <%- user.name.last %> &nbsp;<i class="fa-solid fa-<%- user.badge.icon %>"></i></h6>
-	<p><%- user.posts %> Posts</p>
+	<p><%- user.posts %> Posts • <%- user.comments %> Comments</p>
 	<% } else { %>
 	<div class="image">
 		<img src="<%- vars.domain %>/images/vschsd-logo.png" />
@@ -16,10 +16,19 @@
 	<a href="<%- vars.domain %>/login"><button class="fill">Sign In</button></a>
 	<% } %>
 	<div class="buttons">
-		<a href="<%- vars.domain %>/"><button class="transparent"><i class="fa-solid fa-home"></i> Home</button></a>
+		<a href="<%- vars.domain %>"><button class="transparent"><i class="fa-solid fa-home"></i> Home</button></a>
 		<a href="<%- vars.domain %>/forum"><button class="transparent"><i class="fa-solid fa-comments"></i> Forum</button></a>
-		<a href="<%- vars.domain %>/forum/topics"><button class="transparent"><i class="fa-solid fa-hashtag"></i> Topics</button></a>
-		<%- vars.tagListHTMLSidebar %>
+		<div class="topics">
+			<a href="<%- vars.domain %>/forum/topics"><button class="transparent"><i class="fa-solid fa-hashtag"></i> Topics</button></a>
+			<%- vars.tagListHTMLSidebar %>
+		</div>
+		<a href="<%- vars.domain %>/users"><button class="transparent"><i class="fa-solid fa-users"></i> Users</button></a>
 		<a href="<%- vars.domain %>/account"><button class="transparent"><i class="fa-solid fa-user"></i> Account</button></a>
+		<% if ((user.badge) && (user.badge.slug === "moderator")) { %>
+		<a href="<%- vars.domain %>/admin"><button class="transparent"><i class="fa-solid fa-gear"></i> Mod Actions</button></a>
+		<% } %>
+		<% if ((user.badge) && (user.badge.slug === "admin")) { %>
+		<a href="<%- vars.domain %>/admin"><button class="transparent"><i class="fa-solid fa-gear"></i> Admin</button></a>
+		<% } %>
 	</div>
-</sidebar>
+	</sidebar>

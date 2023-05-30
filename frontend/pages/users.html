@@ -1,0 +1,35 @@
+<html>
+
+<head>
+	<%- include('../partials/head.html'); %>
+</head>
+
+<body>
+	<%- include('../partials/header.html'); %>
+	<%- include('../partials/sidebar.html'); %>
+	<main class="users<% if (user.name) { %> loggedin <%- user.school.cssColorClass %><% } %>">
+		<% if (user.name) { %>
+		<div class="banner schoolBackground">
+			<img src="<%- vars.domain %>/images/<%=(typeof user.school.logoUrl != 'undefined' )? user.school.logoUrl:''%>" />
+			<h1>Users</h1>
+			<h3>All the people registered on the forum.</h3>
+		</div>
+		<% } else { %>
+		<div class="banner" style="background-image: url('<%- vars.domain %>/images/vschsd-banner.gif');">
+			<img src="<%- vars.domain %>/images/vschsd-logo.png" />
+			<h1>Users</h1>
+			<h3>All the people registered on the forum.</h3>
+		</div>
+		<% } %>
+		<div class="content">
+			<h3>All Users</h3>
+			<div class="users">
+				<%- userList %>
+			</div>
+		</div>
+		<%- include('../partials/footer.html'); %>
+	</main>
+</body>
+<%- include('../partials/foot.html'); %>
+
+</html>

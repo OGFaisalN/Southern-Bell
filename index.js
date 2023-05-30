@@ -209,7 +209,7 @@ defaults.ssoButtons.forEach(button => {
     } else {
         textColor = "white";
     };
-    defaults.ssoButtonListHTML += `<a href="${button.link}" target="_blank" rel="noopener noreferrer"><button class="sso" style="background-color: #${button.color}; color: ${textColor}"><img src="${button.icon}" /> ${button.name}</button></a>`;
+    defaults.ssoButtonListHTML += `<a href="${button.link}" target="_blank" rel="noopener noreferrer"><button class="sso" style="background: #${button.color}; color: ${textColor}"><img src="${button.icon}" /> ${button.name}</button></a>`;
 });
 defaults.tags.forEach(tag => {
     defaults.tagListHTML += `<option value="${tag.slug}">${tag.name}</option>`;
@@ -330,7 +330,81 @@ app.get('/', async (req, res) => {
                             if (postsList === "") {
                                 postsList = "No posts yet.";
                             };
-                            res.render('index', { vars: defaults, title: 'Home', user: req.session.userData, posts: postsList });
+                            res.render('index', { vars: defaults, title: '', user: req.session.userData, posts: postsList });
+                        };
+                    });
+            });
+        });
+});
+
+app.get('/home', async (req, res) => {
+    await allRoutes(req);
+    await fetch(`${process.env.DATABASE_URL}?do=allposts`, {
+        method: 'GET',
+        headers: {
+            Accept: '*/*',
+            'User-Agent': `${defaults.siteName} (${defaults.domain})`
+        }
+    })
+        .then(db => db.json())
+        .then(db => {
+            var postsList = "";
+            var wanted = db.data.length;
+            var done = 0;
+            var sortedPosts = [];
+            var pinnedPosts = [];
+            db.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async post => {
+                var tagList = "";
+                post.tags.split(`,`).forEach(tag => {
+                    defaults.tags.forEach(tags => {
+                        if (tags.slug === tag) {
+                            tagList += tags.name + ", ";
+                        };
+                    });
+                });
+                await fetch(`${process.env.DATABASE_URL}?do=find&username=${post.author}`, {
+                    method: 'GET',
+                    headers: {
+                        Accept: '*/*',
+                        'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                    }
+                })
+                    .then(db => db.json())
+                    .then(db => {
+                        if ((db.info.status === 1) && (new Date(post["created_at"]).isToday())) {
+                            var authorName = db.data.firstname + " " + db.data.lastname;
+                            var authorBadge = JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1];
+                            defaults.badges.forEach(badge => {
+                                if (badge.slug === authorBadge) {
+                                    authorBadge = badge;
+                                };
+                            });
+                            if (post.pinned) {
+                                pinnedPosts.push({
+                                    id: post.id,
+                                    post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post["created_at"]).toLocaleTimeString('en-US')}) <i class="fa-solid fa-thumbtack"></i>${(post.images != "{}") ? ' <i class="fa-solid fa-image"></i>' : ''}</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                                });
+                            } else {
+                                sortedPosts.push({
+                                    id: post.id,
+                                    post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post["created_at"]).toLocaleTimeString('en-US')})${(post.images != "{}") ? ' <i class="fa-solid fa-image"></i>' : ''}</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
+                                });
+                            };
+                        };
+                        done++;
+                        if (done === wanted) {
+                            pinnedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
+                            pinnedPosts.forEach(async post => {
+                                postsList += post.post;
+                            });
+                            sortedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
+                            sortedPosts.forEach(async post => {
+                                postsList += post.post;
+                            });
+                            if (postsList === "") {
+                                postsList = "No posts yet.";
+                            };
+                            res.render('home', { vars: defaults, title: 'Home', user: req.session.userData, posts: postsList });
                         };
                     });
             });
@@ -343,7 +417,7 @@ app.get('/account', async (req, res) => {
         var tagListHTML = "";
         defaults.badges.forEach(badge => {
             if (req.session.userData.badges.includes(badge.slug)) {
-                tagListHTML += `<i class="fa-solid fa-${badge.icon}" alt="${badge.name}"></i>&nbsp;&nbsp;${badge.name}, `;
+                tagListHTML += `&nbsp;<i class="fa-solid fa-${badge.icon}" alt="${badge.name}"></i>&nbsp;&nbsp;${badge.name}, `;
             };
         });
         await fetch(`${process.env.DATABASE_URL}?do=allposts&username=${req.session.userData.username}`, {
@@ -494,7 +568,7 @@ app.post('/login', async (req, res) => {
                                     email: db.email,
                                     age: db.age,
                                     school: schoolData,
-                                    dob: new Date(db.dob).toLocaleDateString("en-US"),
+                                    dob: new Intl.DateTimeFormat('en-US', { timeZone: 'Australia/Sydney' }).format(new Date(db.dob)),
                                     gradyear: db.gradyear,
                                     badges: JSON.parse(db.badges),
                                     badge: JSON.parse(db.badges)[JSON.parse(db.badges).length - 1],
@@ -519,6 +593,21 @@ app.post('/login', async (req, res) => {
                                             req.session.userData.posts = db.data.length;
                                         } else {
                                             req.session.userData.posts = 0;
+                                        };
+                                    });
+                                await fetch(`${process.env.DATABASE_URL}?do=allcomments&username=${req.session.userData.username}`, {
+                                    method: 'GET',
+                                    headers: {
+                                        Accept: '*/*',
+                                        'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                                    }
+                                })
+                                    .then(db => db.json())
+                                    .then(db => {
+                                        if (db.data) {
+                                            req.session.userData.comments = db.data.length;
+                                        } else {
+                                            req.session.userData.comments = 0;
                                         };
                                     });
                                 req.session.loggedinUser = true;
@@ -842,20 +931,26 @@ app.get('/forum/posts/:post', async (req, res) => {
                             };
                         });
                         var authorPfp = "";
+                        var authorSchool = [];
                         defaults.schools.forEach(school => {
                             if (db.data.school === school.short) {
                                 authorPfp = `${defaults.domain}/images/${school.logoUrl}`;
+                                authorSchool = school;
                             };
                         });
                         if (db.data.image != null) {
                             authorPfp = db.data.image;
                         };
+                        var authorAbout = `<img src="${authorPfp}"/><h4>${authorName}</h4><p>${authorName} is a ${authorBadge.name} from ${authorSchool.name}.</p>`;
+                        var authorUsername = db.data.username;
                         switch (JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1]) {
                             case "admin":
                                 var alert = "<i class='fas fa-exclamation-triangle'></i>&nbsp;&nbsp;This post is from an admin.";
+                                var adminpost = true;
                                 break;
                             default:
                                 var alert = "";
+                                var adminpost = false;
                                 break;
                         };
                         await fetch(`${process.env.DATABASE_URL}?do=allcomments&post=${post.data.id}`, {
@@ -899,15 +994,19 @@ app.get('/forum/posts/:post', async (req, res) => {
                                                     if (db.data.image != null) {
                                                         commentAuthorPfp = db.data.image;
                                                     };
+                                                    var modactions = "";
+                                                    if ((req.session.userData.badge) && ((req.session.userData.badge.slug === "admin") || (req.session.userData.badge.slug === "moderator") || (comment.author === req.session.userData.username))) {
+                                                        modactions = `<div class="modactions">Comment Actions: <button onclick="window.location.href='${defaults.domain}/forum/comments/${comment.id}/delete'"><i class="fa-solid fa-trash"></i> Delete</button></div>`;
+                                                    };
                                                     if (comment.images != "{}") {
                                                         sortedComments.push({
                                                             id: comment.id,
-                                                            comment: `<div class="comment"><img src="${commentAuthorPfp}" class="pfp" /><a href="#${comment.id}" id="${comment.id}"><h4>${commentAuthorName} <i class="fa-solid fa-${commentAuthorBadge.icon}" alt="${commentAuthorBadge.name}"></i></h4><h5>${new Date(comment["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(comment["created_at"]).toLocaleTimeString('en-US')}</h5><h4>${comment.content}</h4><img src="${JSON.parse(comment.images).image}" alt="${JSON.parse(comment.images).name}"></a></div>`,
+                                                            comment: `<div class="comment"><a href="${defaults.domain}/users/${comment.author}"><img src="${commentAuthorPfp}" class="pfp" /></a><a href="#${comment.id}" id="${comment.id}" class="inner"><h4>${commentAuthorName} <i class="fa-solid fa-${commentAuthorBadge.icon}" alt="${commentAuthorBadge.name}"></i></h4><h5>${new Date(comment["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(comment["created_at"]).toLocaleTimeString('en-US')}</h5><h4>${comment.content}</h4><img src="${JSON.parse(comment.images).image}" alt="${JSON.parse(comment.images).name}" />${modactions}</a></div>`,
                                                         });
                                                     } else {
                                                         sortedComments.push({
                                                             id: comment.id,
-                                                            comment: `<div class="comment"><img src="${commentAuthorPfp}" class="pfp" /><a href="#${comment.id}" id="${comment.id}"><h4>${commentAuthorName} <i class="fa-solid fa-${commentAuthorBadge.icon}" alt="${commentAuthorBadge.name}"></i></h4><h5>${new Date(comment["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(comment["created_at"]).toLocaleTimeString('en-US')}</h5><h4>${comment.content}</h4></a></div>`,
+                                                            comment: `<div class="comment"><a href="${defaults.domain}/users/${comment.author}"><img src="${commentAuthorPfp}" class="pfp" /></a><a href="#${comment.id}" id="${comment.id}" class="inner"><h4>${commentAuthorName} <i class="fa-solid fa-${commentAuthorBadge.icon}" alt="${commentAuthorBadge.name}"></i></h4><h5>${new Date(comment["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(comment["created_at"]).toLocaleTimeString('en-US')}</h5><h4>${comment.content}</h4>${modactions}</a></div>`,
                                                         });
                                                     };
                                                 };
@@ -918,9 +1017,9 @@ app.get('/forum/posts/:post', async (req, res) => {
                                                         commentsList += comment.comment;
                                                     });
                                                     if (post.data.images != "{}") {
-                                                        res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: JSON.parse(post.data.images).image, imagename: JSON.parse(post.data.images).name, author: authorName, badge: authorBadge, pinned: post.data.pinned, date: `${new Date(post.data["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post.data["created_at"]).toLocaleTimeString('en-US')}`, comments: commentsList, id: post.data.id, pfp: authorPfp, alert: alert, slug: post.data.slug });
+                                                        res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: JSON.parse(post.data.images).image, imagename: JSON.parse(post.data.images).name, author: authorName, badge: authorBadge, pinned: post.data.pinned, date: `${new Date(post.data["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post.data["created_at"]).toLocaleTimeString('en-US')}`, comments: commentsList, id: post.data.id, pfp: authorPfp, alert: alert, slug: post.data.slug, username: post.data.author, adminpost: adminpost, authorAbout: authorAbout, authorUsername: authorUsername });
                                                     } else {
-                                                        res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: "", imagename: "", author: authorName, badge: authorBadge, pinned: post.data.pinned, date: `${new Date(post.data["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post.data["created_at"]).toLocaleTimeString('en-US')}`, comments: commentsList, id: post.data.id, pfp: authorPfp, alert: alert, slug: post.data.slug });
+                                                        res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: "", imagename: "", author: authorName, badge: authorBadge, pinned: post.data.pinned, date: `${new Date(post.data["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post.data["created_at"]).toLocaleTimeString('en-US')}`, comments: commentsList, id: post.data.id, pfp: authorPfp, alert: alert, slug: post.data.slug, username: post.data.author, adminpost: adminpost, authorAbout: authorAbout, authorUsername: authorUsername });
                                                     };
                                                 };
                                             });
@@ -928,9 +1027,9 @@ app.get('/forum/posts/:post', async (req, res) => {
                                 } else {
                                     commentsList = "No comments yet.";
                                     if (post.data.images != "{}") {
-                                        res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: JSON.parse(post.data.images).image, imagename: JSON.parse(post.data.images).name, author: authorName, badge: authorBadge, pinned: post.data.pinned, date: `${new Date(post.data["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post.data["created_at"]).toLocaleTimeString('en-US')}`, comments: commentsList, id: post.data.id, pfp: authorPfp, alert: alert, slug: post.data.slug });
+                                        res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: JSON.parse(post.data.images).image, imagename: JSON.parse(post.data.images).name, author: authorName, badge: authorBadge, pinned: post.data.pinned, date: `${new Date(post.data["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post.data["created_at"]).toLocaleTimeString('en-US')}`, comments: commentsList, id: post.data.id, pfp: authorPfp, alert: alert, slug: post.data.slug, username: post.data.author, adminpost: adminpost, authorAbout: authorAbout, authorUsername: authorUsername });
                                     } else {
-                                        res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: "", imagename: "", author: authorName, badge: authorBadge, pinned: post.data.pinned, date: `${new Date(post.data["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post.data["created_at"]).toLocaleTimeString('en-US')}`, comments: commentsList, id: post.data.id, pfp: authorPfp, alert: alert, slug: post.data.slug });
+                                        res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: "", imagename: "", author: authorName, badge: authorBadge, pinned: post.data.pinned, date: `${new Date(post.data["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post.data["created_at"]).toLocaleTimeString('en-US')}`, comments: commentsList, id: post.data.id, pfp: authorPfp, alert: alert, slug: post.data.slug, username: post.data.author, adminpost: adminpost, authorAbout: authorAbout, authorUsername: authorUsername });
                                     };
                                 };
                             });
@@ -939,6 +1038,117 @@ app.get('/forum/posts/:post', async (req, res) => {
                 res.render('404', { vars: defaults, title: '404', user: req.session.userData });
             };
         });
+});
+
+app.get('/forum/posts/:post/delete', async (req, res) => {
+    await allRoutes(req);
+    if (req.session.loggedinUser === true) {
+        await fetch(`${process.env.DATABASE_URL}?do=findpost&slug=${req.params.post}`, {
+            method: 'GET',
+            headers: {
+                Accept: '*/*',
+                'User-Agent': `${defaults.siteName} (${defaults.domain})`
+            }
+        })
+            .then(post => post.json())
+            .then(async post => {
+                if (post.info.status === 1) {
+                    if ((req.session.userData.badge.slug === "admin") || (req.session.userData.badge.slug === "moderator") || (post.data.author === req.session.userData.username)) {
+                        await fetch(`${process.env.DATABASE_URL}?do=deletepost&slug=${req.params.post}`, {
+                            method: 'GET',
+                            headers: {
+                                Accept: '*/*',
+                                'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                            }
+                        })
+                            .then(result => result.json())
+                            .then(async result => {
+                                res.redirect('/forum');
+                            });
+                    } else {
+                        res.redirect('/forum');
+                    };
+                } else {
+                    res.redirect('/forum');
+                };
+            });
+    } else {
+        res.redirect('/forum');
+    };
+});
+
+app.get('/forum/posts/:post/pin', async (req, res) => {
+    await allRoutes(req);
+    if (req.session.loggedinUser === true) {
+        await fetch(`${process.env.DATABASE_URL}?do=findpost&slug=${req.params.post}`, {
+            method: 'GET',
+            headers: {
+                Accept: '*/*',
+                'User-Agent': `${defaults.siteName} (${defaults.domain})`
+            }
+        })
+            .then(post => post.json())
+            .then(async post => {
+                if (post.info.status === 1) {
+                    if (req.session.userData.badge.slug === "admin") {
+                        await fetch(`${process.env.DATABASE_URL}?do=pinpost&slug=${req.params.post}`, {
+                            method: 'GET',
+                            headers: {
+                                Accept: '*/*',
+                                'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                            }
+                        })
+                            .then(result => result.json())
+                            .then(async result => {
+                                res.redirect(`/forum/posts/${req.params.post}`);
+                            });
+                    } else {
+                        res.redirect('/forum');
+                    };
+                } else {
+                    res.redirect('/forum');
+                };
+            });
+    } else {
+        res.redirect('/forum');
+    };
+});
+
+app.get('/forum/posts/:post/unpin', async (req, res) => {
+    await allRoutes(req);
+    if (req.session.loggedinUser === true) {
+        await fetch(`${process.env.DATABASE_URL}?do=findpost&slug=${req.params.post}`, {
+            method: 'GET',
+            headers: {
+                Accept: '*/*',
+                'User-Agent': `${defaults.siteName} (${defaults.domain})`
+            }
+        })
+            .then(post => post.json())
+            .then(async post => {
+                if (post.info.status === 1) {
+                    if (req.session.userData.badge.slug === "admin") {
+                        await fetch(`${process.env.DATABASE_URL}?do=unpinpost&slug=${req.params.post}`, {
+                            method: 'GET',
+                            headers: {
+                                Accept: '*/*',
+                                'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                            }
+                        })
+                            .then(result => result.json())
+                            .then(async result => {
+                                res.redirect(`/forum/posts/${req.params.post}`);
+                            });
+                    } else {
+                        res.redirect('/forum');
+                    };
+                } else {
+                    res.redirect('/forum');
+                };
+            });
+    } else {
+        res.redirect('/forum');
+    };
 });
 
 app.get('/forum/topics', async (req, res) => {
@@ -1117,20 +1327,147 @@ app.get('/forum/comments/:comment', async (req, res) => {
         })
             .then(comment => comment.json())
             .then(async comment => {
-                await fetch(`${process.env.DATABASE_URL}?do=findpost&id=${comment.data.post}`, {
+                if (comment.data) {
+                    await fetch(`${process.env.DATABASE_URL}?do=findpost&id=${comment.data.post}`, {
+                        method: 'GET',
+                        headers: {
+                            Accept: '*/*',
+                            'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                        }
+                    })
+                        .then(post => post.json())
+                        .then(async post => {
+                            res.redirect(`${defaults.domain}/forum/posts/${post.data.slug}#${comment.data.id}`);
+                        });
+                } else {
+                    res.redirect('/forum');
+                };
+            });
+    } else {
+        res.redirect('/forum/comments');
+    };
+});
+
+app.get('/forum/comments/:comment/delete', async (req, res) => {
+    await allRoutes(req);
+    if (req.session.loggedinUser === true) {
+        await fetch(`${process.env.DATABASE_URL}?do=findcomment&id=${req.params.comment}`, {
+            method: 'GET',
+            headers: {
+                Accept: '*/*',
+                'User-Agent': `${defaults.siteName} (${defaults.domain})`
+            }
+        })
+            .then(comment => comment.json())
+            .then(async comment => {
+                if (comment.info.status === 1) {
+                    if ((req.session.userData.badge.slug === "admin") || (req.session.userData.badge.slug === "moderator") || (comment.data.author === req.session.userData.username)) {
+                        await fetch(`${process.env.DATABASE_URL}?do=deletecomment&id=${req.params.comment}`, {
+                            method: 'GET',
+                            headers: {
+                                Accept: '*/*',
+                                'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                            }
+                        })
+                            .then(result => result.json())
+                            .then(async result => {
+                                res.redirect('/forum');
+                            });
+                    } else {
+                        res.redirect('/forum');
+                    };
+                } else {
+                    res.redirect('/forum');
+                };
+            });
+    } else {
+        res.redirect('/forum');
+    };
+});
+
+app.get('/users', async (req, res) => {
+    await allRoutes(req);
+    await fetch(`${process.env.DATABASE_URL}?do=all`, {
+        method: 'GET',
+        headers: {
+            Accept: '*/*',
+            'User-Agent': `${defaults.siteName} (${defaults.domain})`
+        }
+    })
+        .then(users => users.json())
+        .then(async users => {
+            var userList = "";
+            var wanted = users.data.length;
+            var done = 0;
+            var sortedUsers = [];
+            var sortedUsersBySchool = [];
+            users.data.forEach(async user => {
+                var userName = user.firstname + " " + user.lastname;
+                var userBadge = JSON.parse(user.badges)[JSON.parse(user.badges).length - 1];
+                defaults.badges.forEach(badge => {
+                    if (badge.slug === userBadge) {
+                        userBadge = badge;
+                    };
+                });
+                var userPfp = "";
+                defaults.schools.forEach(school => {
+                    if (user.school === school.short) {
+                        userPfp = `${defaults.domain}/images/${school.logoUrl}`;
+                    };
+                    sortedUsersBySchool[user.school].push(user);
+                });
+                if (user.image != null) {
+                    userPfp = user.image;
+                };
+                var userPosts = 0;
+                var userComments = 0;
+                await fetch(`${process.env.DATABASE_URL}?do=allposts&username=${user.username}`, {
                     method: 'GET',
                     headers: {
                         Accept: '*/*',
                         'User-Agent': `${defaults.siteName} (${defaults.domain})`
                     }
                 })
-                    .then(post => post.json())
-                    .then(async post => {
-                        res.redirect(`${defaults.domain}/forum/posts/${post.data.slug}#${comment.data.id}`);
+                    .then(db => db.json())
+                    .then(async db => {
+                        if (db.data) {
+                            userPosts = db.data.length;
+                        };
+                        await fetch(`${process.env.DATABASE_URL}?do=allcomments&username=${user.username}`, {
+                            method: 'GET',
+                            headers: {
+                                Accept: '*/*',
+                                'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                            }
+                        })
+                            .then(db => db.json())
+                            .then(db => {
+                                if (db.data) {
+                                    userComments = db.data.length;
+                                };
+                                sortedUsers.push({
+                                    id: user.id,
+                                    content: `<a href="/users/${user.username}" class="card" id="${user.username}"><img src="${userPfp}" /><h4>${userName} <i class="fa-solid fa-${userBadge.icon}" alt="${userBadge.name}"></i></h4><h5>${userBadge.name}</h5><div class="data">${userPosts} Posts • ${userComments} Comments</div></a>`
+                                });
+                                done++;
+                                if (done === wanted) {
+                                    sortedUsers.sort((a, b) => parseFloat(a.id) - parseFloat(b.id)).forEach(user => {
+                                        userList += user.content;
+                                    })
+                                    res.render('users', { vars: defaults, title: 'Users', user: req.session.userData, userList: userList });
+                                };
+                            });
                     });
             });
+        });
+});
+
+app.get('/users/:username', async (req, res) => {
+    await allRoutes(req);
+    if (req.params.username) {
+        res.redirect(`/search?query=${req.params.username}`)
     } else {
-        res.redirect('/forum/comments');
+        res.redirect('/users');
     };
 });
 
@@ -1153,14 +1490,14 @@ app.get('/search', async (req, res) => {
                 var done = 0;
                 var done2 = 0;
                 await posts.data.forEach(async post => {
-                    if (post.name.toLowerCase().includes(req.query.query.toLowerCase()) || post.description.toLowerCase().includes(req.query.query.toLowerCase())) {
+                    if (post.name.toLowerCase().includes(req.query.query.toLowerCase()) || post.description.toLowerCase().includes(req.query.query.toLowerCase()) || post.author.toLowerCase().includes(req.query.query.toLowerCase())) {
                         wanted++;
                     };
                     done++;
                     if (done === posts.data.length) {
                         if (wanted != 0) {
                             await posts.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async post => {
-                                if (post.name.toLowerCase().includes(req.query.query.toLowerCase()) || post.description.toLowerCase().includes(req.query.query.toLowerCase())) {
+                                if (post.name.toLowerCase().includes(req.query.query.toLowerCase()) || post.description.toLowerCase().includes(req.query.query.toLowerCase()) || post.author.toLowerCase().includes(req.query.query.toLowerCase())) {
                                     var tagList = "";
                                     post.tags.split(`,`).forEach(tag => {
                                         defaults.tags.forEach(tags => {
@@ -1234,14 +1571,14 @@ app.get('/search', async (req, res) => {
                     var done = 0;
                     var done2 = 0;
                     await comments.data.forEach(async comment => {
-                        if (comment.content.toLowerCase().includes(req.query.query.toLowerCase())) {
+                        if (comment.content.toLowerCase().includes(req.query.query.toLowerCase()) || comment.author.toLowerCase().includes(req.query.query.toLowerCase())) {
                             wanted++;
                         };
                         done++;
                         if (done === comments.data.length) {
                             if (wanted != 0) {
                                 await comments.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async comment => {
-                                    if (comment.content.toLowerCase().includes(req.query.query.toLowerCase())) {
+                                    if (comment.content.toLowerCase().includes(req.query.query.toLowerCase()) || comment.author.toLowerCase().includes(req.query.query.toLowerCase())) {
                                         await fetch(`${process.env.DATABASE_URL}?do=find&username=${comment.author}`, {
                                             method: 'GET',
                                             headers: {
@@ -1261,12 +1598,12 @@ app.get('/search', async (req, res) => {
                                                     if (comment.images != "{}") {
                                                         sortedComments.push({
                                                             id: comment.id,
-                                                            comment: `<div class="comment"><a href="#${comment.id}" id="${comment.id}"><h4>${commentAuthorName} <i class="fa-solid fa-${commentAuthorBadge.icon}" alt="${commentAuthorBadge.name}"></i></h4><h5>${new Date(comment["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(comment["created_at"]).toLocaleTimeString('en-US')}</h5><h4>${comment.content}</h4><img src="${JSON.parse(comment.images).image}" alt="${JSON.parse(comment.images).name}"></a></div>`,
+                                                            comment: `<div class="comment"><a href="${defaults.domain}/forum/comments/${comment.id}"><h4>${commentAuthorName} <i class="fa-solid fa-${commentAuthorBadge.icon}" alt="${commentAuthorBadge.name}"></i></h4><h5>${new Date(comment["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(comment["created_at"]).toLocaleTimeString('en-US')}</h5><h4>${comment.content}</h4><img src="${JSON.parse(comment.images).image}" alt="${JSON.parse(comment.images).name}"></a></div>`,
                                                         });
                                                     } else {
                                                         sortedComments.push({
                                                             id: comment.id,
-                                                            comment: `<div class="comment"><a href="#${comment.id}" id="${comment.id}"><h4>${commentAuthorName} <i class="fa-solid fa-${commentAuthorBadge.icon}" alt="${commentAuthorBadge.name}"></i></h4><h5>${new Date(comment["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(comment["created_at"]).toLocaleTimeString('en-US')}</h5><h4>${comment.content}</h4></a></div>`,
+                                                            comment: `<div class="comment"><a href="${defaults.domain}/forum/comments/${comment.id}"><h4>${commentAuthorName} <i class="fa-solid fa-${commentAuthorBadge.icon}" alt="${commentAuthorBadge.name}"></i></h4><h5>${new Date(comment["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(comment["created_at"]).toLocaleTimeString('en-US')}</h5><h4>${comment.content}</h4></a></div>`,
                                                         });
                                                     };
                                                     done2++;
@@ -1287,15 +1624,13 @@ app.get('/search', async (req, res) => {
                 });
         };
         async function sendResults(sortedPosts, postsList, commentsList) {
-            res.render('search', { vars: defaults, title: 'Search Results', user: req.session.userData, posts: postsList, query: req.query.query, results: sortedPosts.length, comments: commentsList });
+            try {
+                res.render('search', { vars: defaults, title: 'Search Results', user: req.session.userData, posts: postsList, query: req.query.query, results: sortedPosts.length, comments: commentsList });
+            } catch { };
         };
     } else {
         res.redirect('/forum');
     };
-});
-
-app.get('test', async (req, res) => {
-    res.send('test');
 });
 
 app.get('*', async (req, res) => {
