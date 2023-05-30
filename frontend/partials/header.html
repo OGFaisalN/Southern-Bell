@@ -21,7 +21,7 @@
 				<input type="text" placeholder="Search" name="query">
 			</form>
 			<div class="user">
-				<a href="<%- vars.domain %>/account">
+				<a href="<%- vars.domain %>/account?redirect=<%- vars.url %>">
 					<% if (user.name) { %><img class="rounded" src="<% if (user.pfp) {%><%- user.pfp %><% } else { %><%- vars.domain %>/images/<%- user.school.logoUrl %><% } %>" />&nbsp;&nbsp;<%= user.name.first %> <%= user.name.last %><% } else { %><i class="fa-regular fa-circle-user"></i> Account<% } %>
 				</a>
 				<% if (user.name) { %>

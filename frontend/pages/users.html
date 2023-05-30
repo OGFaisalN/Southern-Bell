@@ -23,8 +23,37 @@
 		<% } %>
 		<div class="content">
 			<h3>All Users</h3>
-			<div class="users">
-				<%- userList %>
+			<div class="southUsers">
+				<div class="schoolBanner southBanner">
+					<h1>South Students</h1>
+				</div>
+				<div class="users">
+					<%- userList.south %>
+				</div>
+			</div>
+			<div class="northUsers">
+				<div class="schoolBanner northBanner">
+					<h1>North Students</h1>
+				</div>
+				<div class="users">
+					<%- userList.north %>
+				</div>
+			</div>
+			<div class="centralUsers">
+				<div class="schoolBanner centralBanner">
+					<h1>Central Students</h1>
+				</div>
+				<div class="users">
+					<%- userList.central %>
+				</div>
+			</div>
+			<div class="memorialUsers">
+				<div class="schoolBanner memorialBanner">
+					<h1>Memorial Students</h1>
+				</div>
+				<div class="users">
+					<%- userList.memorial %>
+				</div>
 			</div>
 		</div>
 		<%- include('../partials/footer.html'); %>

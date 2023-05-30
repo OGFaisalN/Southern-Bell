@@ -29,6 +29,7 @@ app.use(session({
 
 var defaults = {
     domain: "",
+    url: "",
     siteName: "VSCHSD Student Forum",
     announcement: "",
     schools: [
@@ -224,6 +225,7 @@ async function allRoutes(req) {
     if (!req.session.userData) {
         req.session.userData = {};
     };
+    defaults.url = req.originalUrl.split("?")[0];
 };
 
 Date.prototype.isToday = function () {
@@ -519,7 +521,11 @@ app.get('/account', async (req, res) => {
                 };
             });
     } else {
-        res.redirect('/login?redirect=/account');
+        if (req.query.redirect) {
+            res.redirect(`/login?redirect=${req.query.redirect}`);
+        } else {
+            res.redirect('/login?redirect=/account');
+        };
     };
 });
 
@@ -1396,11 +1402,14 @@ app.get('/users', async (req, res) => {
     })
         .then(users => users.json())
         .then(async users => {
-            var userList = "";
+            var userList = [];
             var wanted = users.data.length;
             var done = 0;
-            var sortedUsers = [];
             var sortedUsersBySchool = [];
+            defaults.schools.forEach(school => {
+                sortedUsersBySchool[school.short] = [];
+                userList[school.short] = [];
+            });
             users.data.forEach(async user => {
                 var userName = user.firstname + " " + user.lastname;
                 var userBadge = JSON.parse(user.badges)[JSON.parse(user.badges).length - 1];
@@ -1414,7 +1423,6 @@ app.get('/users', async (req, res) => {
                     if (user.school === school.short) {
                         userPfp = `${defaults.domain}/images/${school.logoUrl}`;
                     };
-                    sortedUsersBySchool[user.school].push(user);
                 });
                 if (user.image != null) {
                     userPfp = user.image;
@@ -1445,16 +1453,108 @@ app.get('/users', async (req, res) => {
                                 if (db.data) {
                                     userComments = db.data.length;
                                 };
-                                sortedUsers.push({
+                                sortedUsersBySchool[user.school].push({
                                     id: user.id,
+                                    school: user.school,
                                     content: `<a href="/users/${user.username}" class="card" id="${user.username}"><img src="${userPfp}" /><h4>${userName} <i class="fa-solid fa-${userBadge.icon}" alt="${userBadge.name}"></i></h4><h5>${userBadge.name}</h5><div class="data">${userPosts} Posts • ${userComments} Comments</div></a>`
                                 });
                                 done++;
                                 if (done === wanted) {
-                                    sortedUsers.sort((a, b) => parseFloat(a.id) - parseFloat(b.id)).forEach(user => {
-                                        userList += user.content;
-                                    })
-                                    res.render('users', { vars: defaults, title: 'Users', user: req.session.userData, userList: userList });
+                                    wanted = sortedUsersBySchool.south.length;
+                                    done = 0;
+                                    if (wanted != 0) {
+                                        doSchoolSouth(wanted);
+                                    } else {
+                                        doSchoolNorth(wanted);
+                                    };
+                                    async function doSchoolSouth(wanted) {
+                                        if (wanted != 0) {
+                                            sortedUsersBySchool.south.sort((a, b) => parseFloat(a.id) - parseFloat(b.id)).forEach(usersInSchool => {
+                                                userList[usersInSchool.school] += usersInSchool.content;
+                                                done++;
+                                                if (done === wanted) {
+                                                    wanted = sortedUsersBySchool.north.length;
+                                                    done = 0;
+                                                    if (wanted != 0) {
+                                                        doSchoolNorth(wanted);
+                                                    } else {
+                                                        doSchoolCentral(wanted);
+                                                    };
+                                                };
+                                            });
+                                        } else {
+                                            wanted = sortedUsersBySchool.north.length;
+                                            done = 0;
+                                            if (wanted != 0) {
+                                                doSchoolNorth(wanted);
+                                            } else {
+                                                doSchoolCentral(wanted);
+                                            };
+                                        };
+                                    };
+                                    async function doSchoolNorth(wanted) {
+                                        if (wanted != 0) {
+                                            sortedUsersBySchool.north.forEach(usersInSchool => {
+                                                userList[usersInSchool.school] += usersInSchool.content;
+                                                done++;
+                                                if (done === wanted) {
+                                                    wanted = sortedUsersBySchool.central.length;
+                                                    done = 0;
+                                                    if (wanted != 0) {
+                                                        doSchoolCentral(wanted);
+                                                    } else {
+                                                        doSchoolMemorial(wanted);
+                                                    };
+                                                };
+                                            });
+                                        } else {
+                                            wanted = sortedUsersBySchool.north.length;
+                                            done = 0;
+                                            if (wanted != 0) {
+                                                doSchoolCentral(wanted);
+                                            } else {
+                                                doSchoolMemorial(wanted);
+                                            };
+                                        };
+                                    };
+                                    async function doSchoolCentral(wanted) {
+                                        if (wanted != 0) {
+                                            sortedUsersBySchool.central.sort((a, b) => parseFloat(a.id) - parseFloat(b.id)).forEach(usersInSchool => {
+                                                userList[usersInSchool.school] += usersInSchool.content;
+                                                done++;
+                                                if (done === wanted) {
+                                                    wanted = sortedUsersBySchool.memorial.length;
+                                                    done = 0;
+                                                    if (wanted != 0) {
+                                                        doSchoolMemorial(wanted);
+                                                    } else {
+                                                        res.render('users', { vars: defaults, title: 'Users', user: req.session.userData, userList: userList });
+                                                    };
+                                                };
+                                            });
+                                        } else {
+                                            wanted = sortedUsersBySchool.north.length;
+                                            done = 0;
+                                            if (wanted != 0) {
+                                                doSchoolMemorial(wanted);
+                                            } else {
+                                                res.render('users', { vars: defaults, title: 'Users', user: req.session.userData, userList: userList });
+                                            };
+                                        };
+                                    };
+                                    async function doSchoolMemorial(wanted) {
+                                        if (wanted != 0) {
+                                            sortedUsersBySchool.memorial.sort((a, b) => parseFloat(a.id) - parseFloat(b.id)).forEach(usersInSchool => {
+                                                userList[usersInSchool.school] += usersInSchool.content;
+                                                done++;
+                                                if (done === wanted) {
+                                                    res.render('users', { vars: defaults, title: 'Users', user: req.session.userData, userList: userList });
+                                                };
+                                            });
+                                        } else {
+                                            res.render('users', { vars: defaults, title: 'Users', user: req.session.userData, userList: userList });
+                                        };
+                                    };
                                 };
                             });
                     });

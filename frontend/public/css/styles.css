@@ -1134,6 +1134,39 @@ main.search .comments .comment img {
     width: 150px;
 }
 
+main.users .content .schoolBanner {
+    height: 200px;
+    padding: 30px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 10px;
+    margin-top: 50px;
+}
+
+main.users .content .schoolBanner.southBanner {
+    background-image: url("/images/south-banner.png");
+}
+
+main.users .content .schoolBanner.northBanner {
+    background-image: url("/images/north-banner.png");
+}
+
+main.users .content .schoolBanner.centralBanner {
+    background-image: url("/images/central-banner.png");
+}
+
+main.users .content .schoolBanner.memorialBanner {
+    background-image: url("/images/memorial-banner.png");
+}
+
+main.users .content .schoolBanner h1 {
+    background-color: var(--background);
+    padding: 10px 20px;
+    border-radius: 10px;
+    width: max-content;
+}
+
 footer {
     text-align: center;
     width: 100%;
