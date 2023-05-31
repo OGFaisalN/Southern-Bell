@@ -1135,7 +1135,6 @@ main.search .comments .comment img {
 }
 
 main.users .content .schoolBanner {
-    height: 200px;
     padding: 30px;
     background-size: cover;
     background-repeat: no-repeat;

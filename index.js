@@ -185,9 +185,7 @@ var defaults = {
 
 if (process.env.NODE_ENV === 'production') {
     defaults.domain = "https://acp.vschsd.faisaln.cf/vschsd-student-forum";
-    defaults.announcement = `<i class="fa-solid fa-message"></i>&nbsp;&nbsp;Welcome!`;
 } else {
-    defaults.announcement = `<i class="fa-solid fa-vial"></i>&nbsp;&nbsp;Beta Version`;
     if (process.env.NODE_ENV === 'development') {
         defaults.domain = "https://beta.acp.vschsd.faisaln.cf";
     } else {
@@ -226,6 +224,13 @@ async function allRoutes(req) {
         req.session.userData = {};
     };
     defaults.url = req.originalUrl.split("?")[0];
+    if (!req.session.announcement) {
+        if (process.env.NODE_ENV === 'production') {
+            req.session.announcement = `<i class="fa-solid fa-message"></i>&nbsp;&nbsp;Welcome!`;
+        } else {
+            req.session.announcement = `<i class="fa-solid fa-vial"></i>&nbsp;&nbsp;Beta Version`;
+        };
+    };
 };
 
 Date.prototype.isToday = function () {
@@ -332,81 +337,7 @@ app.get('/', async (req, res) => {
                             if (postsList === "") {
                                 postsList = "No posts yet.";
                             };
-                            res.render('index', { vars: defaults, title: '', user: req.session.userData, posts: postsList });
-                        };
-                    });
-            });
-        });
-});
-
-app.get('/home', async (req, res) => {
-    await allRoutes(req);
-    await fetch(`${process.env.DATABASE_URL}?do=allposts`, {
-        method: 'GET',
-        headers: {
-            Accept: '*/*',
-            'User-Agent': `${defaults.siteName} (${defaults.domain})`
-        }
-    })
-        .then(db => db.json())
-        .then(db => {
-            var postsList = "";
-            var wanted = db.data.length;
-            var done = 0;
-            var sortedPosts = [];
-            var pinnedPosts = [];
-            db.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async post => {
-                var tagList = "";
-                post.tags.split(`,`).forEach(tag => {
-                    defaults.tags.forEach(tags => {
-                        if (tags.slug === tag) {
-                            tagList += tags.name + ", ";
-                        };
-                    });
-                });
-                await fetch(`${process.env.DATABASE_URL}?do=find&username=${post.author}`, {
-                    method: 'GET',
-                    headers: {
-                        Accept: '*/*',
-                        'User-Agent': `${defaults.siteName} (${defaults.domain})`
-                    }
-                })
-                    .then(db => db.json())
-                    .then(db => {
-                        if ((db.info.status === 1) && (new Date(post["created_at"]).isToday())) {
-                            var authorName = db.data.firstname + " " + db.data.lastname;
-                            var authorBadge = JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1];
-                            defaults.badges.forEach(badge => {
-                                if (badge.slug === authorBadge) {
-                                    authorBadge = badge;
-                                };
-                            });
-                            if (post.pinned) {
-                                pinnedPosts.push({
-                                    id: post.id,
-                                    post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post["created_at"]).toLocaleTimeString('en-US')}) <i class="fa-solid fa-thumbtack"></i>${(post.images != "{}") ? ' <i class="fa-solid fa-image"></i>' : ''}</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
-                                });
-                            } else {
-                                sortedPosts.push({
-                                    id: post.id,
-                                    post: `<a href="${defaults.domain}/forum/posts/${post.slug}" class="post"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post["created_at"]).toLocaleTimeString('en-US')})${(post.images != "{}") ? ' <i class="fa-solid fa-image"></i>' : ''}</h4><h2>${post.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
-                                });
-                            };
-                        };
-                        done++;
-                        if (done === wanted) {
-                            pinnedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
-                            pinnedPosts.forEach(async post => {
-                                postsList += post.post;
-                            });
-                            sortedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
-                            sortedPosts.forEach(async post => {
-                                postsList += post.post;
-                            });
-                            if (postsList === "") {
-                                postsList = "No posts yet.";
-                            };
-                            res.render('home', { vars: defaults, title: 'Home', user: req.session.userData, posts: postsList });
+                            res.render('index', { vars: defaults, session: req.session, title: '', user: req.session.userData, posts: postsList });
                         };
                     });
             });
@@ -515,7 +446,7 @@ app.get('/account', async (req, res) => {
                                 await sendData(commentsList);
                             };
                             async function sendData(commentsList) {
-                                res.render('account', { vars: defaults, title: 'Account', user: req.session.userData, buttons: defaults.ssoButtonListHTML, posts: postsList, badges: tagListHTML.slice(0, -2), comments: commentsList });
+                                res.render('account', { vars: defaults, session: req.session, title: 'Account', user: req.session.userData, buttons: defaults.ssoButtonListHTML, posts: postsList, badges: tagListHTML.slice(0, -2), comments: commentsList });
                             };
                         });
                 };
@@ -538,7 +469,7 @@ app.get('/login', async (req, res) => {
             res.redirect('/account');
         };
     } else {
-        res.render('login', { vars: defaults, title: 'Login', user: req.session.userData, redirect: "?redirect=" + req.query.redirect });
+        res.render('login', { vars: defaults, session: req.session, title: 'Login', user: req.session.userData, redirect: "?redirect=" + req.query.redirect });
     };
 });
 
@@ -585,7 +516,7 @@ app.post('/login', async (req, res) => {
                                         req.session.userData.badge = badge;
                                     };
                                 });
-                                defaults.announcement = `<i class="fa-solid fa-${req.session.userData.badge.icon}"></i>&nbsp;&nbsp;Hey, ${req.session.userData.badge.name}!`;
+                                req.session.announcement = `<i class="fa-solid fa-${req.session.userData.badge.icon}"></i>&nbsp;&nbsp;Hey, ${req.session.userData.badge.name}!`;
                                 await fetch(`${process.env.DATABASE_URL}?do=allposts&username=${req.session.userData.username}`, {
                                     method: 'GET',
                                     headers: {
@@ -626,12 +557,12 @@ app.post('/login', async (req, res) => {
                         });
                     } else {
                         req.session.loggedinUser = false;
-                        res.render('login', { vars: defaults, title: 'Login', user: req.session.userData, alert: "Incorrect details!", redirect: "?redirect=" + req.query.redirect });
+                        res.render('login', { vars: defaults, session: req.session, title: 'Login', user: req.session.userData, alert: "Incorrect details!", redirect: "?redirect=" + req.query.redirect });
                     };
                 });
             } else {
                 req.session.loggedinUser = false;
-                res.render('login', { vars: defaults, title: 'Login', user: req.session.userData, alert: "Incorrect details!", redirect: "?redirect=" + req.query.redirect });
+                res.render('login', { vars: defaults, session: req.session, title: 'Login', user: req.session.userData, alert: "Incorrect details!", redirect: "?redirect=" + req.query.redirect });
             };
         });
 });
@@ -641,7 +572,7 @@ app.get('/signup', async (req, res) => {
     if (req.session.loggedinUser === true) {
         res.redirect('/account');
     } else {
-        res.render('signup', { vars: defaults, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML });
+        res.render('signup', { vars: defaults, session: req.session, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML });
     };
 });
 
@@ -653,7 +584,7 @@ app.post('/signup', async (req, res) => {
                 await continue1();
             } else {
                 req.session.loggedinUser = false;
-                res.render('signup', { vars: defaults, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "Fill in all fields correctly!" });
+                res.render('signup', { vars: defaults, session: req.session, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "Fill in all fields correctly!" });
             };
         } else {
             await continue1();
@@ -694,31 +625,31 @@ app.post('/signup', async (req, res) => {
                                         await connection.query(`INSERT INTO users (id, username, password, email, firstname, lastname, age, school, gradyear, dob, badges${temp1}) VALUES (${newId}, '${req.body.username.toLowerCase()}', '${await bcrypt.hash(req.body.password, 10)}', '${req.body.email}', '${await toTitleCase(req.body.firstname)}', '${await toTitleCase(req.body.lastname)}', '${getAge(req.body.dob)}', '${req.body.school}', '${req.body.gradyear}', '${req.body.dob}', '["${badges}"]'${temp2})`, async function (error, results, fields) {
                                             if (!error) {
                                                 req.session.loggedinUser = false;
-                                                res.render('signup', { vars: defaults, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "Account created." });
+                                                res.render('signup', { vars: defaults, session: req.session, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "Account created." });
                                                 await connection.end();
                                             } else {
                                                 console.log(error);
                                                 req.session.loggedinUser = false;
-                                                res.render('signup', { vars: defaults, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "There was an error!" });
+                                                res.render('signup', { vars: defaults, session: req.session, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "There was an error!" });
                                                 await connection.end();
                                             };
                                         });
                                     } else {
                                         console.log(error);
                                         req.session.loggedinUser = false;
-                                        res.render('signup', { vars: defaults, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "There was an error!" });
+                                        res.render('signup', { vars: defaults, session: req.session, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "There was an error!" });
                                         await connection.end();
                                     };
                                 });
                             } else {
                                 console.log(error);
                                 req.session.loggedinUser = false;
-                                res.render('signup', { vars: defaults, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "Account already exists!" });
+                                res.render('signup', { vars: defaults, session: req.session, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "Account already exists!" });
                             };
                         } else {
                             console.log(error);
                             req.session.loggedinUser = false;
-                            res.render('signup', { vars: defaults, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "There was an error!" });
+                            res.render('signup', { vars: defaults, session: req.session, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "There was an error!" });
                         };
                     });
                 };
@@ -726,12 +657,11 @@ app.post('/signup', async (req, res) => {
         };
     } else {
         req.session.loggedinUser = false;
-        res.render('signup', { vars: defaults, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "Fill in all fields correctly!" });
+        res.render('signup', { vars: defaults, session: req.session, title: 'Signup', user: req.session.userData, schoolList: defaults.schoolListHTML, alert: "Fill in all fields correctly!" });
     };
 });
 
 app.get('/logout', async (req, res) => {
-    defaults.announcement = `You're logged out :(&nbsp;<a href="${defaults.domain}/login">Log back in?</a>`;
     req.session.destroy();
     res.redirect('/login');
 });
@@ -803,7 +733,7 @@ app.get('/forum', async (req, res) => {
                             if (postsList === "") {
                                 postsList = "No posts yet.";
                             };
-                            res.render('forum', { vars: defaults, title: 'Forum', user: req.session.userData, posts: postsList });
+                            res.render('forum', { vars: defaults, session: req.session, title: 'Forum', user: req.session.userData, posts: postsList });
                         };
                     });
             });
@@ -818,7 +748,7 @@ app.get('/forum/posts', async (req, res) => {
 app.get('/forum/posts/new', async (req, res) => {
     await allRoutes(req);
     if (req.session.loggedinUser === true) {
-        res.render('newpost', { vars: defaults, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML });
+        res.render('newpost', { vars: defaults, session: req.session, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML });
     } else {
         res.redirect('/login?redirect=/forum/posts/new');
     };
@@ -879,19 +809,19 @@ app.post('/forum/posts/new', async (req, res) => {
                                 await connection.end();
                             } else {
                                 console.log(error);
-                                res.render('newpost', { vars: defaults, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML, alert: "There was an error!" });
+                                res.render('newpost', { vars: defaults, session: req.session, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML, alert: "There was an error!" });
                                 await connection.end();
                             };
                         });
                     } else {
                         console.log(error);
-                        res.render('newpost', { vars: defaults, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML, alert: "There was an error!" });
+                        res.render('newpost', { vars: defaults, session: req.session, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML, alert: "There was an error!" });
                         await connection.end();
                     };
                 });
             } else {
                 console.log(error);
-                res.render('newpost', { vars: defaults, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML, alert: "There was an error!" });
+                res.render('newpost', { vars: defaults, session: req.session, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML, alert: "There was an error!" });
                 await connection.end();
             };
         });
@@ -1023,9 +953,9 @@ app.get('/forum/posts/:post', async (req, res) => {
                                                         commentsList += comment.comment;
                                                     });
                                                     if (post.data.images != "{}") {
-                                                        res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: JSON.parse(post.data.images).image, imagename: JSON.parse(post.data.images).name, author: authorName, badge: authorBadge, pinned: post.data.pinned, date: `${new Date(post.data["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post.data["created_at"]).toLocaleTimeString('en-US')}`, comments: commentsList, id: post.data.id, pfp: authorPfp, alert: alert, slug: post.data.slug, username: post.data.author, adminpost: adminpost, authorAbout: authorAbout, authorUsername: authorUsername });
+                                                        res.render('post', { vars: defaults, session: req.session, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: JSON.parse(post.data.images).image, imagename: JSON.parse(post.data.images).name, author: authorName, badge: authorBadge, pinned: post.data.pinned, date: `${new Date(post.data["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post.data["created_at"]).toLocaleTimeString('en-US')}`, comments: commentsList, id: post.data.id, pfp: authorPfp, alert: alert, slug: post.data.slug, username: post.data.author, adminpost: adminpost, authorAbout: authorAbout, authorUsername: authorUsername });
                                                     } else {
-                                                        res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: "", imagename: "", author: authorName, badge: authorBadge, pinned: post.data.pinned, date: `${new Date(post.data["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post.data["created_at"]).toLocaleTimeString('en-US')}`, comments: commentsList, id: post.data.id, pfp: authorPfp, alert: alert, slug: post.data.slug, username: post.data.author, adminpost: adminpost, authorAbout: authorAbout, authorUsername: authorUsername });
+                                                        res.render('post', { vars: defaults, session: req.session, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: "", imagename: "", author: authorName, badge: authorBadge, pinned: post.data.pinned, date: `${new Date(post.data["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post.data["created_at"]).toLocaleTimeString('en-US')}`, comments: commentsList, id: post.data.id, pfp: authorPfp, alert: alert, slug: post.data.slug, username: post.data.author, adminpost: adminpost, authorAbout: authorAbout, authorUsername: authorUsername });
                                                     };
                                                 };
                                             });
@@ -1033,15 +963,15 @@ app.get('/forum/posts/:post', async (req, res) => {
                                 } else {
                                     commentsList = "No comments yet.";
                                     if (post.data.images != "{}") {
-                                        res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: JSON.parse(post.data.images).image, imagename: JSON.parse(post.data.images).name, author: authorName, badge: authorBadge, pinned: post.data.pinned, date: `${new Date(post.data["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post.data["created_at"]).toLocaleTimeString('en-US')}`, comments: commentsList, id: post.data.id, pfp: authorPfp, alert: alert, slug: post.data.slug, username: post.data.author, adminpost: adminpost, authorAbout: authorAbout, authorUsername: authorUsername });
+                                        res.render('post', { vars: defaults, session: req.session, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: JSON.parse(post.data.images).image, imagename: JSON.parse(post.data.images).name, author: authorName, badge: authorBadge, pinned: post.data.pinned, date: `${new Date(post.data["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post.data["created_at"]).toLocaleTimeString('en-US')}`, comments: commentsList, id: post.data.id, pfp: authorPfp, alert: alert, slug: post.data.slug, username: post.data.author, adminpost: adminpost, authorAbout: authorAbout, authorUsername: authorUsername });
                                     } else {
-                                        res.render('post', { vars: defaults, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: "", imagename: "", author: authorName, badge: authorBadge, pinned: post.data.pinned, date: `${new Date(post.data["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post.data["created_at"]).toLocaleTimeString('en-US')}`, comments: commentsList, id: post.data.id, pfp: authorPfp, alert: alert, slug: post.data.slug, username: post.data.author, adminpost: adminpost, authorAbout: authorAbout, authorUsername: authorUsername });
+                                        res.render('post', { vars: defaults, session: req.session, title: post.data.name, user: req.session.userData, tags: tagList.slice(0, -2), description: post.data.description, image: "", imagename: "", author: authorName, badge: authorBadge, pinned: post.data.pinned, date: `${new Date(post.data["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post.data["created_at"]).toLocaleTimeString('en-US')}`, comments: commentsList, id: post.data.id, pfp: authorPfp, alert: alert, slug: post.data.slug, username: post.data.author, adminpost: adminpost, authorAbout: authorAbout, authorUsername: authorUsername });
                                     };
                                 };
                             });
                     });
             } else {
-                res.render('404', { vars: defaults, title: '404', user: req.session.userData });
+                res.render('404', { vars: defaults, session: req.session, title: '404', user: req.session.userData });
             };
         });
 });
@@ -1159,7 +1089,7 @@ app.get('/forum/posts/:post/unpin', async (req, res) => {
 
 app.get('/forum/topics', async (req, res) => {
     await allRoutes(req);
-    res.render('topics', { vars: defaults, title: 'Topics', user: req.session.userData, tags: defaults.tagListHTMLButtons });
+    res.render('topics', { vars: defaults, session: req.session, title: 'Topics', user: req.session.userData, tags: defaults.tagListHTMLButtons });
 });
 
 app.get('/forum/topics/:topic', async (req, res) => {
@@ -1231,18 +1161,18 @@ app.get('/forum/topics/:topic', async (req, res) => {
                                         sortedPosts.forEach(async post => {
                                             postsList += post.post;
                                         });
-                                        res.render('topic', { vars: defaults, title: 'Topic', user: req.session.userData, tags: defaults.tagListHTMLButtons, posts: postsList, longtitle: tag.title, description: tag.description, icon: tag.icon });
+                                        res.render('topic', { vars: defaults, session: req.session, title: 'Topic', user: req.session.userData, tags: defaults.tagListHTMLButtons, posts: postsList, longtitle: tag.title, description: tag.description, icon: tag.icon });
                                     };
                                 });
                         });
                     } else {
-                        res.render('topic', { vars: defaults, title: 'Topic', user: req.session.userData, tags: defaults.tagListHTMLButtons, posts: "No Posts", longtitle: tag.title, description: tag.description, icon: tag.icon });
+                        res.render('topic', { vars: defaults, session: req.session, title: 'Topic', user: req.session.userData, tags: defaults.tagListHTMLButtons, posts: "No Posts", longtitle: tag.title, description: tag.description, icon: tag.icon });
                     };
                 });
         };
         done++;
         if (done === wanted) {
-            res.render('404', { vars: defaults, title: '404', user: req.session.userData });
+            res.render('404', { vars: defaults, session: req.session, title: '404', user: req.session.userData });
         };
     });
 });
@@ -1256,7 +1186,7 @@ app.get('/forum/comments/new', async (req, res) => {
     await allRoutes(req);
     if (req.session.loggedinUser === true) {
         if (req.query.post) {
-            res.render('newcomment', { vars: defaults, title: 'New Comment', user: req.session.userData, post: req.query.post });
+            res.render('newcomment', { vars: defaults, session: req.session, title: 'New Comment', user: req.session.userData, post: req.query.post });
         } else {
             res.redirect('/forum');
         };
@@ -1306,13 +1236,13 @@ app.post('/forum/comments/new', async (req, res) => {
                             });
                     } else {
                         console.log(error);
-                        res.render('newcomment', { vars: defaults, title: 'New Comment', user: req.session.userData, alert: "There was an error!", post: req.query.post });
+                        res.render('newcomment', { vars: defaults, session: req.session, title: 'New Comment', user: req.session.userData, alert: "There was an error!", post: req.query.post });
                         await connection.end();
                     };
                 });
             } else {
                 console.log(error);
-                res.render('newcomment', { vars: defaults, title: 'New Comment', user: req.session.userData, alert: "There was an error!", post: req.query.post });
+                res.render('newcomment', { vars: defaults, session: req.session, title: 'New Comment', user: req.session.userData, alert: "There was an error!", post: req.query.post });
                 await connection.end();
             };
         });
@@ -1528,7 +1458,7 @@ app.get('/users', async (req, res) => {
                                                     if (wanted != 0) {
                                                         doSchoolMemorial(wanted);
                                                     } else {
-                                                        res.render('users', { vars: defaults, title: 'Users', user: req.session.userData, userList: userList });
+                                                        res.render('users', { vars: defaults, session: req.session, title: 'Users', user: req.session.userData, userList: userList });
                                                     };
                                                 };
                                             });
@@ -1538,7 +1468,7 @@ app.get('/users', async (req, res) => {
                                             if (wanted != 0) {
                                                 doSchoolMemorial(wanted);
                                             } else {
-                                                res.render('users', { vars: defaults, title: 'Users', user: req.session.userData, userList: userList });
+                                                res.render('users', { vars: defaults, session: req.session, title: 'Users', user: req.session.userData, userList: userList });
                                             };
                                         };
                                     };
@@ -1548,11 +1478,11 @@ app.get('/users', async (req, res) => {
                                                 userList[usersInSchool.school] += usersInSchool.content;
                                                 done++;
                                                 if (done === wanted) {
-                                                    res.render('users', { vars: defaults, title: 'Users', user: req.session.userData, userList: userList });
+                                                    res.render('users', { vars: defaults, session: req.session, title: 'Users', user: req.session.userData, userList: userList });
                                                 };
                                             });
                                         } else {
-                                            res.render('users', { vars: defaults, title: 'Users', user: req.session.userData, userList: userList });
+                                            res.render('users', { vars: defaults, session: req.session, title: 'Users', user: req.session.userData, userList: userList });
                                         };
                                     };
                                 };
@@ -1725,7 +1655,7 @@ app.get('/search', async (req, res) => {
         };
         async function sendResults(sortedPosts, postsList, commentsList) {
             try {
-                res.render('search', { vars: defaults, title: 'Search Results', user: req.session.userData, posts: postsList, query: req.query.query, results: sortedPosts.length, comments: commentsList });
+                res.render('search', { vars: defaults, session: req.session, title: 'Search Results', user: req.session.userData, posts: postsList, query: req.query.query, results: sortedPosts.length, comments: commentsList });
             } catch { };
         };
     } else {
@@ -1735,7 +1665,7 @@ app.get('/search', async (req, res) => {
 
 app.get('*', async (req, res) => {
     await allRoutes(req);
-    res.render('404', { vars: defaults, title: '404', user: req.session.userData });
+    res.render('404', { vars: defaults, session: req.session, title: '404', user: req.session.userData });
 });
 
 app.listen(port, () => {

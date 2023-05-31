@@ -2,7 +2,7 @@
 <div class="preheader<% if (user.name) { %> <%- user.school.cssColorClass %><% } %>"></div>
 <header<% if (user.name) { %> class="<%- user.school.cssColorClass %>Mobile" <% } %>>
 	<div class="announcement<% if (user.name) { %> <%- user.school.cssColorClass %><% } %>">
-		<%- vars.announcement %>
+		<%- session.announcement %>
 	</div>
 	<div class="main">
 		<div class="left">
