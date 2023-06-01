@@ -16,6 +16,9 @@ switch (page) {
     case "/":
         toggleSidebar();
         break;
+    case "/admin":
+        toggleSidebar();
+        break;
     case "/forum/posts/new":
         document.getElementById("imagename").value = "";
         document.getElementById("imagename").addEventListener("change", async (event) => {

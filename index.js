@@ -1599,7 +1599,6 @@ app.get('/search', async (req, res) => {
                     var sortedComments = [];
                     var wanted = 0;
                     var done = 0;
-                    var done2 = 0;
                     await comments.data.forEach(async comment => {
                         if (comment.content.toLowerCase().includes(req.query.query.toLowerCase()) || comment.author.toLowerCase().includes(req.query.query.toLowerCase())) {
                             wanted++;
@@ -1607,6 +1606,7 @@ app.get('/search', async (req, res) => {
                         done++;
                         if (done === comments.data.length) {
                             if (wanted != 0) {
+                                var done2 = 0;
                                 await comments.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async comment => {
                                     if (comment.content.toLowerCase().includes(req.query.query.toLowerCase()) || comment.author.toLowerCase().includes(req.query.query.toLowerCase())) {
                                         await fetch(`${process.env.DATABASE_URL}?do=find&username=${comment.author}`, {
@@ -1637,11 +1637,13 @@ app.get('/search', async (req, res) => {
                                                         });
                                                     };
                                                     done2++;
-                                                    sortedComments.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
-                                                    sortedComments.forEach(async comment => {
-                                                        commentsList += comment.comment;
-                                                    });
-                                                    await sendResults(sortedPosts, postsList, commentsList);
+                                                    if (done2 === wanted) {
+                                                        sortedComments.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
+                                                        sortedComments.forEach(async comment => {
+                                                            commentsList += comment.comment;
+                                                        });
+                                                        await sendResults(sortedPosts, postsList, commentsList);
+                                                    };
                                                 };
                                             });
                                     };
@@ -1661,6 +1663,79 @@ app.get('/search', async (req, res) => {
     } else {
         res.redirect('/forum');
     };
+});
+
+app.get('/admin', async (req, res) => {
+    await allRoutes(req);
+    //if (req.session.loggedinUser === true) {
+    //if ((req.session.userData.badge.slug === "admin") || (req.session.userData.badge.slug === "moderator")) {
+    if (1) {
+        if (1) {
+            await allRoutes(req);
+            await fetch(`${process.env.DATABASE_URL}?do=allposts`, {
+                method: 'GET',
+                headers: {
+                    Accept: '*/*',
+                    'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                }
+            })
+                .then(db => db.json())
+                .then(db => {
+                    var postsList = "";
+                    var wanted = db.data.length;
+                    var done = 0;
+                    var sortedPosts = [];
+                    db.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async post => {
+                        var tagList = "";
+                        post.tags.split(`,`).forEach(tag => {
+                            defaults.tags.forEach(tags => {
+                                if (tags.slug === tag) {
+                                    tagList += tags.name + ", ";
+                                };
+                            });
+                        });
+                        await fetch(`${process.env.DATABASE_URL}?do=find&username=${post.author}`, {
+                            method: 'GET',
+                            headers: {
+                                Accept: '*/*',
+                                'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                            }
+                        })
+                            .then(db => db.json())
+                            .then(db => {
+                                if (db.info.status === 1) {
+                                    var authorName = db.data.firstname + " " + db.data.lastname;
+                                    var authorBadge = JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1];
+                                    defaults.badges.forEach(badge => {
+                                        if (badge.slug === authorBadge) {
+                                            authorBadge = badge;
+                                        };
+                                    });
+                                    sortedPosts.push({
+                                        id: post.id,
+                                        post: `<a href="${defaults.domain}/forum/posts/${post.slug}/manage" class="post"><div class="title">${post.name}</div><div class="author">${authorName} (${authorBadge.name})</div><div class="created">${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post["created_at"]).toLocaleTimeString('en-US')}</div><div class="badges">${(post.pinned) ? ' <i class="fa-solid fa-thumbtack"></i>' : ''} ${(post.images != "{}") ? ' <i class="fa-solid fa-image"></i>' : ''}</div><div class="tags">${tagList.slice(0, -2)}</div><div class="actions"></div></a>`,
+                                    });
+                                };
+                                done++;
+                                if (done === wanted) {
+                                    sortedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
+                                    sortedPosts.forEach(async post => {
+                                        postsList += post.post;
+                                    });
+                                    if (postsList === "") {
+                                        postsList = "No posts yet.";
+                                    };
+                                    res.render('admin', { vars: defaults, session: req.session, title: 'Admin', user: req.session.userData, posts: postsList });
+                                };
+                            });
+                    });
+                });
+        } else {
+            res.redirect('/');
+        };
+    } else {
+        res.redirect('/');
+    }
 });
 
 app.get('*', async (req, res) => {

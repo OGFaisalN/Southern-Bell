@@ -292,7 +292,7 @@ header {
 }
 
 header.collapsed .main {
-	height: 50px !important;
+    height: 50px !important;
 }
 
 header .announcement,
@@ -306,7 +306,7 @@ header .main {
 
 header .announcement {
     display: flex;
-	flex-direction: row;
+    flex-direction: row;
     justify-content: center;
     width: 100vw;
     background:
@@ -343,9 +343,10 @@ header .main a {
     justify-content: center;
 }
 
-header .main .logo, header .main .user {
-	display: flex;
-	flex-direction: row;
+header .main .logo,
+header .main .user {
+    display: flex;
+    flex-direction: row;
 }
 
 header .main .logo a img {
@@ -890,12 +891,12 @@ main.postCreator form textarea#content {
 }
 
 main.postCreator form select#tags {
-	background: var(--background);
-	font-size: 15px;
-	color: var(--text);
-	border: 1px solid var(--text);
-	border-radius: 5px;
-	padding: 5px;
+    background: var(--background);
+    font-size: 15px;
+    color: var(--text);
+    border: 1px solid var(--text);
+    border-radius: 5px;
+    padding: 5px;
 }
 
 main.postCreator form select#tags option::before {
@@ -1073,35 +1074,35 @@ main.post .postsidebar .box img {
 }
 
 main.users .users {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
     margin-top: 20px;
 }
 
 main.users .users .card {
-	background: var(--gradient);
-	color: var(--background);
-	border-radius: 10px;
-	padding: 20px;
-	text-decoration: none;
-	display: flex;
-	flex-direction: column;
-	gap: 5px;
+    background: var(--gradient);
+    color: var(--background);
+    border-radius: 10px;
+    padding: 20px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 main.users .users .card:hover {
-	box-shadow: 0px 0px 15px var(--text);
+    box-shadow: 0px 0px 15px var(--text);
 }
 
 main.users .users .card * {
-	color: var(--background);
+    color: var(--background);
     margin: 0;
 }
 
 main.users .users .card img {
-	height: 35px;
-	width: 35px;
+    height: 35px;
+    width: 35px;
     border-radius: 100%;
 }
 
@@ -1164,6 +1165,44 @@ main.users .content .schoolBanner h1 {
     padding: 10px 20px;
     border-radius: 10px;
     width: max-content;
+}
+
+main.admin .content .posts {
+    gap: 0;
+}
+
+main.admin .content .posts .post {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: unset;
+    padding: 2px;
+    border: none;
+    height: 25px;
+}
+
+main.admin .content .posts .post .title {
+    width: 20%;
+}
+
+main.admin .content .posts .post .author {
+    width: 25%;
+}
+
+main.admin .content .posts .post .created {
+    width: 25%;
+}
+
+main.admin .content .posts .post .badges {
+    width: 10%;
+}
+
+main.admin .content .posts .post .tags {
+    width: 10%;
+}
+
+main.admin .content .posts .post .actions {
+    width: 10%;
 }
 
 footer {
