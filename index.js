@@ -269,6 +269,7 @@ async function toTitleCase(str) {
 };
 
 async function detectProfanity(content) {
+    var has = false;
     await fetch(`https://api.api-ninjas.com/v1/profanityfilter?text=${content}`, {
         headers: {
             'X-Api-Key': process.env.NINJAS_API_KEY
@@ -277,11 +278,10 @@ async function detectProfanity(content) {
         .then(body => body.json())
         .then(async body => {
             if (body["has_profanity"] === true) {
-                return 1;
-            } else {
-                return 0;
+                has = true;
             };
         });
+    return has;
 };
 
 // Routes
@@ -1929,10 +1929,6 @@ app.get('/admin', async (req, res) => {
     } else {
         res.redirect('/');
     }
-});
-
-app.get('/test', async (req, res) => {
-    res.send(`Name is ${req.query.name}, got ${await detectProfanity(req.query.name)}, description is ${req.query.description}, got ${await detectProfanity(req.query.description)}.`);
 });
 
 app.get('*', async (req, res) => {
