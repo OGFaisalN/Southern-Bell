@@ -1167,42 +1167,37 @@ main.users .content .schoolBanner h1 {
     width: max-content;
 }
 
-main.admin .content .posts {
+main.admin .content .lists {
     gap: 0;
 }
 
-main.admin .content .posts .post {
+main.admin .content .lists .list {
     display: flex;
     flex-direction: row;
     align-items: center;
     background-color: unset;
     padding: 2px;
     border: none;
-    height: 25px;
 }
 
-main.admin .content .posts .post .title {
+main.admin .content .lists .list:nth-child(1) {
+    font-weight: bold;
+}
+
+main.admin .content .lists .list .ten {
+    width: 10%;
+}
+
+main.admin .content .lists .list .twenty {
     width: 20%;
 }
 
-main.admin .content .posts .post .author {
+main.admin .content .lists .list .twentyfive {
     width: 25%;
 }
 
-main.admin .content .posts .post .created {
-    width: 25%;
-}
-
-main.admin .content .posts .post .badges {
-    width: 10%;
-}
-
-main.admin .content .posts .post .tags {
-    width: 10%;
-}
-
-main.admin .content .posts .post .actions {
-    width: 10%;
+main.admin .content .lists .list .thirtyfive {
+    width: 35%;
 }
 
 footer {

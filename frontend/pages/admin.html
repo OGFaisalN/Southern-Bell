@@ -15,12 +15,20 @@
 		</div>
 		<div class="content">
 			<h3>All Posts</h3>
-			<a href="<%- vars.domain %>/forum/posts/new"><button><i class="fa-solid fa-pen-to-square"></i> New Post</button></a>
-			<div class="posts">
-				<div class="post"><div class="title">Title</div><div class="author">Author</div><div class="created">Created At</div><div class="badges">Badges</div><div class="tags">Tags</div><div class="actions">Actions</div></div>
+			<div class="lists posts">
+				<div class="list post"><div class="twenty">Title</div><div class="twentyfive">Author</div><div class="twentyfive">Created At</div><div class="ten">Badges</div><div class="ten">Tags</div><div class="ten">Actions</div></div>
 				<%- posts %>
 			</div>
-			<% if (posts != "No posts yet.") { %><a href="<%- vars.domain %>/forum/posts/new"><button><i class="fa-solid fa-pen-to-square"></i> New Post</button></a><% } %>
+			<h3>All Users</h3>
+			<div class="lists users">
+				<div class="list user"><div class="twenty">Name</div><div class="twentyfive">Email</div><div class="twentyfive">Created At</div><div class="ten">Class of</div><div class="ten">DOB</div><div class="ten">Actions</div></div>
+				<%- users %>
+			</div>
+			<h3>All Comments</h3>
+			<div class="lists comments">
+				<div class="list comment"><div class="thirtyfive">Content</div><div class="twenty">Author</div><div class="twentyfive">Created At</div><div class="ten">Badges</div><div class="ten">Actions</div></div>
+				<%- comments %>
+			</div>
 		</div>
 		<%- include('../partials/footer.html'); %>
 	</main>

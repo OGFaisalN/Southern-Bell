@@ -268,6 +268,22 @@ async function toTitleCase(str) {
     );
 };
 
+async function detectProfanity(content) {
+    await fetch(`https://api.api-ninjas.com/v1/profanityfilter?text=${content}`, {
+        headers: {
+            'X-Api-Key': process.env.NINJAS_API_KEY
+        }
+    })
+        .then(body => body.json())
+        .then(async body => {
+            if (body["has_profanity"] === true) {
+                return 1;
+            } else {
+                return 0;
+            };
+        });
+};
+
 // Routes
 
 app.get('/', async (req, res) => {
@@ -302,9 +318,10 @@ app.get('/', async (req, res) => {
                         'User-Agent': `${defaults.siteName} (${defaults.domain})`
                     }
                 })
+
                     .then(db => db.json())
                     .then(db => {
-                        if ((db.info.status === 1) && (new Date(post["created_at"]).isToday())) {
+                        if ((db.info.status === 1) && (new Date(post["created_at"]).isToday()) && (!post.flagged)) {
                             var authorName = db.data.firstname + " " + db.data.lastname;
                             var authorBadge = JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1];
                             defaults.badges.forEach(badge => {
@@ -578,7 +595,7 @@ app.get('/signup', async (req, res) => {
 
 app.post('/signup', async (req, res) => {
     await allRoutes(req);
-    if ((req.body.username != "") && (req.body.password != "") && (req.body.email != "") && (req.body.firstname != "") && (req.body.lastname != "") && (req.body.dob != "") && (req.body.school != "") && (req.body.gradyear != "") && (req.body.email === `${req.body.username.toLowerCase()}@vschsd.org`)) {
+    if ((req.body.username != "") && (req.body.password != "") && (req.body.email != "") && (req.body.firstname != "") && (req.body.lastname != "") && (req.body.dob != "") && (req.body.school != "") && (req.body.gradyear != "") && (req.body.email === `${req.body.username.toLowerCase()}@vschsd.org`) && (!detectProfanity(req.body.username))) {
         if (!req.body.teacher) {
             if ((req.body.password.length === 6) && (!isNaN(req.body.password)) && (req.body.gradyear.length === 4) && (!isNaN(req.body.gradyear))) {
                 await continue1();
@@ -700,7 +717,7 @@ app.get('/forum', async (req, res) => {
                 })
                     .then(db => db.json())
                     .then(db => {
-                        if (db.info.status === 1) {
+                        if ((db.info.status === 1) && (!post.flagged)) {
                             var authorName = db.data.firstname + " " + db.data.lastname;
                             var authorBadge = JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1];
                             defaults.badges.forEach(badge => {
@@ -805,23 +822,39 @@ app.post('/forum/posts/new', async (req, res) => {
                         };
                         await connection.query(`INSERT INTO posts (id, author, name, slug, tags${temp1}${temp3}) VALUES (${newId}, '${req.session.userData.username}', '${req.body.name}', '${slug}', '${req.body.tags}'${temp2}${temp4})`, async function (error, results, fields) {
                             if (!error) {
-                                res.redirect(`${defaults.domain}/forum/posts/${slug}`);
+                                if ((detectProfanity(req.body.name)) || (detectProfanity(req.body.description))) {
+                                    await fetch(`${process.env.DATABASE_URL}?do=flagpost&slug=${slug}`, {
+                                        method: 'GET',
+                                        headers: {
+                                            Accept: '*/*',
+                                            'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                                        }
+                                    })
+                                        .then(db => db.json())
+                                        .then(db => {
+                                            if (db.info.status === 1) {
+                                                res.redirect(`${defaults.domain}/forum/posts/${slug}`);
+                                            }
+                                        });
+                                } else {
+                                    res.redirect(`${defaults.domain}/forum/posts/${slug}`);
+                                };
                                 await connection.end();
                             } else {
                                 console.log(error);
-                                res.render('newpost', { vars: defaults, session: req.session, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML, alert: "There was an error!" });
+                                res.render('newpost', { vars: defaults, session: req.session, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML, alert: (error.code === 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD') ? 'We do not allow emojis.' :"There was an error!", enteredTitle: req.body.name, enteredDescription: req.body.description });
                                 await connection.end();
                             };
                         });
                     } else {
                         console.log(error);
-                        res.render('newpost', { vars: defaults, session: req.session, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML, alert: "There was an error!" });
+                        res.render('newpost', { vars: defaults, session: req.session, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML, alert: "There was an error!", enteredTitle: req.body.name, enteredDescription: req.body.description });
                         await connection.end();
                     };
                 });
             } else {
                 console.log(error);
-                res.render('newpost', { vars: defaults, session: req.session, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML, alert: "There was an error!" });
+                res.render('newpost', { vars: defaults, session: req.session, title: 'New Post', user: req.session.userData, tagList: defaults.tagListHTML, alert: "There was an error!", enteredTitle: req.body.name, enteredDescription: req.body.description });
                 await connection.end();
             };
         });
@@ -1087,6 +1120,80 @@ app.get('/forum/posts/:post/unpin', async (req, res) => {
     };
 });
 
+app.get('/forum/posts/:post/flag', async (req, res) => {
+    await allRoutes(req);
+    if (req.session.loggedinUser === true) {
+        await fetch(`${process.env.DATABASE_URL}?do=findpost&slug=${req.params.post}`, {
+            method: 'GET',
+            headers: {
+                Accept: '*/*',
+                'User-Agent': `${defaults.siteName} (${defaults.domain})`
+            }
+        })
+            .then(post => post.json())
+            .then(async post => {
+                if (post.info.status === 1) {
+                    if ((req.session.userData.badge.slug === "admin") || (req.session.userData.badge.slug === "moderation")) {
+                        await fetch(`${process.env.DATABASE_URL}?do=flagpost&slug=${req.params.post}`, {
+                            method: 'GET',
+                            headers: {
+                                Accept: '*/*',
+                                'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                            }
+                        })
+                            .then(result => result.json())
+                            .then(async result => {
+                                res.redirect(`/forum/posts/${req.params.post}`);
+                            });
+                    } else {
+                        res.redirect('/forum');
+                    };
+                } else {
+                    res.redirect('/forum');
+                };
+            });
+    } else {
+        res.redirect('/forum');
+    };
+});
+
+app.get('/forum/posts/:post/unflag', async (req, res) => {
+    await allRoutes(req);
+    if (req.session.loggedinUser === true) {
+        await fetch(`${process.env.DATABASE_URL}?do=findpost&slug=${req.params.post}`, {
+            method: 'GET',
+            headers: {
+                Accept: '*/*',
+                'User-Agent': `${defaults.siteName} (${defaults.domain})`
+            }
+        })
+            .then(post => post.json())
+            .then(async post => {
+                if (post.info.status === 1) {
+                    if ((req.session.userData.badge.slug === "admin") || (req.session.userData.badge.slug === "moderator")) {
+                        await fetch(`${process.env.DATABASE_URL}?do=unflagpost&slug=${req.params.post}`, {
+                            method: 'GET',
+                            headers: {
+                                Accept: '*/*',
+                                'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                            }
+                        })
+                            .then(result => result.json())
+                            .then(async result => {
+                                res.redirect(`/forum/posts/${req.params.post}`);
+                            });
+                    } else {
+                        res.redirect('/forum');
+                    };
+                } else {
+                    res.redirect('/forum');
+                };
+            });
+    } else {
+        res.redirect('/forum');
+    };
+});
+
 app.get('/forum/topics', async (req, res) => {
     await allRoutes(req);
     res.render('topics', { vars: defaults, session: req.session, title: 'Topics', user: req.session.userData, tags: defaults.tagListHTMLButtons });
@@ -1132,7 +1239,7 @@ app.get('/forum/topics/:topic', async (req, res) => {
                             })
                                 .then(db => db.json())
                                 .then(db => {
-                                    if (db.info.status === 1) {
+                                    if ((db.info.status === 1) && (!post.flagged)) {
                                         var authorName = db.data.firstname + " " + db.data.lastname;
                                         defaults.badges.forEach(badge => {
                                             if (badge.slug === JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1]) {
@@ -1520,14 +1627,14 @@ app.get('/search', async (req, res) => {
                 var done = 0;
                 var done2 = 0;
                 await posts.data.forEach(async post => {
-                    if (post.name.toLowerCase().includes(req.query.query.toLowerCase()) || post.description.toLowerCase().includes(req.query.query.toLowerCase()) || post.author.toLowerCase().includes(req.query.query.toLowerCase())) {
+                    if ((post.name.toLowerCase().includes(req.query.query.toLowerCase()) || post.description.toLowerCase().includes(req.query.query.toLowerCase()) || post.author.toLowerCase().includes(req.query.query.toLowerCase())) && (!post.flagged)) {
                         wanted++;
                     };
                     done++;
                     if (done === posts.data.length) {
                         if (wanted != 0) {
                             await posts.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async post => {
-                                if (post.name.toLowerCase().includes(req.query.query.toLowerCase()) || post.description.toLowerCase().includes(req.query.query.toLowerCase()) || post.author.toLowerCase().includes(req.query.query.toLowerCase())) {
+                                if ((post.name.toLowerCase().includes(req.query.query.toLowerCase()) || post.description.toLowerCase().includes(req.query.query.toLowerCase()) || post.author.toLowerCase().includes(req.query.query.toLowerCase())) && (!post.flagged)) {
                                     var tagList = "";
                                     post.tags.split(`,`).forEach(tag => {
                                         defaults.tags.forEach(tags => {
@@ -1667,10 +1774,8 @@ app.get('/search', async (req, res) => {
 
 app.get('/admin', async (req, res) => {
     await allRoutes(req);
-    //if (req.session.loggedinUser === true) {
-    //if ((req.session.userData.badge.slug === "admin") || (req.session.userData.badge.slug === "moderator")) {
-    if (1) {
-        if (1) {
+    if (req.session.loggedinUser === true) {
+        if ((req.session.userData.badge.slug === "admin") || (req.session.userData.badge.slug === "moderator")) {
             await allRoutes(req);
             await fetch(`${process.env.DATABASE_URL}?do=allposts`, {
                 method: 'GET',
@@ -1702,7 +1807,7 @@ app.get('/admin', async (req, res) => {
                             }
                         })
                             .then(db => db.json())
-                            .then(db => {
+                            .then(async db => {
                                 if (db.info.status === 1) {
                                     var authorName = db.data.firstname + " " + db.data.lastname;
                                     var authorBadge = JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1];
@@ -1713,7 +1818,7 @@ app.get('/admin', async (req, res) => {
                                     });
                                     sortedPosts.push({
                                         id: post.id,
-                                        post: `<a href="${defaults.domain}/forum/posts/${post.slug}/manage" class="post"><div class="title">${post.name}</div><div class="author">${authorName} (${authorBadge.name})</div><div class="created">${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post["created_at"]).toLocaleTimeString('en-US')}</div><div class="badges">${(post.pinned) ? ' <i class="fa-solid fa-thumbtack"></i>' : ''} ${(post.images != "{}") ? ' <i class="fa-solid fa-image"></i>' : ''}</div><div class="tags">${tagList.slice(0, -2)}</div><div class="actions"></div></a>`,
+                                        post: `<div class="list post"><a href="${defaults.domain}/forum/posts/${post.slug}/manage" class="twenty">${post.name}</a><a href="${defaults.domain}/users/${post.author}/manage" class="twentyfive">${authorName} (${authorBadge.name})</a><div class="twentyfive">${new Date(post["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(post["created_at"]).toLocaleTimeString('en-US')}</div><div class="ten">${(post.pinned) ? `<a href="${defaults.domain}/forum/posts/${post.slug}/unpin"><i class="fa-solid fa-thumbtack"></i></a>` : ''} ${(post.images != "{}") ? ' <i class="fa-solid fa-image"></i>' : ''}</div><div class="ten">${tagList.slice(0, -2)}</div><div class="ten"><a href="${defaults.domain}/forum/posts/${post.slug}/delete"><i class="fa-solid fa-trash"></i></a>${(post.flagged) ? ` <a href="${defaults.domain}/forum/posts/${post.slug}/unflag"><i class="fa-solid fa-flag"></i></a>` : ` <a href="${defaults.domain}/forum/posts/${post.slug}/flag"><i class="fa-regular fa-flag"></i></a>`}</div></div>`,
                                     });
                                 };
                                 done++;
@@ -1725,7 +1830,95 @@ app.get('/admin', async (req, res) => {
                                     if (postsList === "") {
                                         postsList = "No posts yet.";
                                     };
-                                    res.render('admin', { vars: defaults, session: req.session, title: 'Admin', user: req.session.userData, posts: postsList });
+                                    await fetch(`${process.env.DATABASE_URL}?do=all`, {
+                                        method: 'GET',
+                                        headers: {
+                                            Accept: '*/*',
+                                            'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                                        }
+                                    })
+                                        .then(db => db.json())
+                                        .then(db => {
+                                            var usersList = "";
+                                            var wanted = db.data.length;
+                                            var done = 0;
+                                            var sortedUsers = [];
+                                            db.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async user => {
+                                                var authorName = user.firstname + " " + user.lastname;
+                                                var authorBadge = JSON.parse(user.badges)[JSON.parse(user.badges).length - 1];
+                                                defaults.badges.forEach(badge => {
+                                                    if (badge.slug === authorBadge) {
+                                                        authorBadge = badge;
+                                                    };
+                                                });
+                                                sortedUsers.push({
+                                                    id: user.id,
+                                                    user: `<div class="list user"><a href="${defaults.domain}/users/${user.username}/manage" class="twenty">${authorName} (${authorBadge.name}, ${user.age})</a><div class="twentyfive">${user.email}</div><div class="twentyfive">${new Date(user["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(user["created_at"]).toLocaleTimeString('en-US')}</div><div class="ten">${user.gradyear}</div><div class="ten">${user.dob}</div><div class="ten"><a href="${defaults.domain}/users/${user.username}/delete"><i class="fa-solid fa-trash"></i></a></div></div>`,
+                                                });
+                                                done++;
+                                                if (done === wanted) {
+                                                    sortedUsers.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
+                                                    sortedUsers.forEach(async user => {
+                                                        usersList += user.user;
+                                                    });
+                                                    if (usersList === "") {
+                                                        usersList = "No users yet.";
+                                                    };
+                                                    await fetch(`${process.env.DATABASE_URL}?do=allcomments`, {
+                                                        method: 'GET',
+                                                        headers: {
+                                                            Accept: '*/*',
+                                                            'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                                                        }
+                                                    })
+                                                        .then(comments => comments.json())
+                                                        .then(async comments => {
+                                                            if (comments.data) {
+                                                                var commentsList = [];
+                                                                var wanted = comments.data.length;
+                                                                var done = 0;
+                                                                var sortedComments = [];
+                                                                comments.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async comment => {
+                                                                    await fetch(`${process.env.DATABASE_URL}?do=find&username=${comment.author}`, {
+                                                                        method: 'GET',
+                                                                        headers: {
+                                                                            Accept: '*/*',
+                                                                            'User-Agent': `${defaults.siteName} (${defaults.domain})`
+                                                                        }
+                                                                    })
+                                                                        .then(db => db.json())
+                                                                        .then(db => {
+                                                                            if (db.info.status === 1) {
+                                                                                var commentAuthorName = db.data.firstname + " " + db.data.lastname;
+                                                                                var commentAuthorBadge = JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1];
+                                                                                defaults.badges.forEach(badge => {
+                                                                                    if (badge.slug === commentAuthorBadge) {
+                                                                                        commentAuthorBadge = badge;
+                                                                                    };
+                                                                                });
+                                                                                sortedComments.push({
+                                                                                    id: comment.id,
+                                                                                    comment: `<div class="list comment"><a href="${defaults.domain}/comments/${comment.id}/manage" class="thirtyfive">${comment.content}</a><a href="${defaults.domain}/users/${comment.author}/manage" class="twenty">${commentAuthorName}</a><div class="twentyfive">${new Date(comment["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(comment["created_at"]).toLocaleTimeString('en-US')}</div><div class="ten">${(comment.images != "{}") ? ' <i class="fa-solid fa-image"></i>' : ''}</div><div class="ten"><a href="${defaults.domain}/comments/${comment.id}/delete"><i class="fa-solid fa-trash"></i></a></div></div>`,
+                                                                                });
+                                                                            };
+                                                                            done++;
+                                                                            if (done === wanted) {
+                                                                                sortedComments.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
+                                                                                sortedComments.forEach(async comment => {
+                                                                                    commentsList += comment.comment;
+                                                                                });
+                                                                                res.render('admin', { vars: defaults, session: req.session, title: 'Admin', user: req.session.userData, posts: postsList, users: usersList, comments: commentsList });
+                                                                            };
+                                                                        });
+                                                                });
+                                                            } else {
+                                                                commentsList = "No comments yet.";
+                                                                res.render('admin', { vars: defaults, session: req.session, title: 'Admin', user: req.session.userData, posts: postsList, users: usersList, comments: commentsList });
+                                                            };
+                                                        });
+                                                };
+                                            });
+                                        });
                                 };
                             });
                     });
@@ -1736,6 +1929,10 @@ app.get('/admin', async (req, res) => {
     } else {
         res.redirect('/');
     }
+});
+
+app.get('/test', async (req, res) => {
+    res.send(`Name is ${req.query.name}, got ${await detectProfanity(req.query.name)}, description is ${req.query.description}, got ${await detectProfanity(req.query.description)}.`);
 });
 
 app.get('*', async (req, res) => {
