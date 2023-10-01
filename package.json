@@ -1,17 +1,15 @@
 {
   "dependencies": {
-    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
-    "mysql": "^2.18.1",
     "node-fetch": "^2.6.6"
   },
   "name": "advanced-computer-programming-beta",
   "version": "1.0.0",
-  "description": "VSCHSD Student Forum",
+  "description": "Southern Bell",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -1,0 +1,5 @@
+<script>
+    var domain = "<%- vars.domain %>";
+    var page = window.location.toString().split(`${domain}`)[1].split("?")[0];
+</script>
+<script src="<%- vars.domain %>/js/scripts.js"></script>

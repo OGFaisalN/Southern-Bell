@@ -1,0 +1,12 @@
+<footer style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>')">
+	<div class="inner">
+		<div class="top">
+			<img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].logo.path %>" alt="<%= cms.siteDetails[0].title %>" />
+			<div class="links"><%- include('links.ejs') %></div>
+		</div>
+		<div class="bottom">
+			<%- include('socials.ejs') %>
+			<p>&copy; <%= cms.siteDetails[0].title %> 2023-24 | Powered by <a href="https://dangoweb.com/?from=<%= cms.siteDetails[0].title.toLowerCase().replaceAll(' ', '-') %>">Web Hosting</a></p>
+		</div>
+	</div>
+</footer>

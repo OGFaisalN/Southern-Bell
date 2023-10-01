@@ -1,0 +1,58 @@
+<html>
+
+<head>
+	<%- include('../partials/head.ejs'); %>
+</head>
+
+<body>
+	<%- include('../partials/header.ejs'); %>
+	<div class="hero" <% if (!cms.newspapers[cms.newspapers.length - 2]) { %> style="grid-template-columns: 100% 0.7fr;" <% } %>>
+		<a href="<%- vars.domain %>/newspapers/<%= cms.newspapers[cms.newspapers.length - 1].slug %>" class="newspaper" <% if (cms.newspapers[cms.newspapers.length - 1].image != null) { %> style="background-image: url('<%= vars.asset_prefix %><%= cms.newspapers[cms.newspapers.length - 1].image.path %>')" <% } %>>
+			<div>
+				<h2><%= cms.newspapers[cms.newspapers.length - 1].title %></h2>
+				<% function ifYesterday(date) { 
+					var yesterday = new Date();
+					yesterday.setDate(yesterday.getDate() - 1);
+					return date.toDateString() === yesterday.toDateString();
+				} %>
+				<h4><% var date = new Date(cms.newspapers[cms.newspapers.length - 1].date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></h4>
+			</div>
+		</a>
+		<div class="side">
+			<% if (cms.newspapers[cms.newspapers.length - 2]) { %><a href="<%- vars.domain %>/newspapers/<%= cms.newspapers[cms.newspapers.length - 2].slug %>" class="newspaper" <% if (cms.newspapers[cms.newspapers.length - 2].image != null) { %> style="background-image: url('<%= vars.asset_prefix %><%= cms.newspapers[cms.newspapers.length - 2].image.path %>')" <% } %>>
+				<div>
+					<h2><%= cms.newspapers[cms.newspapers.length - 2].title %></h2>
+					<h4><% var date = new Date(cms.newspapers[cms.newspapers.length - 2].date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></h4>
+				</div>
+			</a><% } %>
+			<% if (cms.newspapers[cms.newspapers.length - 3]) { %><a href="<%- vars.domain %>/newspapers/<%= cms.newspapers[cms.newspapers.length - 3].slug %>" class="newspaper" <% if (cms.newspapers[cms.newspapers.length - 3].image != null) { %> style="background-image: url('<%= vars.asset_prefix %><%= cms.newspapers[cms.newspapers.length - 3].image.path %>')" <% } %>>
+				<div>
+					<h2><%= cms.newspapers[cms.newspapers.length - 3].title %></h2>
+					<h4><% var date = new Date(cms.newspapers[cms.newspapers.length - 3].date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></h4>
+				</div>
+			</a><% } %>
+		</div>
+	</div>
+	<div class="articles">
+		<h2>Latest Articles</h2>
+		<hr>
+		<div class="grid">
+			<% cms.articles.sort((a, b) => b._created - a._created); for (article of cms.articles) { %>
+			<div class="article">
+				<a href="<%- vars.domain %>/articles/<%= article.slug %>"><img src="<%- vars.asset_prefix %><%= article.images[0].path %>" alt="<%= article.images[0].title %>" /></a>
+				<div class="inner">
+					<a href="<%- vars.domain %>/articles/<%= article.slug %>">
+						<h3><%= article.title %></h3>
+					</a>
+					<h4><%= article.description %></h4>
+					<p><a href="<%- vars.domain %>/tags/<%= article.tags[0].toLowerCase() %>"><%= article.tags[0] %></a> / <% var date = new Date(article._created * 1000); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
+				</div>
+			</div>
+			<% } %>
+		</div>
+	</div>
+	<%- include('../partials/footer.ejs'); %>
+</body>
+<%- include('../partials/foot.ejs'); %>
+
+</html>

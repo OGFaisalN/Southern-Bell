@@ -13,4 +13,4 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
-        script: cd /home/dangoweb/domains/faisaln.cf/public_html/advanced-computer-programming/vschsd-student-forum && git pull && cloudlinux-selector restart --json --interpreter nodejs --app-root "/home/dangoweb/domains/faisaln.cf/public_html/advanced-computer-programming/vschsd-student-forum"
+        script: cd /home/dangoweb/domains/faisaln.com/public_html/southern-bell && git pull && cloudlinux-selector restart --json --interpreter nodejs --app-root "/home/dangoweb/domains/faisaln.com/public_html/southern-bell"

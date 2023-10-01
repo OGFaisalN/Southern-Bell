@@ -1,0 +1,34 @@
+<html>
+
+<head>
+	<%- include('../partials/head.ejs'); %>
+</head>
+
+<body>
+	<%- include('../partials/header.ejs'); %>
+	<main class="topics<% if (user.name) { %> loggedin <%- user.school.cssColorClass %><% } %>">
+		<% if (user.name) { %>
+		<div class="banner schoolBackground">
+			<img src="<%- vars.domain %>/images/<%=(typeof user.school.logoUrl != 'undefined' )? user.school.logoUrl:''%>" />
+			<h1>Topics</h1>
+			<h3>Want to organize your question based on subject? Here is a list of topics that may help you out!</h3>
+		</div>
+		<% } else { %>
+		<div class="banner" style="background-image: url('<%- vars.domain %>/images/south-banner.png');">
+			<img src="<%- vars.domain %>/images/logo.png" />
+			<h1>Topics</h1>
+			<h3>Want to organize your question based on subject? Here is a list of topics that may help you out!</h3>
+		</div>
+		<% } %>
+		<div class="content">
+			<h3>All Topics</h3>
+			<div class="topics">
+				<%- vars.tagListHTMLButtons %>
+			</div>
+		</div>
+		<%- include('../partials/footer.ejs'); %>
+	</main>
+</body>
+<%- include('../partials/foot.ejs'); %>
+
+</html>
