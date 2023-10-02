@@ -6,7 +6,7 @@
 		</div>
 		<div class="bottom">
 			<%- include('socials.ejs') %>
-			<p>&copy; <%= cms.siteDetails[0].title %> 2023-24 | Powered by <a href="https://dangoweb.com/?from=<%= cms.siteDetails[0].title.toLowerCase().replaceAll(' ', '-') %>">Web Hosting</a></p>
+			<p>&copy; <%= cms.siteDetails[0].title %> 2023-24 | <a href="https://dangoweb.com/?from=<%= cms.siteDetails[0].title.toLowerCase().replaceAll(' ', '-') %>">Host</a> | <a href="<%- vars.domain %>/admin">Admin</a></p>
 		</div>
 	</div>
 </footer>

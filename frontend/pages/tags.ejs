@@ -2,32 +2,44 @@
 
 <head>
 	<%- include('../partials/head.ejs'); %>
+	<% function ifYesterday(date) { 
+		var yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
+		return date.toDateString() === yesterday.toDateString();
+	}
+	var tags = {};
+	for (article of cms.articles) {
+		for (tag of article.tags) {
+			if (!tags[tag]) {
+				tags[tag] = [];
+			};
+			tags[tag].push(article);
+		};
+	}; %>
 </head>
 
 <body>
 	<%- include('../partials/header.ejs'); %>
-	<main class="topics<% if (user.name) { %> loggedin <%- user.school.cssColorClass %><% } %>">
-		<% if (user.name) { %>
-		<div class="banner schoolBackground">
-			<img src="<%- vars.domain %>/images/<%=(typeof user.school.logoUrl != 'undefined' )? user.school.logoUrl:''%>" />
-			<h1>Topics</h1>
-			<h3>Want to organize your question based on subject? Here is a list of topics that may help you out!</h3>
-		</div>
-		<% } else { %>
-		<div class="banner" style="background-image: url('<%- vars.domain %>/images/south-banner.png');">
-			<img src="<%- vars.domain %>/images/logo.png" />
-			<h1>Topics</h1>
-			<h3>Want to organize your question based on subject? Here is a list of topics that may help you out!</h3>
-		</div>
-		<% } %>
-		<div class="content">
-			<h3>All Topics</h3>
-			<div class="topics">
-				<%- vars.tagListHTMLButtons %>
+	<div class="banner" style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>');">
+		<i class="fa-solid fa-tags"></i>
+		<h1>All Tags</h1>
+		<h3><%= Object.keys(tags).length %> Tag<% if (Object.keys(tags).length > 1) { %>s<% } %></h3>
+	</div>
+	<div class="articles">
+		<div class="grid">
+			<% if (Object.keys(tags).length != 0) { for (tag in tags) { %>
+			<div class="article" style="padding-top: 0;">
+				<div class="inner">
+					<a href="<%- vars.domain %>/tags/<%= tag %>">
+						<h3><%= tag %></h3>
+					</a>
+					<p><%- tags[tag].length %> Articles</p>
+				</div>
 			</div>
+			<% } } else { %>No tags found<% } %>
 		</div>
-		<%- include('../partials/footer.ejs'); %>
-	</main>
+	</div>
+	<%- include('../partials/footer.ejs'); %>
 </body>
 <%- include('../partials/foot.ejs'); %>
 

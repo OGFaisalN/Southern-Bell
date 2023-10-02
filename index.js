@@ -48,7 +48,7 @@ async function startApp() {
     // Defaults & Environment Variables
 
     var defaults = {
-        domain: process.env.NODE_ENV === 'production' ? cms.siteDetails[0].domain_production : process.env.NODE_ENV === 'development' ? cms.siteDetails[0].domain_development : 'http://localhost',
+        domain: process.env.NODE_ENV === 'production' ? cms.siteDetails[0].domain_production : process.env.NODE_ENV === 'development' ? cms.siteDetails[0].domain_development : '..',
         asset_prefix: process.env.CMS_ASSET_PREFIX,
         school: {
             short: "south",
@@ -148,32 +148,33 @@ async function startApp() {
         res.render('index', { vars: defaults, session: req.session, title: '', cms });
     });
 
-    /*app.get('/newspapers', async (req, res) => {
+    app.get('/newspapers', async (req, res) => {
         await allRoutes(req);
-        res.redirect('/');
+        res.render('newspapers', { vars: defaults, session: req.session, title: 'All Newspapers', cms });
     });
 
-    app.get('/newspapers/:newspaper', async (req, res) => {
+    /*app.get('/newspapers/:newspaper', async (req, res) => {
         await allRoutes(req);
-    });
-    
+    });*/
+
     app.get('/articles', async (req, res) => {
         await allRoutes(req);
-        res.redirect('/');
+        res.render('articles', { vars: defaults, session: req.session, title: 'All Articles', cms });
     });
 
-    app.get('/articles/:article', async (req, res) => {
+    /*app.get('/articles/:article', async (req, res) => {
         await allRoutes(req);
-    });
+    });*/
 
     app.get('/tags', async (req, res) => {
         await allRoutes(req);
-        res.render('tag', { vars: defaults, session: req.session, title: 'Tags', cms });
+        res.render('tags', { vars: defaults, session: req.session, title: 'Tags', cms });
     });
 
     app.get('/tags/:tag', async (req, res) => {
         await allRoutes(req);
-    });*/
+        res.render('tag', { vars: defaults, session: req.session, title: 'Tags', cms, tag: req.params.tag.toLowerCase() });
+    });
 
     app.get('/search', async (req, res) => {
         await allRoutes(req);

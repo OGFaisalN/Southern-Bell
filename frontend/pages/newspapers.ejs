@@ -1,0 +1,37 @@
+<html>
+
+<head>
+	<%- include('../partials/head.ejs'); %>
+	<% function ifYesterday(date) { 
+		var yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
+		return date.toDateString() === yesterday.toDateString();
+	} %>
+</head>
+
+<body>
+	<%- include('../partials/header.ejs'); %>
+	<div class="banner" style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>');">
+		<i class="fa-solid fa-newspaper"></i>
+		<h1>All Newspapers</h1>
+		<h3><%- cms.newspapers.length %> Newspapers</h3>
+	</div>
+	<div class="articles">
+		<div class="grid">
+			<% for (newspaper of cms.newspapers.sort((a, b) => b.date - a.date)) { %>
+			<div class="article" style="background-image: url('<%- vars.asset_prefix %><%= newspaper.image.path %>')">
+				<div class="inner">
+					<a href="<%- vars.domain %>/newspapers/<%= newspaper.slug %>">
+						<h3><%= newspaper.title %></h3>
+					</a>
+					<p><% var date = new Date(newspaper.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
+				</div>
+			</div>
+			<% } %>
+		</div>
+	</div>
+	<%- include('../partials/footer.ejs'); %>
+</body>
+<%- include('../partials/foot.ejs'); %>
+
+</html>

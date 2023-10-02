@@ -6,7 +6,7 @@
 		var yesterday = new Date();
 		yesterday.setDate(yesterday.getDate() - 1);
 		return date.toDateString() === yesterday.toDateString();
-	} %>
+	}; %>
 </head>
 
 <body>
@@ -38,8 +38,7 @@
 		<hr>
 		<div class="grid">
 			<% for (article of cms.articles.sort((a, b) => b._created - a._created)) { %>
-			<div class="article">
-				<a href="<%- vars.domain %>/articles/<%= article.slug %>"><img src="<%- vars.asset_prefix %><%= article.images[0].path %>" alt="<%= article.images[0].title %>" /></a>
+			<div class="article" style="background-image: url('<%- vars.asset_prefix %><%= article.images[0].path %>')">
 				<div class="inner">
 					<a href="<%- vars.domain %>/articles/<%= article.slug %>">
 						<h3><%= article.title %></h3>
