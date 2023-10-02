@@ -11,6 +11,6 @@ jobs:
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
+        key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.PORT }}
-        script: cd /home/dangoweb/domains/faisaln.com/public_html/southern-bell && git pull && cloudlinux-selector restart --json --interpreter nodejs --app-root "/home/dangoweb/domains/faisaln.com/public_html/southern-bell"
+        script: cd /home/dangoweb/domains/faisaln.com/southernbell && git pull && cloudlinux-selector restart --json --interpreter nodejs --app-root "/home/dangoweb/domains/faisaln.com/southernbell"
