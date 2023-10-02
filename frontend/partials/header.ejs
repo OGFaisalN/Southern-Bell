@@ -10,7 +10,7 @@
 			<%- include('links.ejs') %>
 		</div>
 		<div class="search">
-			<img src="<%- vars.domain %>/images/search.svg" alt="Search" onClick="document.querySelector('.search').classList.toggle('active')">
+			<img src="<%- vars.domain %>/images/search.svg" alt="Search" onClick="document.querySelector('.search').classList.toggle('active'); document.querySelector('.search form input').focus();">
 			<form action="/search">
 				<input type="text" placeholder="Search" name="query">
 			</form>

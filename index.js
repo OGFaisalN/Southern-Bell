@@ -148,259 +148,39 @@ async function startApp() {
         res.render('index', { vars: defaults, session: req.session, title: '', cms });
     });
 
-    app.get('/forum', async (req, res) => {
+    /*app.get('/newspapers', async (req, res) => {
         await allRoutes(req);
-        await fetch(`${process.env.DATABASE_URL}?do=allarticles`, {
-            method: 'GET',
-            headers: {
-                Accept: '*/*',
-                'User-Agent': `${cms.siteDetails[0].title} (${defaults.domain})`
-            }
-        })
-            .then(db => db.json())
-            .then(db => {
-                var articlesList = "";
-                var wanted = db.data.length;
-                var done = 0;
-                var sortedPosts = [];
-                var pinnedPosts = [];
-                db.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async article => {
-                    var tagList = "";
-                    article.tags.split(`,`).forEach(tag => {
-                        defaults.tags.forEach(tags => {
-                            if (tags.slug === tag) {
-                                tagList += tags.name + ", ";
-                            };
-                        });
-                    });
-                    await fetch(`${process.env.DATABASE_URL}?do=find&username=${article.author}`, {
-                        method: 'GET',
-                        headers: {
-                            Accept: '*/*',
-                            'User-Agent': `${cms.siteDetails[0].title} (${defaults.domain})`
-                        }
-                    })
-                        .then(db => db.json())
-                        .then(db => {
-                            if ((db.info.status === 1) && (!article.flagged)) {
-                                var authorName = db.data.firstname + " " + db.data.lastname;
-                                var authorBadge = JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1];
-                                defaults.badges.forEach(badge => {
-                                    if (badge.slug === authorBadge) {
-                                        authorBadge = badge;
-                                    };
-                                });
-                                if (article.pinned) {
-                                    pinnedPosts.push({
-                                        id: article.id,
-                                        article: `<a href="${defaults.domain}/forum/articles/${article.slug}" class="article"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(article["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(article["created_at"]).toLocaleTimeString('en-US')}) <i class="fa-solid fa-thumbtack"></i>${(article.images != "{}") ? ' <i class="fa-solid fa-image"></i>' : ''}</h4><h2>${article.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
-                                    });
-                                } else {
-                                    sortedPosts.push({
-                                        id: article.id,
-                                        article: `<a href="${defaults.domain}/forum/articles/${article.slug}" class="article"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(article["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(article["created_at"]).toLocaleTimeString('en-US')})${(article.images != "{}") ? ' <i class="fa-solid fa-image"></i>' : ''}</h4><h2>${article.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
-                                    });
-                                };
-                            };
-                            done++;
-                            if (done === wanted) {
-                                pinnedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
-                                pinnedPosts.forEach(async article => {
-                                    articlesList += article.article;
-                                });
-                                sortedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
-                                sortedPosts.forEach(async article => {
-                                    articlesList += article.article;
-                                });
-                                if (articlesList === "") {
-                                    articlesList = "No articles yet.";
-                                };
-                                res.render('forum', { vars: defaults, session: req.session, title: 'Forum', articles: articlesList });
-                            };
-                        });
-                });
-            });
+        res.redirect('/');
     });
 
-    app.get('/forum/articles', async (req, res) => {
+    app.get('/newspapers/:newspaper', async (req, res) => {
         await allRoutes(req);
-        res.redirect('/forum');
+    });
+    
+    app.get('/articles', async (req, res) => {
+        await allRoutes(req);
+        res.redirect('/');
     });
 
-    app.get('/forum/articles/:article', async (req, res) => {
+    app.get('/articles/:article', async (req, res) => {
         await allRoutes(req);
     });
 
-    app.get('/forum/topics', async (req, res) => {
+    app.get('/tags', async (req, res) => {
         await allRoutes(req);
-        res.render('topics', { vars: defaults, session: req.session, title: 'Topics', tags: defaults.tagListHTMLButtons });
+        res.render('tag', { vars: defaults, session: req.session, title: 'Tags', cms });
     });
 
-    app.get('/forum/topics/:topic', async (req, res) => {
+    app.get('/tags/:tag', async (req, res) => {
         await allRoutes(req);
-    });
+    });*/
 
     app.get('/search', async (req, res) => {
         await allRoutes(req);
         if (req.query.query) {
-            await fetch(`${process.env.DATABASE_URL}?do=allarticles`, {
-                method: 'GET',
-                headers: {
-                    Accept: '*/*',
-                    'User-Agent': `${cms.siteDetails[0].title} (${defaults.domain})`
-                }
-            })
-                .then(articles => articles.json())
-                .then(async articles => {
-                    var articlesList = "";
-                    var sortedPosts = [];
-                    var pinnedPosts = [];
-                    var wanted = 0;
-                    var done = 0;
-                    var done2 = 0;
-                    await articles.data.forEach(async article => {
-                        if ((article.name.toLowerCase().includes(req.query.query.toLowerCase()) || article.description.toLowerCase().includes(req.query.query.toLowerCase()) || article.author.toLowerCase().includes(req.query.query.toLowerCase())) && (!article.flagged)) {
-                            wanted++;
-                        };
-                        done++;
-                        if (done === articles.data.length) {
-                            if (wanted != 0) {
-                                await articles.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async article => {
-                                    if ((article.name.toLowerCase().includes(req.query.query.toLowerCase()) || article.description.toLowerCase().includes(req.query.query.toLowerCase()) || article.author.toLowerCase().includes(req.query.query.toLowerCase())) && (!article.flagged)) {
-                                        var tagList = "";
-                                        article.tags.split(`,`).forEach(tag => {
-                                            defaults.tags.forEach(tags => {
-                                                if (tags.slug === tag) {
-                                                    tagList += tags.name + ", ";
-                                                };
-                                            });
-                                        });
-                                        await fetch(`${process.env.DATABASE_URL}?do=find&username=${article.author}`, {
-                                            method: 'GET',
-                                            headers: {
-                                                Accept: '*/*',
-                                                'User-Agent': `${cms.siteDetails[0].title} (${defaults.domain})`
-                                            }
-                                        })
-                                            .then(db => db.json())
-                                            .then(async db => {
-                                                if (db.info.status === 1) {
-                                                    var authorName = db.data.firstname + " " + db.data.lastname;
-                                                    defaults.badges.forEach(badge => {
-                                                        if (badge.slug === JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1]) {
-                                                            authorBadge = badge;
-                                                        };
-                                                    });
-                                                    if (article.pinned) {
-                                                        pinnedPosts.push({
-                                                            id: article.id,
-                                                            article: `<a href="${defaults.domain}/forum/articles/${article.slug}" class="article"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(article["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(article["created_at"]).toLocaleTimeString('en-US')}) <i class="fa-solid fa-thumbtack"></i>${(article.images != "{}") ? ' <i class="fa-solid fa-image"></i>' : ''}</h4><h2>${article.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
-                                                        });
-                                                    } else {
-                                                        sortedPosts.push({
-                                                            id: article.id,
-                                                            article: `<a href="${defaults.domain}/forum/articles/${article.slug}" class="article"><h4>${authorName} <i class="fa-solid fa-${authorBadge.icon}" alt="${authorBadge.name}"></i> (${new Date(article["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(article["created_at"]).toLocaleTimeString('en-US')})${(article.images != "{}") ? ' <i class="fa-solid fa-image"></i>' : ''}</h4><h2>${article.name}</h2><div class="tags"><i class="fa-solid fa-tags"></i> ${tagList.slice(0, -2)}</div></a>`,
-                                                        });
-                                                    };
-                                                    done2++;
-                                                    if (done2 === wanted) {
-                                                        pinnedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
-                                                        pinnedPosts.forEach(async article => {
-                                                            articlesList += article.article;
-                                                        });
-                                                        sortedPosts.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
-                                                        sortedPosts.forEach(async article => {
-                                                            articlesList += article.article;
-                                                        });
-                                                        await getComments(sortedPosts, articlesList);
-                                                    };
-                                                };
-                                            });
-                                    };
-                                });
-                            } else {
-                                await getComments([], "No articles");
-                            };
-                        };
-                    });
-                });
-            async function getComments(sortedPosts, articlesList) {
-                await fetch(`${process.env.DATABASE_URL}?do=allcomments`, {
-                    method: 'GET',
-                    headers: {
-                        Accept: '*/*',
-                        'User-Agent': `${cms.siteDetails[0].title} (${defaults.domain})`
-                    }
-                })
-                    .then(comments => comments.json())
-                    .then(async comments => {
-                        var commentsList = "";
-                        var sortedComments = [];
-                        var wanted = 0;
-                        var done = 0;
-                        await comments.data.forEach(async comment => {
-                            if (comment.content.toLowerCase().includes(req.query.query.toLowerCase()) || comment.author.toLowerCase().includes(req.query.query.toLowerCase())) {
-                                wanted++;
-                            };
-                            done++;
-                            if (done === comments.data.length) {
-                                if (wanted != 0) {
-                                    var done2 = 0;
-                                    await comments.data.sort((a, b) => parseFloat(b.id) - parseFloat(a.id)).forEach(async comment => {
-                                        if (comment.content.toLowerCase().includes(req.query.query.toLowerCase()) || comment.author.toLowerCase().includes(req.query.query.toLowerCase())) {
-                                            await fetch(`${process.env.DATABASE_URL}?do=find&username=${comment.author}`, {
-                                                method: 'GET',
-                                                headers: {
-                                                    Accept: '*/*',
-                                                    'User-Agent': `${cms.siteDetails[0].title} (${defaults.domain})`
-                                                }
-                                            })
-                                                .then(db => db.json())
-                                                .then(async db => {
-                                                    if (db.info.status === 1) {
-                                                        var commentAuthorName = db.data.firstname + " " + db.data.lastname;
-                                                        defaults.badges.forEach(badge => {
-                                                            if (badge.slug === JSON.parse(db.data.badges)[JSON.parse(db.data.badges).length - 1]) {
-                                                                commentAuthorBadge = badge;
-                                                            };
-                                                        });
-                                                        if (comment.images != "{}") {
-                                                            sortedComments.push({
-                                                                id: comment.id,
-                                                                comment: `<div class="comment"><a href="${defaults.domain}/forum/comments/${comment.id}"><h4>${commentAuthorName} <i class="fa-solid fa-${commentAuthorBadge.icon}" alt="${commentAuthorBadge.name}"></i></h4><h5>${new Date(comment["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(comment["created_at"]).toLocaleTimeString('en-US')}</h5><h4>${comment.content}</h4><img src="${JSON.parse(comment.images).image}" alt="${JSON.parse(comment.images).name}"></a></div>`,
-                                                            });
-                                                        } else {
-                                                            sortedComments.push({
-                                                                id: comment.id,
-                                                                comment: `<div class="comment"><a href="${defaults.domain}/forum/comments/${comment.id}"><h4>${commentAuthorName} <i class="fa-solid fa-${commentAuthorBadge.icon}" alt="${commentAuthorBadge.name}"></i></h4><h5>${new Date(comment["created_at"]).toLocaleDateString('en-us', { weekday: "long", month: "short", day: "numeric" })} at ${new Date(comment["created_at"]).toLocaleTimeString('en-US')}</h5><h4>${comment.content}</h4></a></div>`,
-                                                            });
-                                                        };
-                                                        done2++;
-                                                        if (done2 === wanted) {
-                                                            sortedComments.sort((a, b) => parseFloat(b.id) - parseFloat(a.id));
-                                                            sortedComments.forEach(async comment => {
-                                                                commentsList += comment.comment;
-                                                            });
-                                                            await sendResults(sortedPosts, articlesList, commentsList);
-                                                        };
-                                                    };
-                                                });
-                                        };
-                                    });
-                                } else {
-                                    await sendResults(sortedPosts, articlesList, "No comments");
-                                };
-                            };
-                        });
-                    });
-            };
-            async function sendResults(sortedPosts, articlesList, commentsList) {
-                try {
-                    res.render('search', { vars: defaults, session: req.session, title: 'Search Results', articles: articlesList, query: req.query.query, results: sortedPosts.length, comments: commentsList });
-                } catch { };
-            };
+            res.render('search', { vars: defaults, session: req.session, title: 'Search Results', cms, query: req.query.query.toLowerCase() });
         } else {
-            res.redirect('/forum');
+            res.redirect('/');
         };
     });
 

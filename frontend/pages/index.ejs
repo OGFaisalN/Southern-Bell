@@ -2,6 +2,11 @@
 
 <head>
 	<%- include('../partials/head.ejs'); %>
+	<% function ifYesterday(date) { 
+		var yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
+		return date.toDateString() === yesterday.toDateString();
+	} %>
 </head>
 
 <body>
@@ -10,11 +15,6 @@
 		<a href="<%- vars.domain %>/newspapers/<%= cms.newspapers[cms.newspapers.length - 1].slug %>" class="newspaper" <% if (cms.newspapers[cms.newspapers.length - 1].image != null) { %> style="background-image: url('<%= vars.asset_prefix %><%= cms.newspapers[cms.newspapers.length - 1].image.path %>')" <% } %>>
 			<div>
 				<h2><%= cms.newspapers[cms.newspapers.length - 1].title %></h2>
-				<% function ifYesterday(date) { 
-					var yesterday = new Date();
-					yesterday.setDate(yesterday.getDate() - 1);
-					return date.toDateString() === yesterday.toDateString();
-				} %>
 				<h4><% var date = new Date(cms.newspapers[cms.newspapers.length - 1].date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></h4>
 			</div>
 		</a>
@@ -37,7 +37,7 @@
 		<h2>Latest Articles</h2>
 		<hr>
 		<div class="grid">
-			<% cms.articles.sort((a, b) => b._created - a._created); for (article of cms.articles) { %>
+			<% for (article of cms.articles.sort((a, b) => b._created - a._created)) { %>
 			<div class="article">
 				<a href="<%- vars.domain %>/articles/<%= article.slug %>"><img src="<%- vars.asset_prefix %><%= article.images[0].path %>" alt="<%= article.images[0].title %>" /></a>
 				<div class="inner">

@@ -410,6 +410,14 @@ header .main .search form input::placeholder {
 	color: #313131;
 }
 
+.banner {
+    width: 90vw;
+    padding: 5vw;
+    background-size: cover;
+    color: var(--background);
+    margin-bottom: 5vh;
+}
+
 footer {
     text-align: center;
     width: 100%;

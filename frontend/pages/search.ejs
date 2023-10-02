@@ -2,39 +2,65 @@
 
 <head>
 	<%- include('../partials/head.ejs'); %>
+	<% const filteredArticles = cms.articles.filter(article => {
+		const title = article.title.toLowerCase();
+		const description = article.description.toLowerCase();
+		const content = article.content.toLowerCase();
+		return title.includes(query) || description.includes(query) || content.includes(query);
+	});
+	const filteredNewspapers = cms.newspapers.filter(newspaper => {
+		return newspaper.title.toLowerCase().includes(query);
+	});
+	function ifYesterday(date) { 
+		var yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
+		return date.toDateString() === yesterday.toDateString();
+	} %>
 </head>
 
 <body>
 	<%- include('../partials/header.ejs'); %>
-	<main class="search<% if (user.name) { %> loggedin <%- user.school.cssColorClass %><% } %>">
-		<% if (user.name) { %>
-		<div class="banner schoolBackground">
-			<i class="fa-solid fa-magnifying-glass"></i>
-			<h1>Search results for "<%- query %>"</h1>
-			<h3><%- results %> Results</h3>
-		</div>
-		<% } else { %>
-		<div class="banner" style="background-image: url('<%- vars.domain %>/images/south-banner.png');">
-			<i class="fa-solid fa-magnifying-glass"></i>
-			<h1>Search results for "<%- query %>"</h1>
-			<h3><%- results %> Results</h3>
-		</div>
-		<% } %>
-		<div class="content">
-			<h3>All Posts</h3>
-			<a href="/forum/posts/new"><button><i class="fa-solid fa-pen-to-square"></i> New Post</button></a>
-			<div class="posts">
-				<%- posts %>
+	<div class="banner" style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>');">
+		<i class="fa-solid fa-magnifying-glass"></i>
+		<h1>Search results for '<%- query %>'</h1>
+		<h3><%- filteredArticles.length + filteredNewspapers.length %> Results</h3>
+	</div>
+	<div class="articles">
+		<h2>Newspapers on '<%- query %>'</h2>
+		<hr>
+		<div class="grid">
+			<% if (filteredNewspapers.length != 0) { filteredNewspapers.sort((a, b) => b._created - a._created).forEach(newspaper => { %>
+			<div class="article">
+				<a href="<%- vars.domain %>/newspaper/<%= newspaper.slug %>"><img src="<%- vars.asset_prefix %><%= newspaper.image.path %>" alt="<%= newspaper.image.title %>" /></a>
+				<div class="inner">
+					<a href="<%- vars.domain %>/newspaper/<%= newspaper.slug %>">
+						<h3><%= newspaper.title %></h3>
+					</a>
+					<p><% var date = new Date(newspaper.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
+				</div>
 			</div>
-			<br />
-			<h3>All Comments</h3>
-			<br />
-			<div class="comments">
-				<%- comments %>
-			</div>
+			<% }); } else { %>No newspapers found<% } %>
 		</div>
-		<%- include('../partials/footer.ejs'); %>
-	</main>
+	</div>
+	<div class="articles">
+		<h2>Articles on '<%- query %>'</h2>
+		<hr>
+		<div class="grid">
+			<% if (filteredArticles.length != 0) { filteredArticles.sort((a, b) => b._created - a._created).forEach(article => { %>
+			<div class="article">
+				<a href="<%- vars.domain %>/article/<%= article.slug %>"><img src="<%- vars.asset_prefix %><%= article.images[0].path %>" alt="<%= article.images[0].title %>" /></a>
+				<div class="inner">
+					<a href="<%- vars.domain %>/article/<%= article.slug %>">
+						<h3><%= article.title %></h3>
+					</a>
+					<h4><%= article.description %></h4>
+					<p><a href="<%- vars.domain %>/tags/<%= article.tags[0].toLowerCase() %>"><%= article.tags[0] %></a> / <% var date = new Date(article._created * 1000); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
+				</div>
+			</div>
+			<% }); } else { %>No articles found<% } %>
+		</div>
+	</div>
+	<%- include('../partials/footer.ejs'); %>
 </body>
 <%- include('../partials/foot.ejs'); %>
 
