@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const app = express();
 const fetch = require('node-fetch');
+const Feed = require('feed').Feed;
 require('dotenv').config();
 const port = 3000;
 
@@ -49,7 +50,7 @@ async function startApp() {
     // Defaults & Environment Variables
 
     var defaults = {
-        domain: process.env.NODE_ENV === 'production' ? cms.siteDetails[0].domain_production : process.env.NODE_ENV === 'development' ? cms.siteDetails[0].domain_development : '..',
+        domain: process.env.NODE_ENV === 'production' ? cms.siteDetails[0]['domain-production'] : process.env.NODE_ENV === 'development' ? cms.siteDetails[0]['domain-development'] : '..',
         asset_prefix: process.env.CMS_ASSET_PREFIX,
         asset_url: process.env.CMS_ASSET_URL,
         school: {
@@ -206,6 +207,81 @@ async function startApp() {
 
     app.get('/admin', async (req, res) => {
         res.redirect('https://cms.dangoweb.com/:southern-bell');
+    });
+
+    app.get('/rss', async (req, res) => {
+        const feed = new Feed({
+            title: cms.siteDetails[0].title,
+            description: `RSS Feed for ${cms.siteDetails[0].title}`,
+            id: cms.siteDetails[0]['domain-production'],
+            link: cms.siteDetails[0]['domain-production'],
+            language: "en",
+            image: `${defaults.asset_prefix}${cms.siteDetails[0].logo.path}`,
+            favicon: `${defaults.asset_prefix}${cms.siteDetails[0].favicon.path}`,
+            copyright: `All rights reserved ${new Date().getFullYear()}, ${cms.siteDetails[0].title}`,
+            generator: "Dango Web Solutions",
+            feedLinks: {
+                json: `${cms.siteDetails[0]['domain-production']}/json`,
+                atom: `${cms.siteDetails[0]['domain-production']}/atom`
+            },
+            author: {
+                name: cms.siteDetails[0].title,
+                email: `admin@${cms.siteDetails[0]['domain-production'].split('://')[1]}`,
+                link: cms.siteDetails[0]['domain-production']
+            }
+        });
+        cms.newspapers.forEach(post => {
+            feed.addItem({
+                title: post.title,
+                id: `${cms.siteDetails[0]['domain-production']}${post.slug}`,
+                link: `${cms.siteDetails[0]['domain-production']}${post.slug}`,
+                description: `${post.articles.length} Article(s)`,
+                content: post.content,
+                author: [
+                    {
+                        name: cms.siteDetails[0].title,
+                        email: `admin@${cms.siteDetails[0]['domain-production'].split('://')[1]}`,
+                        link: cms.siteDetails[0]['domain-production']
+                    }
+                ],
+                contributor: [
+                    {
+                        name: "Faisal N",
+                        email: "contact@faisaln.com",
+                        link: "https://faisaln.com/"
+                    }
+                ],
+                date: new Date(post.date),
+                image: `${defaults.asset_prefix}${post.image.path}`
+            });
+        });
+        cms.articles.forEach(post => {
+            feed.addItem({
+                title: post.title,
+                id: `${cms.siteDetails[0]['domain-production']}${post.slug}`,
+                link: `${cms.siteDetails[0]['domain-production']}${post.slug}`,
+                description: post.description,
+                content: post.content,
+                author: [
+                    {
+                        name: cms.siteDetails[0].title,
+                        email: `admin@${cms.siteDetails[0]['domain-production'].split('://')[1]}`,
+                        link: cms.siteDetails[0]['domain-production']
+                    }
+                ],
+                contributor: [
+                    {
+                        name: "Faisal N",
+                        email: "contact@faisaln.com",
+                        link: "https://faisaln.com/"
+                    }
+                ],
+                date: new Date(post.date),
+                image: `${defaults.asset_prefix}${post.images[0].path}`
+            });
+        });
+        res.set('Content-Type', 'text/xml');
+        res.send(feed.rss2());
     });
 
     app.get('*', async (req, res) => {

@@ -585,6 +585,7 @@ footer .inner .top .links {
     align-items: center;
     justify-content: center;
     flex-direction: row;
+	gap: 20px;
 }
 
 footer .inner .top .links a {
