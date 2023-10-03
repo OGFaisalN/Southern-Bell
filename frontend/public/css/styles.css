@@ -417,6 +417,108 @@ header .main .search form input::placeholder {
 	font-size: 48px;
 }
 
+.article-i {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+	gap: 40px;
+    padding: 60px 40px;
+	width: 75%;
+    max-width: 1200px;
+}
+
+.article-i .split {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.article-i .split .left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.article-i .split .left .info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.article-i .split .left .info h1 {
+	font-weight: bold;
+	margin: 0;
+}
+
+.article-i .split .left .info h3 {
+	width: 50%;
+	margin: 0;
+}
+
+.article-i .split .left .author {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.article-i .split .left .author img {
+    border-radius: 100%;
+}
+
+.article-i .split .left .author .info {
+	gap: 5px;
+}
+
+.article-i .split .left .author .info * {
+    margin: 0;
+}
+
+.article-i .split .right .icons i {
+    cursor: pointer;
+}
+
+.article-i .images {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+.article-i .image {
+    height: 30vh;
+    background-size: cover;
+    background-position: center;
+}
+
+.article-i .image:first-of-type {
+    height: 60vh;
+    grid-column-start: 1;
+    grid-column-end: 3;
+    display: flex;
+}
+
+.article-i .content:before {
+	font-weight: bold;
+}
+
+.article-i .content * {
+	margin: 10px 0;
+}
+
+.article-i .content b {
+    font-weight: bold;
+}
+
+.article-i .content b * {
+    font-weight: bold;
+}
+
+.article-i .content a {
+    text-decoration: underline;
+}
+
 footer {
     text-align: center;
     width: 100%;

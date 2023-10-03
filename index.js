@@ -50,6 +50,7 @@ async function startApp() {
     var defaults = {
         domain: process.env.NODE_ENV === 'production' ? cms.siteDetails[0].domain_production : process.env.NODE_ENV === 'development' ? cms.siteDetails[0].domain_development : '..',
         asset_prefix: process.env.CMS_ASSET_PREFIX,
+        asset_url: process.env.CMS_ASSET_URL,
         school: {
             short: "south",
             name: "South High School",
@@ -162,9 +163,15 @@ async function startApp() {
         res.render('articles', { vars: defaults, session: req.session, title: 'All Articles', cms });
     });
 
-    /*app.get('/articles/:article', async (req, res) => {
+    app.get('/articles/:article', async (req, res) => {
         await allRoutes(req);
-    });*/
+        var article = cms.articles.find(article => article.slug === req.params.article);
+        if (article) {
+            res.render('article', { vars: defaults, session: req.session, title: article.title, cms, article });
+        } else {
+            res.render('404', { vars: defaults, session: req.session, title: '404', cms });
+        };
+    });
 
     app.get('/tags', async (req, res) => {
         await allRoutes(req);
@@ -173,7 +180,7 @@ async function startApp() {
 
     app.get('/tags/:tag', async (req, res) => {
         await allRoutes(req);
-        res.render('tag', { vars: defaults, session: req.session, title: 'Tags', cms, tag: req.params.tag.toLowerCase() });
+        res.render('tag', { vars: defaults, session: req.session, title: `#${req.params.tag.toLowerCase()}`, cms, tag: req.params.tag.toLowerCase() });
     });
 
     app.get('/search', async (req, res) => {

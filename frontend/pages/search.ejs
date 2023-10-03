@@ -56,7 +56,7 @@
 			<% if (filteredArticles.length != 0) { filteredArticles.sort((a, b) => b._created - a._created).forEach(article => { %>
 			<div class="article" style="background-image: url('<%- vars.asset_prefix %><%= article.images[0].path %>')">
 				<div class="inner">
-					<a href="<%- vars.domain %>/article/<%= article.slug %>">
+					<a href="<%- vars.domain %>/articles/<%= article.slug %>">
 						<h3><%= article.title %></h3>
 					</a>
 					<h4><%= article.description %></h4>

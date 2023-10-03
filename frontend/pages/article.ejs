@@ -1,0 +1,50 @@
+<html>
+
+<head>
+	<%- include('../partials/head.ejs'); %>
+	<% function ifYesterday(date) { 
+		var yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
+		return date.toDateString() === yesterday.toDateString();
+	}; %>
+</head>
+
+<body>
+	<%- include('../partials/header.ejs'); %>
+	<div class="article-i">
+		<div class="split">
+			<div class="left">
+				<div class="info">
+					<h1><%= article.title %></h1>
+					<h3><%= article.description %></h3>
+				</div>
+				<div class="author">
+					<img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>" />
+					<div class="info">
+						<h4>By <a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a> Staff, <a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a></h4>
+						<h5>Published <% var date = new Date(article._created * 1000); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></h5>
+						<% if (article._created != article._modified) { %><h5>Edited <% var date = new Date(article._modified * 1000); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></h5><% } } %>
+					</div>
+				</div>
+			</div>
+			<div class="right">
+				<div class="icons">
+					<i class="fas fa-link" onClick="navigator.clipboard.writeText(window.location.href).then(() => alert('Link copied!')).catch(err => alert('Copying failed.'));"></i>
+				</div>
+			</div>
+		</div>
+		<% if (article.images[0] != null) { %>
+		<div class="images">
+			<% for (image of article.images) { %>
+			<div class="image" style="background-image: url('<%- vars.asset_prefix %><%= image.path %>')"></div>
+			<% } %>
+		</div>
+		<% } %>
+		<style>.article-i .content:before { content: '(<%= cms.siteDetails[0].title %> Staff) — ' }</style>
+		<div class="content"><%- article.content.replaceAll('/.spaces/', vars.asset_url) %></div>
+	</div>
+	<%- include('../partials/footer.ejs'); %>
+</body>
+<%- include('../partials/foot.ejs'); %>
+
+</html>
