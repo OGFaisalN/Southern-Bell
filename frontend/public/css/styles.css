@@ -259,7 +259,7 @@ header .main .search form input::placeholder {
 	grid-auto-flow: row;
 	grid-template-areas: ". side";
 	width: 75%;
-	height: 590px;
+	height: 30vw;
 	gap: 20px;
 	padding: 20px 0;
 }
