@@ -5,7 +5,7 @@ const path = require('path');
 const app = express();
 const fetch = require('node-fetch');
 require('dotenv').config();
-const port = 80;
+const port = 3000;
 
 app.engine('.ejs', require('ejs').renderFile);
 app.set('view engine', 'ejs');
@@ -37,6 +37,7 @@ function cmsdata() {
                 articles: content(model: "articles")
                 layouts: content(model: "layouts")
                 newspapers: content(model: "newspapers")
+                about: content(model: "about")
             }`
         }),
     })
@@ -147,6 +148,11 @@ async function startApp() {
     app.get('/', async (req, res) => {
         await allRoutes(req);
         res.render('index', { vars: defaults, session: req.session, title: '', cms });
+    });
+
+    app.get('/about', async (req, res) => {
+        await allRoutes(req);
+        res.render('about', { vars: defaults, session: req.session, title: cms.about[0].title, cms });
     });
 
     app.get('/newspapers', async (req, res) => {

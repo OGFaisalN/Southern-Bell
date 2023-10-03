@@ -1,0 +1,22 @@
+<html>
+
+<head>
+	<%- include('../partials/head.ejs'); %>
+</head>
+
+<body>
+	<%- include('../partials/header.ejs'); %>
+	<div class="about">
+		<div class="split">
+			<% if (cms.about[0].image != null) { %><img src="<%- vars.asset_prefix %><%= cms.about[0].image.path %>" /><% } %>
+			<div class="content">
+				<%- cms.about[0].content %>
+			</div>
+		</div>
+		<% if (cms.about[0].image-2 != null) { %><img src="<%- vars.asset_prefix %><%= cms.about[0]['image-2'].path %>" /><% } %>
+	</div>
+	<%- include('../partials/footer.ejs'); %>
+</body>
+<%- include('../partials/foot.ejs'); %>
+
+</html>
