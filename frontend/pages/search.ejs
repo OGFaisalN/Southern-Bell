@@ -53,14 +53,14 @@
 		<h2>Articles on '<%- query %>'</h2>
 		<hr>
 		<div class="grid">
-			<% if (filteredArticles.length != 0) { filteredArticles.sort((a, b) => b._created - a._created).forEach(article => { %>
+			<% if (filteredArticles.length != 0) { filteredArticles.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(article => { %>
 			<div class="article" style="background-image: url('<%- vars.asset_prefix %><%= article.images[0].path %>')">
 				<div class="inner">
 					<a href="<%- vars.domain %>/articles/<%= article.slug %>">
 						<h3><%= article.title %></h3>
 					</a>
 					<h4><%= article.description %></h4>
-					<p><a href="<%- vars.domain %>/tags/<%= article.tags[0].toLowerCase() %>"><%= article.tags[0] %></a> / <% var date = new Date(article._created * 1000); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
+					<p><a href="<%- vars.domain %>/tags/<%= article.tags[0].toLowerCase() %>"><%= article.tags[0] %></a> / <% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
 				</div>
 			</div>
 			<% }); } else { %>No articles found<% } %>
@@ -76,7 +76,7 @@
 					<a href="<%- vars.domain %>/tags/<%= tag %>">
 						<h3><%= tag %></h3>
 					</a>
-					<p><%- tags[tag].length %> Articles</p>
+					<p><%- tags[tag].length %> Article<% if (tags[tag].length > 1) { %>s<% } %></p>
 				</div>
 			</div>
 			<% });

@@ -33,7 +33,7 @@
 					<a href="<%- vars.domain %>/tags/<%= tag %>">
 						<h3><%= tag %></h3>
 					</a>
-					<p><%- tags[tag].length %> Articles</p>
+					<p><%- tags[tag].length %> Article<% if (tags[tag].length > 1) { %>s<% } %></p>
 				</div>
 			</div>
 			<% } } else { %>No tags found<% } %>

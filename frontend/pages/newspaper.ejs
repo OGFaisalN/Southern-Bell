@@ -1,0 +1,63 @@
+<html>
+
+<head>
+	<%- include('../partials/head.ejs'); %>
+	<% function ifYesterday(date) { 
+		var yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
+		return date.toDateString() === yesterday.toDateString();
+	}; %>
+</head>
+
+<body>
+	<%- include('../partials/header.ejs'); %>
+	<div class="article-i">
+		<div class="split">
+			<div class="left">
+				<div class="info">
+					<h1><%= newspaper.title %></h1>
+					<h3><%= newspaper.description %></h3>
+				</div>
+				<div class="author">
+					<img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>" />
+					<div class="info">
+						<h4>By <a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a> Writers, <a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a></h4>
+						<h5>Published <% var date = new Date(newspaper.date); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></h5>
+						<% if ((newspaper._created != newspaper._modified) && (date < (new Date(newspaper._modified * 1000)))) { %><h5>Edited <% var date = new Date(newspaper._modified * 1000); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></h5><% } } %>
+					</div>
+				</div>
+			</div>
+			<div class="right">
+				<div class="icons">
+					<i class="fas fa-link" onClick="navigator.clipboard.writeText(window.location.href).then(() => alert('Link copied!')).catch(err => alert('Copying failed.'));"></i>
+				</div>
+			</div>
+		</div>
+		<% if (newspaper.pdf != null) { %>
+		<object data="<%- vars.asset_prefix %><%= newspaper.pdf.path %>" type="application/pdf" width="100%" height="100vh">
+			<p>Unable to display PDF file, you may have Javascript disabled. No worries, you can <a href="<%- vars.asset_prefix %><%= newspaper.pdf.path %>">download the PDF version</a> instead!</p>
+			<% if (newspaper.articles.length != 0) { %>
+			<div class="content">
+				<% for (article of newspaper.articles) { article = cms.articles.find(a => a._id === article._id); %>
+				<h2><%= article.title %></h2>
+				<%- article.content.replaceAll('/.spaces/', vars.asset_url) %>
+				<br />
+				<% }%>
+			</div>
+		<% }%>
+		</object>
+		<% } else if (newspaper.articles.length != 0) { %>
+		<div class="content">
+			<% for (article of newspaper.articles) { article = cms.articles.find(a => a._id === article._id); %>
+			<h2><%= article.title %></h2>
+			<%- article.content.replaceAll('/.spaces/', vars.asset_url) %>
+			<br />
+			<% }%>
+		</div>
+		<% }%>
+	</div>
+	<%- include('../partials/footer.ejs'); %>
+</body>
+<%- include('../partials/foot.ejs'); %>
+
+</html>

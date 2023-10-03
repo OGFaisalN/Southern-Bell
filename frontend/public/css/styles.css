@@ -213,6 +213,7 @@ header .main .search {
     align-items: center;
     gap: 15px;
     height: 32px;
+	z-index: 100;
 }
 
 header .main .search img {
@@ -234,7 +235,7 @@ header .main .search form input {
 	width: 15vw;
 	border-radius: 5px;
 	border: 2px solid var(--text);
-	background-color: transparent;
+	background-color: var(--background);
 	color: var(--text);
 	padding: 6px 10px;
 	transition: 0.5s;
@@ -517,6 +518,10 @@ header .main .search form input::placeholder {
 
 .article-i .content a {
     text-decoration: underline;
+}
+
+.article-i object {
+    height: 100vh;
 }
 
 footer {

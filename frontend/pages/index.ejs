@@ -37,14 +37,14 @@
 		<h2>Latest Articles</h2>
 		<hr>
 		<div class="grid">
-			<% for (article of cms.articles.sort((a, b) => b._created - a._created)) { %>
+			<% for (article of cms.articles.sort((a, b) => new Date(b.date) - new Date(a.date))) { %>
 			<div class="article" style="background-image: url('<%- vars.asset_prefix %><%= article.images[0].path %>')">
 				<div class="inner">
 					<a href="<%- vars.domain %>/articles/<%= article.slug %>">
 						<h3><%= article.title %></h3>
 					</a>
 					<h4><%= article.description %></h4>
-					<p><a href="<%- vars.domain %>/tags/<%= article.tags[0].toLowerCase() %>"><%= article.tags[0] %></a> / <% var date = new Date(article._created * 1000); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
+					<p><a href="<%- vars.domain %>/tags/<%= article.tags[0].toLowerCase() %>"><%= article.tags[0] %></a> / <% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
 				</div>
 			</div>
 			<% } %>

@@ -154,9 +154,15 @@ async function startApp() {
         res.render('newspapers', { vars: defaults, session: req.session, title: 'All Newspapers', cms });
     });
 
-    /*app.get('/newspapers/:newspaper', async (req, res) => {
+    app.get('/newspapers/:newspaper', async (req, res) => {
         await allRoutes(req);
-    });*/
+        var newspaper = cms.newspapers.find(newspaper => newspaper.slug === req.params.newspaper);
+        if (newspaper) {
+            res.render('newspaper', { vars: defaults, session: req.session, title: newspaper.title, cms, newspaper });
+        } else {
+            res.render('404', { vars: defaults, session: req.session, title: '404', cms });
+        };
+    });
 
     app.get('/articles', async (req, res) => {
         await allRoutes(req);

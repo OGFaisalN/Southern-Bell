@@ -18,7 +18,7 @@
 	</div>
 	<div class="articles">
 		<div class="grid">
-			<% for (newspaper of cms.newspapers.sort((a, b) => b.date - a.date)) { %>
+			<% for (newspaper of cms.newspapers.sort((a, b) => new Date(b.date) - new Date(a.date))) { %>
 			<div class="article" style="background-image: url('<%- vars.asset_prefix %><%= newspaper.image.path %>')">
 				<div class="inner">
 					<a href="<%- vars.domain %>/newspapers/<%= newspaper.slug %>">
