@@ -50,6 +50,7 @@ async function startApp() {
     // Defaults & Environment Variables
 
     var defaults = {
+        environment: process.env.NODE_ENV || 'testing',
         domain: process.env.NODE_ENV === 'production' ? cms.siteDetails[0]['domain-production'] : process.env.NODE_ENV === 'development' ? cms.siteDetails[0]['domain-development'] : '..',
         asset_prefix: process.env.CMS_ASSET_PREFIX,
         asset_url: process.env.CMS_ASSET_URL,

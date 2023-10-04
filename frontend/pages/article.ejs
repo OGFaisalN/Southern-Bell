@@ -29,7 +29,7 @@
 			</div>
 			<div class="right">
 				<div class="icons">
-					<i class="fas fa-link" onClick="navigator.clipboard.writeText(window.location.href).then(() => alert('Link copied!')).catch(err => alert('Copying failed.'));"></i>
+					<i class="fas fa-link" onClick="const el = document.createElement('textarea'); el.value = window.location.href; el.setAttribute('readonly', ''); el.style.position = 'absolute'; el.style.left = '-9999px'; document.body.appendChild(el); const selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false; el.select(); document.execCommand('copy'); document.body.removeChild(el); if (selected) { document.getSelection().removeAllRanges(); document.getSelection().addRange(selected); } alert('Link copied!');"></i>
 				</div>
 			</div>
 		</div>
