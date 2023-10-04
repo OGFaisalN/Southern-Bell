@@ -5,7 +5,14 @@ const path = require('path');
 const app = express();
 const fetch = require('node-fetch');
 const Feed = require('feed').Feed;
+const mysql = require('mysql2');
 require('dotenv').config();
+const db = mysql.createConnection({
+    host: 'da.dangoweb.com',
+    user: 'dangoweb_southernbell',
+    password: process.env.DB_PASSWORD,
+    database: 'dangoweb_southernbell'
+});
 const port = 3000;
 
 app.engine('.ejs', require('ejs').renderFile);
@@ -53,39 +60,7 @@ async function startApp() {
         environment: process.env.NODE_ENV || 'testing',
         domain: process.env.NODE_ENV === 'production' ? cms.siteDetails[0]['domain-production'] : process.env.NODE_ENV === 'development' ? cms.siteDetails[0]['domain-development'] : '..',
         asset_prefix: process.env.CMS_ASSET_PREFIX,
-        asset_url: process.env.CMS_ASSET_URL,
-        school: {
-            short: "south",
-            name: "South High School",
-            cssColorClass: "south",
-            logoUrl: "south-logo.png",
-            bannerUrl: "south-banner.png",
-            address: "150 Jedwood Place, Valley Stream, NY 11581",
-            website: "https://vschsd.org/schools/south-high-school/",
-            type: "Public Middle School/High School",
-        },
-        badges: [
-            {
-                name: "Admin",
-                slug: "admin",
-                icon: "screwdriver-wrench",
-            },
-            {
-                name: "Moderator",
-                slug: "moderator",
-                icon: "user-shield",
-            },
-            {
-                name: "Teacher",
-                slug: "teacher",
-                icon: "chalkboard-user",
-            },
-            {
-                name: "Student",
-                slug: "student",
-                icon: "graduation-cap",
-            },
-        ],
+        asset_url: process.env.CMS_ASSET_URL
     };
 
     // Functions
@@ -166,9 +141,30 @@ async function startApp() {
         await allRoutes(req);
         var newspaper = cms.newspapers.find(newspaper => newspaper.slug === req.params.newspaper);
         if (newspaper) {
-            res.render('newspaper', { vars: defaults, session: req.session, title: newspaper.title, cms, newspaper });
+            db.query(`SELECT * FROM comments WHERE post_id = '${newspaper._id}'`,
+                function (err, results, fields) {
+                    res.render('newspaper', { vars: defaults, session: req.session, title: newspaper.title, cms, newspaper, comments: results });
+                }
+            );
         } else {
             res.render('404', { vars: defaults, session: req.session, title: '404', cms });
+        };
+    });
+
+    app.post('/newspapers/:newspaper', async (req, res) => {
+        await allRoutes(req);
+        var newspaper = cms.newspapers.find(newspaper => newspaper.slug === req.params.newspaper);
+        if (newspaper && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
+            db.query(`INSERT INTO comments (author_name, author_email, post_id, content) VALUES ('${req.body.name}', '${req.body.email}', '${req.body.id}', '${req.body.content}')`,
+                function (err, results, fields) {
+                    if (err) {
+                        console.log(err);
+                    };
+                    res.redirect(`/newspapers/${req.params.newspaper}#${results.insertId}`);
+                }
+            );
+        } else {
+            res.redirect('/');
         };
     });
 
@@ -181,9 +177,30 @@ async function startApp() {
         await allRoutes(req);
         var article = cms.articles.find(article => article.slug === req.params.article);
         if (article) {
-            res.render('article', { vars: defaults, session: req.session, title: article.title, cms, article });
+            db.query(`SELECT * FROM comments WHERE post_id = '${article._id}'`,
+                function (err, results, fields) {
+                    res.render('article', { vars: defaults, session: req.session, title: article.title, cms, article, comments: results });
+                }
+            );
         } else {
             res.render('404', { vars: defaults, session: req.session, title: '404', cms });
+        };
+    });
+
+    app.post('/articles/:article', async (req, res) => {
+        await allRoutes(req);
+        var article = cms.articles.find(article => article.slug === req.params.article);
+        if (article && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
+            db.query(`INSERT INTO comments (author_name, author_email, post_id, content) VALUES ('${req.body.name}', '${req.body.email}', '${req.body.id}', '${req.body.content}')`,
+                function (err, results, fields) {
+                    if (err) {
+                        console.log(err);
+                    };
+                    res.redirect('back');
+                }
+            );
+        } else {
+            res.redirect('/');
         };
     });
 
