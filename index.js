@@ -29,6 +29,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: { maxAge: 86400000 }
 }));
+app.set('trust proxy', true);
 
 function cmsdata() {
     return fetch('https://cms.dangoweb.com/:southern-bell/api/gql', {
@@ -242,12 +243,12 @@ async function startApp() {
         await allRoutes(req);
         var poll = cms.polls.find(poll => poll.slug === req.params.poll);
         if (poll && req.body.id && (req.body.name.length > 0) && (req.body.answer)) {
-            db.query(`SELECT * FROM poll_responses WHERE ip = '${req.connection.remoteAddress}'`,
+            db.query(`SELECT * FROM poll_responses WHERE ip = '${req.ip}'`,
                 function (err, responses, fields) {
                     if (responses.length === 0) {
                         for (let i = 0; i < poll.answers.length; i++) {
                             if (poll.answers[i] === req.body.answer) {
-                                db.query(`INSERT INTO poll_responses (name, ip, poll_id, response_id) VALUES ('${req.body.name}', '${req.connection.remoteAddress}', '${req.body.id}', '${i}')`,
+                                db.query(`INSERT INTO poll_responses (name, ip, poll_id, response_id) VALUES ('${req.body.name}', '${req.ip}', '${req.body.id}', '${i}')`,
                                     function (err, results, fields) {
                                         if (err) {
                                             console.log(err);
