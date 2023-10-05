@@ -218,7 +218,10 @@ async function startApp() {
 
     app.get('/polls', async (req, res) => {
         await allRoutes(req);
-        res.render('polls', { vars: defaults, title: 'All Polls', cms });
+        db.query(`SELECT * FROM poll_responses`,
+            function (err, responses, fields) {
+                res.render('polls', { vars: defaults, title: 'All Polls', cms, responses });
+            });
     });
 
     app.get('/polls/:poll', async (req, res) => {
@@ -243,8 +246,11 @@ async function startApp() {
         await allRoutes(req);
         var poll = cms.polls.find(poll => poll.slug === req.params.poll);
         if (poll && req.body.id && (req.body.name.length > 0) && (req.body.answer)) {
-            db.query(`SELECT * FROM poll_responses WHERE ip = '${req.ip}'`,
+            db.query(`SELECT * FROM poll_responses WHERE ip = '${req.ip}' AND poll_id = '${poll._id}'`,
                 function (err, responses, fields) {
+                    if (err) {
+                        console.log(err);
+                    };
                     if (responses.length === 0) {
                         for (let i = 0; i < poll.answers.length; i++) {
                             if (poll.answers[i] === req.body.answer) {
@@ -285,7 +291,10 @@ async function startApp() {
     app.get('/search', async (req, res) => {
         await allRoutes(req);
         if (req.query.query) {
-            res.render('search', { vars: defaults, title: 'Search Results', cms, query: req.query.query.toLowerCase() });
+            db.query(`SELECT * FROM poll_responses`,
+                function (err, responses, fields) {
+                    res.render('search', { vars: defaults, title: 'Search Results', cms, query: req.query.query.toLowerCase(), responses });
+                });
         } else {
             res.redirect('/');
         };

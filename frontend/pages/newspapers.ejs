@@ -14,7 +14,7 @@
 	<div class="banner" style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>');">
 		<i class="fa-solid fa-newspaper"></i>
 		<h1>All Newspapers</h1>
-		<h3><%- cms.newspapers.length %> Newspaper<% if (cms.newspapers.length > 1) { %>s<% } %></h3>
+		<h3><%- cms.newspapers.length %> Newspaper<% if (cms.newspapers.length != 1) { %>s<% } %></h3>
 	</div>
 	<div class="articles">
 		<div class="grid">

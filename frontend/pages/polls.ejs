@@ -14,7 +14,7 @@
 	<div class="banner" style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>');">
 		<i class="fa-solid fa-poll"></i>
 		<h1>All Polls</h1>
-		<h3><%- cms.polls.length %> Poll<% if (cms.polls.length > 1) { %>s<% } %></h3>
+		<h3><%- cms.polls.length %> Poll<% if (cms.polls.length != 1) { %>s<% } %></h3>
 	</div>
 	<div class="articles">
 		<div class="grid">
@@ -24,8 +24,8 @@
 					<a href="<%- vars.domain %>/polls/<%= poll.slug %>">
 						<h3><%= poll.question %></h3>
 					</a>
-					<h4><%- poll.description %></h4>
-					<p><% var date = new Date(poll.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
+					<h4><%= poll.description %></h4>
+					<p><% var votes = 0; for (response of responses) { if (response.poll_id === poll._id) { votes++ }; }; %><%= votes %> Vote<% if (votes != 1) { %>s<% } %> / <% var date = new Date(poll.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
 				</div>
 			</div>
 			<% } %>

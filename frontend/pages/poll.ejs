@@ -30,7 +30,8 @@
 			<div class="left">
 				<div class="info">
 					<h1><%= poll.question %></h1>
-					<h3><%- poll.description %></h3>
+					<h3><%= poll.description %></h3>
+					<p><%= answerCount.reduce((a, b) => a + b) %> Vote<% if (answerCount.reduce((a, b) => a + b) != 1) { %>s<% } %></p>
 				</div>
 				<div class="author">
 					<img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>" />
