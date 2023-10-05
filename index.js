@@ -157,14 +157,14 @@ async function startApp() {
         await allRoutes(req);
         var newspaper = cms.newspapers.find(newspaper => newspaper.slug === req.params.newspaper);
         if (newspaper && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
-            db.query(`INSERT INTO comments (author_name, author_email, post_id, content) VALUES ('${req.body.name}', '${req.body.email}', '${req.body.id}', '${req.body.content}')`,
-                function (err, results, fields) {
+            db.prepare("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", (err, statement) => {
+                statement.execute([req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
                     if (err) {
                         console.log(err);
                     };
                     res.redirect(`/newspapers/${req.params.newspaper}#${results.insertId}`);
-                }
-            );
+                });
+            });
         } else {
             res.redirect('/');
         };
@@ -193,14 +193,14 @@ async function startApp() {
         await allRoutes(req);
         var article = cms.articles.find(article => article.slug === req.params.article);
         if (article && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
-            db.query(`INSERT INTO comments (author_name, author_email, post_id, content) VALUES ('${req.body.name}', '${req.body.email}', '${req.body.id}', '${req.body.content}')`,
-                function (err, results, fields) {
+            db.prepare("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", (err, statement) => {
+                statement.execute([req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
                     if (err) {
                         console.log(err);
                     };
                     res.redirect(`/articles/${req.params.article}#${results.insertId}`);
-                }
-            );
+                });
+            });
         } else {
             res.redirect('/');
         };
@@ -248,14 +248,19 @@ async function startApp() {
                     if (responses.length === 0) {
                         for (let i = 0; i < poll.answers.length; i++) {
                             if (poll.answers[i] === req.body.answer) {
-                                db.query(`INSERT INTO poll_responses (name, ip, poll_id, response_id) VALUES ('${req.body.name}', '${req.ip}', '${req.body.id}', '${i}')`,
-                                    function (err, results, fields) {
-                                        if (err) {
-                                            console.log(err);
-                                        };
-                                        res.redirect(`/polls/${req.params.poll}`);
-                                    }
-                                );
+                                db.prepare("INSERT INTO poll_responses (name, ip, poll_id, response_id) VALUES (?, ?, ?, ?)", (err, statement) => {
+                                    if (err) {
+                                        console.log(err);
+                                        res.redirect(`/polls/${req.params.poll}?error=There was an error submitting your vote!`);
+                                    } else {
+                                        statement.execute([req.body.name, req.ip, req.body.id, i], function (err, results, fields) {
+                                            if (err) {
+                                                console.log(err);
+                                            };
+                                            res.redirect(`/polls/${req.params.poll}`);
+                                        });
+                                    };
+                                });
                             };
                         };
                     } else {
@@ -263,6 +268,15 @@ async function startApp() {
                     };
                 }
             );
+        } else if (poll && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
+            db.prepare("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", (err, statement) => {
+                statement.execute([req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
+                    if (err) {
+                        console.log(err);
+                    };
+                    res.redirect(`/polls/${req.params.poll}#${results.insertId}`);
+                });
+            });
         } else {
             res.redirect('/');
         };
