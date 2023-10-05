@@ -14,7 +14,7 @@
 	<div class="banner" style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>');">
 		<i class="fa-solid fa-pager"></i>
 		<h1>All Articles</h1>
-		<h3><%- cms.articles.length %> Articles</h3>
+		<h3><%- cms.articles.length %> Article<% if (cms.articles.length > 1) { %>s<% } %></h3>
 	</div>
 	<div class="articles">
 		<div class="grid">

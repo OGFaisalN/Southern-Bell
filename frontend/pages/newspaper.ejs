@@ -73,7 +73,7 @@
 				<input name="name" type="text" placeholder="Your Name">
 				<input name="email" type="email" placeholder="Your Email">
 				<input name="content" type="text" placeholder="Your Comment">
-				<button>Post Commment</button>
+				<button>Post Comment</button>
 			</form>
 			<% if (comments.length > 0) { %><hr><% } %>
 			<% for (comment of comments.reverse()) { %>
@@ -85,6 +85,7 @@
 			<% } %>
 		</div>
 	</div>
+	<%- include('../partials/suggested.ejs'); %>
 	<%- include('../partials/footer.ejs'); %>
 </body>
 <%- include('../partials/foot.ejs'); %>

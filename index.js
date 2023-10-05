@@ -46,6 +46,7 @@ function cmsdata() {
                 layouts: content(model: "layouts")
                 newspapers: content(model: "newspapers")
                 about: content(model: "about")
+                polls: content(model: "polls")
             }`
         }),
     })
@@ -124,17 +125,17 @@ async function startApp() {
 
     app.get('/', async (req, res) => {
         await allRoutes(req);
-        res.render('index', { vars: defaults, session: req.session, title: '', cms });
+        res.render('index', { vars: defaults, title: '', cms });
     });
 
     app.get('/about', async (req, res) => {
         await allRoutes(req);
-        res.render('about', { vars: defaults, session: req.session, title: cms.about[0].title, cms });
+        res.render('about', { vars: defaults, title: cms.about[0].title, cms });
     });
 
     app.get('/newspapers', async (req, res) => {
         await allRoutes(req);
-        res.render('newspapers', { vars: defaults, session: req.session, title: 'All Newspapers', cms });
+        res.render('newspapers', { vars: defaults, title: 'All Newspapers', cms });
     });
 
     app.get('/newspapers/:newspaper', async (req, res) => {
@@ -143,11 +144,11 @@ async function startApp() {
         if (newspaper) {
             db.query(`SELECT * FROM comments WHERE post_id = '${newspaper._id}'`,
                 function (err, results, fields) {
-                    res.render('newspaper', { vars: defaults, session: req.session, title: newspaper.title, cms, newspaper, comments: results });
+                    res.render('newspaper', { vars: defaults, title: newspaper.title, cms, newspaper, comments: results });
                 }
             );
         } else {
-            res.render('404', { vars: defaults, session: req.session, title: '404', cms });
+            res.render('404', { vars: defaults, title: '404', cms });
         };
     });
 
@@ -170,7 +171,7 @@ async function startApp() {
 
     app.get('/articles', async (req, res) => {
         await allRoutes(req);
-        res.render('articles', { vars: defaults, session: req.session, title: 'All Articles', cms });
+        res.render('articles', { vars: defaults, title: 'All Articles', cms });
     });
 
     app.get('/articles/:article', async (req, res) => {
@@ -179,11 +180,11 @@ async function startApp() {
         if (article) {
             db.query(`SELECT * FROM comments WHERE post_id = '${article._id}'`,
                 function (err, results, fields) {
-                    res.render('article', { vars: defaults, session: req.session, title: article.title, cms, article, comments: results });
+                    res.render('article', { vars: defaults, title: article.title, cms, article, comments: results });
                 }
             );
         } else {
-            res.render('404', { vars: defaults, session: req.session, title: '404', cms });
+            res.render('404', { vars: defaults, title: '404', cms });
         };
     });
 
@@ -196,7 +197,7 @@ async function startApp() {
                     if (err) {
                         console.log(err);
                     };
-                    res.redirect('back');
+                    res.redirect(`/articles/${req.params.article}#${results.insertId}`);
                 }
             );
         } else {
@@ -206,18 +207,70 @@ async function startApp() {
 
     app.get('/tags', async (req, res) => {
         await allRoutes(req);
-        res.render('tags', { vars: defaults, session: req.session, title: 'Tags', cms });
+        res.render('tags', { vars: defaults, title: 'Tags', cms });
     });
 
     app.get('/tags/:tag', async (req, res) => {
         await allRoutes(req);
-        res.render('tag', { vars: defaults, session: req.session, title: `#${req.params.tag.toLowerCase()}`, cms, tag: req.params.tag.toLowerCase() });
+        res.render('tag', { vars: defaults, title: `#${req.params.tag.toLowerCase()}`, cms, tag: req.params.tag.toLowerCase() });
+    });
+
+    app.get('/polls', async (req, res) => {
+        await allRoutes(req);
+        res.render('polls', { vars: defaults, title: 'All Polls', cms });
+    });
+
+    app.get('/polls/:poll', async (req, res) => {
+        await allRoutes(req);
+        var poll = cms.polls.find(poll => poll.slug === req.params.poll);
+        if (poll) {
+            db.query(`SELECT * FROM poll_responses WHERE poll_id = '${poll._id}'`,
+                function (err, responses, fields) {
+                    db.query(`SELECT * FROM comments WHERE post_id = '${poll._id}'`,
+                        function (err, results, fields) {
+                            res.render('poll', { vars: defaults, title: poll.question, cms, poll, comments: results, responses, error: req.query.error });
+                        }
+                    );
+                }
+            );
+        } else {
+            res.render('404', { vars: defaults, title: '404', cms });
+        };
+    });
+
+    app.post('/polls/:poll', async (req, res) => {
+        await allRoutes(req);
+        var poll = cms.polls.find(poll => poll.slug === req.params.poll);
+        if (poll && req.body.id && (req.body.name.length > 0) && (req.body.answer)) {
+            db.query(`SELECT * FROM poll_responses WHERE ip = '${req.connection.remoteAddress}'`,
+                function (err, responses, fields) {
+                    if (responses.length === 0) {
+                        for (let i = 0; i < poll.answers.length; i++) {
+                            if (poll.answers[i] === req.body.answer) {
+                                db.query(`INSERT INTO poll_responses (name, ip, poll_id, response_id) VALUES ('${req.body.name}', '${req.connection.remoteAddress}', '${req.body.id}', '${i}')`,
+                                    function (err, results, fields) {
+                                        if (err) {
+                                            console.log(err);
+                                        };
+                                        res.redirect(`/polls/${req.params.poll}`);
+                                    }
+                                );
+                            };
+                        };
+                    } else {
+                        res.redirect(`/polls/${req.params.poll}?error=You have already voted!`);
+                    };
+                }
+            );
+        } else {
+            res.redirect('/');
+        };
     });
 
     app.get('/search', async (req, res) => {
         await allRoutes(req);
         if (req.query.query) {
-            res.render('search', { vars: defaults, session: req.session, title: 'Search Results', cms, query: req.query.query.toLowerCase() });
+            res.render('search', { vars: defaults, title: 'Search Results', cms, query: req.query.query.toLowerCase() });
         } else {
             res.redirect('/');
         };
@@ -304,7 +357,7 @@ async function startApp() {
 
     app.get('*', async (req, res) => {
         await allRoutes(req);
-        res.render('404', { vars: defaults, session: req.session, title: '404', cms });
+        res.render('404', { vars: defaults, title: '404', cms });
     });
 
     app.listen(port, () => {

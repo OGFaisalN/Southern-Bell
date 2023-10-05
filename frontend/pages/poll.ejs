@@ -1,0 +1,169 @@
+<html>
+
+<head>
+	<%- include('../partials/head.ejs'); %>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+	<% function ifYesterday(date) { 
+		var yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
+		return date.toDateString() === yesterday.toDateString();
+	};
+	var answers = {};
+	responses.forEach(response => {
+		if (answers[response.response_id]) {
+			answers[response.response_id].push(response);
+		} else {
+			answers[response.response_id] = [response];
+		};
+	});
+	var answerCount = [];
+	for (let i = 0; i < poll.answers.length; i++) {
+		answerCount.push((answers[i] || []).length);
+	}; %>
+</head>
+
+<body>
+	<%- include('../partials/header.ejs'); %>
+	<div class="article-i">
+		<% if (error) { %><div id="error"><%= error %></div><% } %>
+		<div class="split">
+			<div class="left">
+				<div class="info">
+					<h1><%= poll.question %></h1>
+					<h3><%- poll.description %></h3>
+				</div>
+				<div class="author">
+					<img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>" />
+					<div class="info">
+						<h4>By <a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a> Writers, <a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a></h4>
+						<h5>Published <% var date = new Date(poll.date); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></h5>
+						<% if ((poll._created != poll._modified) && (date < (new Date(poll._modified * 1000)))) { %><h5>Edited <% var date = new Date(poll._modified * 1000); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></h5><% } } %>
+					</div>
+				</div>
+			</div>
+			<div class="right">
+				<div class="icons">
+					<i class="fas fa-link" onClick="const el = document.createElement('textarea'); el.value = window.location.href; el.setAttribute('readonly', ''); el.style.position = 'absolute'; el.style.left = '-9999px'; document.body.appendChild(el); const selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false; el.select(); document.execCommand('copy'); document.body.removeChild(el); if (selected) { document.getSelection().removeAllRanges(); document.getSelection().addRange(selected); } alert('Link copied!');"></i>
+				</div>
+			</div>
+		</div>
+		<div class="poll">
+			<div class="results">
+				<canvas id="<%= poll.slug %>-chart" style="width: 100%;"></canvas>
+				<canvas id="<%= poll.slug %>-chart-pie" style="width: 100%;"></canvas>
+			</div>
+			<br />
+			<div class="vote">
+				<h1>Vote</h1>
+				<form action="" method="post" class="new">
+					<h3>Cast your vote!</h3>
+					<input name="id" value="<%= poll._id %>" hidden>
+					<input name="name" type="text" placeholder="Your Name">
+					<select name="answer">
+						<% for (answer of poll.answers) { %><option value="<%= answer %>"><%= answer %></option><% } %>
+					</select>
+					<button>Submit answer</button>
+				</form>
+				<% if (comments.length > 0) { %>
+				<hr><% } %>
+				<% for (comment of comments.reverse()) { %>
+				<div class="comment">
+					<h4><%= comment.author_name %>
+						<h5><% var date = new Date(comment.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></h5>
+						<p><%= comment.content %></p>
+				</div>
+				<% } %>
+			</div>
+		</div>
+		<div class="comments">
+			<h1>Comments</h1>
+			<form action="" method="post" class="new">
+				<h3>New comment:</h3>
+				<input name="id" value="<%= poll._id %>" hidden>
+				<input name="name" type="text" placeholder="Your Name">
+				<input name="email" type="email" placeholder="Your Email">
+				<input name="content" type="text" placeholder="Your Comment">
+				<button>Post Comment</button>
+			</form>
+			<% if (comments.length > 0) { %>
+			<hr><% } %>
+			<% for (comment of comments.reverse()) { %>
+			<div class="comment">
+				<h4><%= comment.author_name %>
+					<h5><% var date = new Date(comment.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></h5>
+					<p><%= comment.content %></p>
+			</div>
+			<% } %>
+		</div>
+	</div>
+	<%- include('../partials/suggested.ejs'); %>
+	<%- include('../partials/footer.ejs'); %>
+</body>
+<%- include('../partials/foot.ejs'); %>
+<script>
+	const barColors = ["#FF4136", "#2ECC40", "#0074D9", "#FF851B", "#B10DC9", "#FFDC00", "#7FDBFF", "#39CCCC", "#3D9970", "#85144b", "#F012BE", "#01FF70", "#FF4136", "#2ECC40", "#0074D9", "#FF851B", "#B10DC9", "#FFDC00", "#7FDBFF", "#39CCCC"];
+	new Chart("<%= poll.slug %>-chart", {
+		type: "bar",
+		data: {
+			labels: <%- JSON.stringify(poll.answers) %>,
+			datasets: [{
+				backgroundColor: barColors,
+				data: <%- JSON.stringify(answerCount) %>
+			}]
+		},
+		options: {
+			legend: {
+				display: false
+			},
+			title: {
+				display: true,
+				text: '<%= poll.question %>'
+			},
+			scales: {
+				yAxes: [{
+					ticks: {
+						beginAtZero: true,
+						userCallback: function(label, index, labels) {
+							if (Math.floor(label) === label) {
+								return label;
+							}
+						},
+					}
+				}],
+			},
+		}
+	});
+	new Chart("<%= poll.slug %>-chart-pie", {
+		type: "pie",
+		data: {
+			labels: <%- JSON.stringify(poll.answers) %>,
+			datasets: [{
+				backgroundColor: barColors,
+				data: <%- JSON.stringify(answerCount) %>
+			}]
+		},
+		options: {
+			legend: {
+				display: false
+			},
+			title: {
+				display: true,
+				text: '<%= poll.question %>'
+			},
+			scales: {
+				yAxes: [{
+					ticks: {
+						beginAtZero: true,
+						userCallback: function(label, index, labels) {
+							if (Math.floor(label) === label) {
+								return label;
+							}
+						},
+					}
+				}],
+			},
+		}
+	});
+</script>
+
+</html>

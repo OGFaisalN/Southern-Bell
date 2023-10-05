@@ -101,6 +101,10 @@
 		width: 100% !important;
 	}
 
+	.article-i .new {
+		flex-direction: column;
+	}
+
 	.about .split {
 		flex-direction: column !important;
 	}
@@ -446,6 +450,14 @@ header .main .search form input::placeholder {
 	max-width: 1200px;
 }
 
+.article-i #error {
+    background-color: var(--theme);
+    color: var(--background);
+    padding: 20px 30px;
+    width: -webkit-fill-available;
+    border-radius: 15px;
+}
+
 .article-i .split {
 	display: flex;
 	flex-direction: row;
@@ -542,6 +554,24 @@ header .main .search form input::placeholder {
 	height: 100vh;
 }
 
+.article-i .poll {
+    display: flex;
+	flex-direction: column;
+	gap: 20px;
+    width: 100%;
+}
+
+.article-i .poll .results {
+    display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: 100%;
+}
+
+.article-i .poll .results canvas {
+	width: 100% !important;
+}
+
 .article-i .comments {
 	display: flex;
 	flex-direction: column;
@@ -559,7 +589,7 @@ header .main .search form input::placeholder {
 	width: 100%;
 }
 
-.article-i .new input {
+.article-i .new input, .article-i .new select {
 	border: 1px solid var(--theme);
 	border-radius: 5px;
 	padding: 5px 10px;
@@ -571,6 +601,7 @@ header .main .search form input::placeholder {
 	border-radius: 5px;
 	padding: 5px 10px;
 	color: var(--background);
+	cursor: pointer;
 }
 
 .article-i .comments hr {

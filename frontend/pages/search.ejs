@@ -19,6 +19,11 @@
 		};
 	};
 	const filteredTags = Object.keys(tags).filter(tag => tag.toLowerCase().includes(query));
+	const filteredPolls = cms.polls.filter(poll => {
+		const question = poll.question.toLowerCase();
+		const description = poll.description.toLowerCase();
+		return question.includes(query) || description.includes(query);
+	});
 	function ifYesterday(date) { 
 		var yesterday = new Date();
 		yesterday.setDate(yesterday.getDate() - 1);
@@ -81,6 +86,23 @@
 			</div>
 			<% });
 			} else { %>No articles found<% } %>
+		</div>
+	</div>
+	<div class="articles">
+		<h2>Polls on '<%- query %>'</h2>
+		<hr>
+		<div class="grid">
+			<% if (filteredPolls.length != 0) { filteredPolls.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(poll => { %>
+			<div class="article" style="padding-top: 0;">
+				<div class="inner">
+					<a href="<%- vars.domain %>/polls/<%= poll.slug %>">
+						<h3><%= poll.question %></h3>
+					</a>
+					<h4><%- poll.description %></h4>
+					<p><% var date = new Date(poll.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
+				</div>
+			</div>
+			<% }); } else { %>No polls found<% } %>
 		</div>
 	</div>
 	<%- include('../partials/footer.ejs'); %>
