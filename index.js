@@ -48,6 +48,7 @@ function cmsdata() {
                 newspapers: content(model: "newspapers")
                 about: content(model: "about")
                 polls: content(model: "polls")
+                artworks: content(model: "artworks")
             }`
         }),
     })
@@ -281,6 +282,42 @@ async function startApp() {
                         console.log(err);
                     };
                     res.redirect(`/polls/${req.params.poll}#${results.insertId}`);
+                });
+            });
+        } else {
+            res.redirect('/');
+        };
+    });
+
+    app.get('/artworks', async (req, res) => {
+        await allRoutes(req);
+        res.render('artworks', { vars: defaults, title: 'All Artworks', cms });
+    });
+
+    app.get('/artworks/:artwork', async (req, res) => {
+        await allRoutes(req);
+        var artwork = cms.artworks.find(artwork => artwork.slug === req.params.artwork);
+        if (artwork) {
+            db.query(`SELECT * FROM comments WHERE post_id = '${artwork._id}'`,
+                function (err, results, fields) {
+                    res.render('artwork', { vars: defaults, title: artwork.title, cms, artwork, comments: results });
+                }
+            );
+        } else {
+            res.render('404', { vars: defaults, title: '404', cms });
+        };
+    });
+
+    app.post('/artworks/:artwork', async (req, res) => {
+        await allRoutes(req);
+        var artwork = cms.artworks.find(artwork => artwork.slug === req.params.artwork);
+        if (artwork && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
+            db.prepare("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", (err, statement) => {
+                statement.execute([req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
+                    if (err) {
+                        console.log(err);
+                    };
+                    res.redirect(`/artworks/${req.params.artwork}#${results.insertId}`);
                 });
             });
         } else {

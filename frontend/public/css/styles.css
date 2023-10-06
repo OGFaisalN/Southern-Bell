@@ -39,8 +39,9 @@
 		padding: 10px 20px !important;
 		border-radius: 100px;
 	}
-	
-	header .main a img, footer .inner .top img {
+
+	header .main a img,
+	footer .inner .top img {
 		max-width: 70vw;
 	}
 
@@ -97,7 +98,8 @@
 		grid-column-end: unset !important;
 	}
 
-	.article-i .content, .article-i .content img {
+	.article-i .content,
+	.article-i .content img {
 		width: 100% !important;
 	}
 
@@ -107,6 +109,22 @@
 
 	.about .split {
 		flex-direction: column !important;
+	}
+
+	.articles.searchResults .grid {
+		gap: 2vw !important;
+	}
+
+	.articles.searchResults .grid .article {
+		flex-direction: column !important;
+		padding-top: 150px !important;
+		padding-left: unset !important;
+		background-size: cover;
+	}
+
+	.articles.searchResults .grid .article .inner {
+		width: unset !important;
+		gap: 30px !important;
 	}
 }
 
@@ -144,6 +162,7 @@ a {
 	text-decoration: none;
 	color: var(--text);
 	transition: 0.5s;
+	cursor: pointer;
 }
 
 a:hover {
@@ -331,6 +350,7 @@ header .main .search form input::placeholder {
 	align-items: flex-start;
 	gap: 20px;
 	color: var(--background);
+    max-width: 80%;
 }
 
 .hero .newspaper div h2 {
@@ -451,11 +471,15 @@ header .main .search form input::placeholder {
 }
 
 .article-i #error {
-    background-color: var(--theme);
-    color: var(--background);
-    padding: 20px 30px;
-    width: -webkit-fill-available;
-    border-radius: 15px;
+	background-color: var(--theme);
+	color: var(--background);
+	padding: 20px 30px;
+	width: -webkit-fill-available;
+	border-radius: 15px;
+}
+
+.article-i > img {
+    width: 100%;
 }
 
 .article-i .split {
@@ -521,6 +545,7 @@ header .main .search form input::placeholder {
 	height: 30vh;
 	background-size: cover;
 	background-position: center;
+    position: relative;
 }
 
 .article-i .image:first-of-type {
@@ -528,6 +553,18 @@ header .main .search form input::placeholder {
 	grid-column-start: 1;
 	grid-column-end: 3;
 	display: flex;
+}
+
+.article-i .image h2 {
+    position: absolute;
+    bottom: 0px;
+    left: 15px;
+    font-size: 14px;
+    margin: 0;
+    background: var(--background);
+    padding: 7px 15px 0 15px;
+    border-radius: 10px 10px 0px 0px;
+    max-width: 95%;
 }
 
 .article-i .content:before {
@@ -555,14 +592,14 @@ header .main .search form input::placeholder {
 }
 
 .article-i .poll {
-    display: flex;
+	display: flex;
 	flex-direction: column;
 	gap: 20px;
-    width: 100%;
+	width: 100%;
 }
 
 .article-i .poll .results {
-    display: flex;
+	display: flex;
 	flex-direction: column;
 	gap: 10px;
 	width: 100%;
@@ -589,7 +626,8 @@ header .main .search form input::placeholder {
 	width: 100%;
 }
 
-.article-i .new input, .article-i .new select {
+.article-i .new input,
+.article-i .new select {
 	border: 1px solid var(--theme);
 	border-radius: 5px;
 	padding: 5px 10px;
@@ -602,6 +640,11 @@ header .main .search form input::placeholder {
 	padding: 5px 10px;
 	color: var(--background);
 	cursor: pointer;
+}
+
+.article-i .new button:hover {
+    opacity: 0.75;
+    letter-spacing: 1px;
 }
 
 .article-i .comments hr {
@@ -643,6 +686,7 @@ header .main .search form input::placeholder {
 
 .about .split img {
 	border-radius: 100%;
+    height: max-content;
 }
 
 footer {
@@ -711,4 +755,50 @@ footer .inner .bottom {
 
 footer .inner .bottom a {
 	color: var(--text);
+}
+
+.toTop {
+	background-color: var(--theme);
+	color: var(--background);
+	width: 40px;
+	height: 40px;
+	position: fixed;
+	bottom: 40px;
+	right: 40px;
+	border-radius: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
+}
+
+.toTop.visible {
+	opacity: 1;
+}
+
+.toTop:hover {
+	color: var(--background);
+	opacity: 0.75;
+}
+
+.articles.searchResults {
+    padding: 100px 0 200px 0;
+}
+
+.articles.searchResults .grid {
+    grid-template-columns: repeat(1, 1fr) !important;
+    grid-template-areas: "." !important;
+	gap: 10vh;
+}
+
+.articles.searchResults .grid .article {
+    flex-direction: row-reverse;
+    padding-top: 0;
+    padding-left: 200px;
+}
+
+.articles.searchResults .grid .article .inner {
+	width: 100%;
+    gap: 0px;
 }

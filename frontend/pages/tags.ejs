@@ -15,6 +15,11 @@
 			};
 			tags[tag].push(article);
 		};
+	};
+	function toTitleCase(str) {
+		return str.replace(/\b\w+/g, function(txt) {
+			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+		});
 	}; %>
 </head>
 
@@ -31,7 +36,7 @@
 			<div class="article" style="padding-top: 0;">
 				<div class="inner">
 					<a href="<%- vars.domain %>/tags/<%= tag %>">
-						<h3><%= tag %></h3>
+						<h3><%= toTitleCase(tag) %></h3>
 					</a>
 					<p><%- tags[tag].length %> Article<% if (tags[tag].length != 1) { %>s<% } %></p>
 				</div>

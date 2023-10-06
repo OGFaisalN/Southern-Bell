@@ -6,6 +6,11 @@
 		var yesterday = new Date();
 		yesterday.setDate(yesterday.getDate() - 1);
 		return date.toDateString() === yesterday.toDateString();
+	};
+	function toTitleCase(str) {
+		return str.replace(/\b\w+/g, function(txt) {
+			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+		});
 	}; %>
 </head>
 
@@ -17,11 +22,12 @@
 				<div class="info">
 					<h1><%= article.title %></h1>
 					<h3><%= article.description %></h3>
+					<p>Tags: <% for (tag of article.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>"><%= toTitleCase(tag) %></a> <% } %></p>
 				</div>
 				<div class="author">
 					<img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>" />
 					<div class="info">
-						<h4>By <a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a> Writers, <a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a></h4>
+						<h4>By <% if ((article.author != "") && (article.author != null)) { %><%= article.author %><% } else { %><a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a> Writers, <a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a><% } %></h4>
 						<h5>Published <% var date = new Date(article.date); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></h5>
 						<% if ((article._created != article._modified) && (date < (new Date(article._modified * 1000)))) { %><h5>Edited <% var date = new Date(article._modified * 1000); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></h5><% } } %>
 					</div>
@@ -36,11 +42,11 @@
 		<% if (article.images[0] != null) { %>
 		<div class="images">
 			<% for (image of article.images) { %>
-			<div class="image" style="background-image: url('<%- vars.asset_prefix %><%= image.path %>')"></div>
+			<div class="image" style="background-image: url('<%- vars.asset_prefix %><%= image.path %>')"><% if (image.description != "") { %><h2><%= image.description %></h2><% } %></div>
 			<% } %>
 		</div>
 		<% } %>
-		<style>.article-i .content:before { content: '(<%= cms.siteDetails[0].title %> Writers) — ' }</style>
+		<style>.article-i .content:before { content: '(<% if ((article.author != "") && (article.author != null)) { %><%= article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %>) — ' }</style>
 		<div class="content"><%- article.content.replaceAll('/.spaces/', vars.asset_url) %></div>
 		<div class="comments">
 			<h1>Comments</h1>

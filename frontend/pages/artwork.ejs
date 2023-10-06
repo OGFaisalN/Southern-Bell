@@ -1,0 +1,69 @@
+<html>
+
+<head>
+	<%- include('../partials/head.ejs'); %>
+	<% function ifYesterday(date) { 
+		var yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
+		return date.toDateString() === yesterday.toDateString();
+	};
+	function toTitleCase(str) {
+		return str.replace(/\b\w+/g, function(txt) {
+			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+		});
+	}; %>
+</head>
+
+<body>
+	<%- include('../partials/header.ejs'); %>
+	<div class="article-i">
+		<div class="split">
+			<div class="left">
+				<div class="info">
+					<h1><%= artwork.title %></h1>
+					<p>Tags: <% for (tag of artwork.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>"><%= toTitleCase(tag) %></a> <% } %></p>
+				</div>
+				<div class="author">
+					<img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>" />
+					<div class="info">
+						<h4>By <% if ((artwork.author != "") && (artwork.author != null)) { %><%= artwork.author %><% } else { %><a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a> Writers, <a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a><% } %></h4>
+						<h5>Published <% var date = new Date(artwork.date); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></h5>
+						<% if ((artwork._created != artwork._modified) && (date < (new Date(artwork._modified * 1000)))) { %><h5>Edited <% var date = new Date(artwork._modified * 1000); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></h5><% } } %>
+					</div>
+				</div>
+			</div>
+			<div class="right">
+				<div class="icons">
+					<i class="fas fa-link" onClick="const el = document.createElement('textarea'); el.value = window.location.href; el.setAttribute('readonly', ''); el.style.position = 'absolute'; el.style.left = '-9999px'; document.body.appendChild(el); const selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false; el.select(); document.execCommand('copy'); document.body.removeChild(el); if (selected) { document.getSelection().removeAllRanges(); document.getSelection().addRange(selected); } alert('Link copied!');"></i>
+				</div>
+			</div>
+		</div>
+		<img src="<%- vars.asset_prefix %><%= artwork.artwork.path %>" />
+		<h4 style="max-width: 700px"><%= artwork.description %></h4>
+		<div class="comments">
+			<h1>Comments</h1>
+			<form action="" method="post" class="new">
+				<h3>New comment:</h3>
+				<input name="id" value="<%= artwork._id %>" hidden>
+				<input name="name" type="text" placeholder="Your Name">
+				<input name="email" type="email" placeholder="Your Email">
+				<input name="content" type="text" placeholder="Your Comment">
+				<button>Post Comment</button>
+			</form>
+			<% if (comments.length > 0) { %>
+			<hr><% } %>
+			<% for (comment of comments.reverse()) { %>
+			<div id="<%= comment.id %>" class="comment">
+				<h4><%= comment.author_name %>
+					<h5><% var date = new Date(comment.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></h5>
+					<p><%= comment.content %></p>
+			</div>
+			<% } %>
+		</div>
+	</div>
+	<%- include('../partials/suggested.ejs'); %>
+	<%- include('../partials/footer.ejs'); %>
+</body>
+<%- include('../partials/foot.ejs'); %>
+
+</html>
