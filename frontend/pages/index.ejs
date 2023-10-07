@@ -38,7 +38,7 @@
 		<hr>
 		<div class="grid">
 			<% for (article of cms.articles.sort((a, b) => new Date(b.date) - new Date(a.date))) { %>
-			<div class="article" style="background-image: url('<%- vars.asset_prefix %><%= article.images[0].path %>')">
+			<div class="article" style="<% if (article.images[0] != null) { %>background-image: url('<%- vars.asset_prefix %><%= article.images[0].path %>')<% } else { %>padding-top: unset !important; justify-content: center; height: 100%;<% } %>">
 				<div class="inner">
 					<a href="<%- vars.domain %>/articles/<%= article.slug %>">
 						<h3><%= article.title %></h3>
@@ -55,7 +55,7 @@
 		<hr>
 		<div class="grid">
 			<% for (artwork of cms.artworks.sort((a, b) => new Date(b.date) - new Date(a.date))) { %>
-			<div class="article" style="background-image: url('<%- vars.asset_prefix %><%= artwork.artwork.path %>'); padding-top: 330px;">
+			<div class="article" style="background-image: url('<%- vars.asset_prefix %><%= artwork.artwork.path %>'); padding-top: 300px;">
 				<div class="inner">
 					<a href="<%- vars.domain %>/artworks/<%= artwork.slug %>">
 						<h3><%= artwork.title %></h3>

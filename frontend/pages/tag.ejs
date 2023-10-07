@@ -22,7 +22,7 @@
 	<div class="articles">
 		<div class="grid">
 			<% if (filteredArticles.length != 0) { filteredArticles.sort((a, b) => b._created - a._created).forEach(article => { %>
-			<div class="article" style="background-image: url('<%- vars.asset_prefix %><%= article.images[0].path %>')">
+			<div class="article"<% if (article.images[0] != null) { %> style="background-image: url('<%- vars.asset_prefix %><%= article.images[0].path %>')"<% } %>>
 				<div class="inner">
 					<a href="<%- vars.domain %>/articles/<%= article.slug %>">
 						<h3><%= article.title %></h3>

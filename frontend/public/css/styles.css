@@ -401,6 +401,7 @@ header .main .search form input::placeholder {
 .articles .grid .article {
 	display: flex;
 	flex-direction: column;
+    justify-content: flex-end;
 	background-color: var(--background);
 	background-size: contain;
 	border-bottom: 4px solid #ececec;
@@ -419,11 +420,10 @@ header .main .search form input::placeholder {
 
 .articles .grid .article .inner {
 	background-color: var(--background);
-	height: 100%;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	gap: 30px;
+	gap: 15px;
 	padding: 40px;
 }
 
@@ -509,6 +509,10 @@ header .main .search form input::placeholder {
 
 .article-i .split .left .info h3 {
 	width: 50%;
+	margin: 0;
+}
+
+.article-i .split .left .info h5 {
 	margin: 0;
 }
 

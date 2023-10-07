@@ -6,8 +6,11 @@ const app = express();
 const fetch = require('node-fetch');
 const Feed = require('feed').Feed;
 const mysql = require('mysql2');
+const uuid = require('uuid');
+const cookieParser = require('cookie-parser');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
-const db = mysql.createConnection({
+const db = mysql.createPool({
     host: 'da.dangoweb.com',
     user: 'dangoweb_southernbell',
     password: process.env.DB_PASSWORD,
@@ -30,6 +33,65 @@ app.use(session({
     cookie: { maxAge: 86400000 }
 }));
 app.set('trust proxy', true);
+app.use(cookieParser());
+app.use(rateLimit({
+    windowMs: 60 * 1000,
+    max: 15
+}));
+app.use((req, res, next) => {
+    if (req.method === 'GET') {
+        const pageviewData = {
+            v: 1,
+            t: 'pageview',
+            tid: process.env.GA_TRACKING_ID,
+            cid: req.ip,
+            uip: req.ip,
+            dp: req.originalUrl,
+            ua: req.headers['user-agent'],
+        };
+        fetch('https://www.google-analytics.com/collect', {
+            method: 'POST',
+            body: new URLSearchParams(pageviewData),
+        })
+            .then(() => {
+                db.query('INSERT INTO pageviews (url, count) VALUES (?, 1) ON DUPLICATE KEY UPDATE count = count + 1', [req.originalUrl], (err, results) => {
+                    if (err) {
+                        console.error('Error tracking pageview:', err);
+                    };
+                });
+            })
+            .catch((err) => {
+                console.error('Error tracking pageview:', err);
+            });
+    }
+    next();
+});
+app.use((req, res, next) => {
+    db.query('SELECT count FROM pageviews WHERE url = ?', [req.originalUrl], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error retrieving page views');
+            return;
+        }
+        if (results.length === 1) {
+            req.pageViews = results[0].count;
+        } else {
+            req.pageViews = 0;
+        }
+        next();
+    });
+});
+app.use((err, req, res, next) => {
+    if (res.headersSent) {
+        return next(err);
+    };
+    if (process.env.NODE_ENV === 'production') {
+        return res.status(500).render('error');
+    } else {
+        console.error(err.stack);
+        return res.status(500).send(err.stack);
+    };
+});
 
 function cmsdata() {
     return fetch('https://cms.dangoweb.com/:southern-bell/api/gql', {
@@ -68,7 +130,7 @@ async function startApp() {
 
     // Functions
 
-    async function allRoutes(req) {
+    async function allRoutes(req, res) {
         cms = (await cmsdata().then(res => res.json())).data;
     };
 
@@ -87,75 +149,39 @@ async function startApp() {
             this.getFullYear() === yesterday.getFullYear()
     };
 
-    function getAge(dateString) {
-        var today = new Date();
-        var birthDate = new Date(dateString);
-        var age = today.getFullYear() - birthDate.getFullYear();
-        var m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        return age;
-    };
-
-    async function toTitleCase(str) {
-        return str.replace(
-            /\w\S*/g,
-            function (txt) {
-                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-            }
-        );
-    };
-
-    async function detectProfanity(content) {
-        var has = false;
-        await fetch(`https://api.api-ninjas.com/v1/profanityfilter?text=${content}`, {
-            headers: {
-                'X-Api-Key': process.env.NINJAS_API_KEY
-            }
-        })
-            .then(body => body.json())
-            .then(async body => {
-                if (body["has_profanity"] === true) {
-                    has = true;
-                };
-            });
-        return has;
-    };
-
     // Routes
 
     app.get('/', async (req, res) => {
-        await allRoutes(req);
-        res.render('index', { vars: defaults, title: '', cms });
+        await allRoutes(req, res);
+        res.render('index', { vars: defaults, title: '', cms, pageviews: req.pageViews });
     });
 
     app.get('/about', async (req, res) => {
-        await allRoutes(req);
-        res.render('about', { vars: defaults, title: cms.about[0].title, cms });
+        await allRoutes(req, res);
+        res.render('about', { vars: defaults, title: cms.about[0].title, cms, pageviews: req.pageViews });
     });
 
     app.get('/newspapers', async (req, res) => {
-        await allRoutes(req);
-        res.render('newspapers', { vars: defaults, title: 'All Newspapers', cms });
+        await allRoutes(req, res);
+        res.render('newspapers', { vars: defaults, title: 'All Newspapers', cms, pageviews: req.pageViews });
     });
 
     app.get('/newspapers/:newspaper', async (req, res) => {
-        await allRoutes(req);
+        await allRoutes(req, res);
         var newspaper = cms.newspapers.find(newspaper => newspaper.slug === req.params.newspaper);
         if (newspaper) {
             db.query(`SELECT * FROM comments WHERE post_id = '${newspaper._id}'`,
                 function (err, results, fields) {
-                    res.render('newspaper', { vars: defaults, title: newspaper.title, cms, newspaper, comments: results });
+                    res.render('newspaper', { vars: defaults, title: newspaper.title, cms, pageviews: req.pageViews, newspaper, comments: results });
                 }
             );
         } else {
-            res.render('404', { vars: defaults, title: '404', cms });
+            res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
         };
     });
 
     app.post('/newspapers/:newspaper', async (req, res) => {
-        await allRoutes(req);
+        await allRoutes(req, res);
         var newspaper = cms.newspapers.find(newspaper => newspaper.slug === req.params.newspaper);
         if (newspaper && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
             db.prepare("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", (err, statement) => {
@@ -172,26 +198,26 @@ async function startApp() {
     });
 
     app.get('/articles', async (req, res) => {
-        await allRoutes(req);
-        res.render('articles', { vars: defaults, title: 'All Articles', cms });
+        await allRoutes(req, res);
+        res.render('articles', { vars: defaults, title: 'All Articles', cms, pageviews: req.pageViews });
     });
 
     app.get('/articles/:article', async (req, res) => {
-        await allRoutes(req);
+        await allRoutes(req, res);
         var article = cms.articles.find(article => article.slug === req.params.article);
         if (article) {
             db.query(`SELECT * FROM comments WHERE post_id = '${article._id}'`,
                 function (err, results, fields) {
-                    res.render('article', { vars: defaults, title: article.title, cms, article, comments: results });
+                    res.render('article', { vars: defaults, title: article.title, cms, pageviews: req.pageViews, article, comments: results });
                 }
             );
         } else {
-            res.render('404', { vars: defaults, title: '404', cms });
+            res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
         };
     });
 
     app.post('/articles/:article', async (req, res) => {
-        await allRoutes(req);
+        await allRoutes(req, res);
         var article = cms.articles.find(article => article.slug === req.params.article);
         if (article && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
             db.prepare("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", (err, statement) => {
@@ -208,46 +234,52 @@ async function startApp() {
     });
 
     app.get('/tags', async (req, res) => {
-        await allRoutes(req);
-        res.render('tags', { vars: defaults, title: 'Tags', cms });
+        await allRoutes(req, res);
+        res.render('tags', { vars: defaults, title: 'Tags', cms, pageviews: req.pageViews });
     });
 
     app.get('/tags/:tag', async (req, res) => {
-        await allRoutes(req);
-        res.render('tag', { vars: defaults, title: `#${req.params.tag.toLowerCase()}`, cms, tag: req.params.tag.toLowerCase() });
+        await allRoutes(req, res);
+        res.render('tag', { vars: defaults, title: `#${req.params.tag.toLowerCase()}`, cms, pageviews: req.pageViews, tag: req.params.tag.toLowerCase() });
     });
 
     app.get('/polls', async (req, res) => {
-        await allRoutes(req);
+        await allRoutes(req, res);
         db.query(`SELECT * FROM poll_responses`,
             function (err, responses, fields) {
-                res.render('polls', { vars: defaults, title: 'All Polls', cms, responses });
+                res.render('polls', { vars: defaults, title: 'All Polls', cms, pageviews: req.pageViews, responses });
             });
     });
 
     app.get('/polls/:poll', async (req, res) => {
-        await allRoutes(req);
+        await allRoutes(req, res);
+        let voteId = req.cookies.voteId;
+        if (!voteId) {
+            voteId = uuid.v4();
+            res.cookie('voteId', voteId);
+        };
+        console.log(voteId);
         var poll = cms.polls.find(poll => poll.slug === req.params.poll);
         if (poll) {
             db.query(`SELECT * FROM poll_responses WHERE poll_id = '${poll._id}'`,
                 function (err, responses, fields) {
                     db.query(`SELECT * FROM comments WHERE post_id = '${poll._id}'`,
                         function (err, results, fields) {
-                            res.render('poll', { vars: defaults, title: poll.question, cms, poll, comments: results, responses, error: req.query.error });
+                            res.render('poll', { vars: defaults, title: poll.question, cms, pageviews: req.pageViews, poll, comments: results, responses, error: req.query.error });
                         }
                     );
                 }
             );
         } else {
-            res.render('404', { vars: defaults, title: '404', cms });
+            res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
         };
     });
 
     app.post('/polls/:poll', async (req, res) => {
-        await allRoutes(req);
+        await allRoutes(req, res);
         var poll = cms.polls.find(poll => poll.slug === req.params.poll);
         if (poll && req.body.id && (req.body.name.length > 0) && (req.body.answer)) {
-            db.query(`SELECT * FROM poll_responses WHERE ip = '${req.ip}' AND poll_id = '${poll._id}'`,
+            db.query(`SELECT * FROM poll_responses WHERE session_id = '${req.cookies.voteId}' AND poll_id = '${poll._id}'`,
                 function (err, responses, fields) {
                     if (err) {
                         console.log(err);
@@ -255,12 +287,12 @@ async function startApp() {
                     if (responses.length === 0) {
                         for (let i = 0; i < poll.answers.length; i++) {
                             if (poll.answers[i] === req.body.answer) {
-                                db.prepare("INSERT INTO poll_responses (name, ip, poll_id, response_id) VALUES (?, ?, ?, ?)", (err, statement) => {
+                                db.prepare("INSERT INTO poll_responses (name, ip, session_id, poll_id, response_id) VALUES (?, ?, ?, ?, ?)", (err, statement) => {
                                     if (err) {
                                         console.log(err);
                                         res.redirect(`/polls/${req.params.poll}?error=There was an error submitting your vote!`);
                                     } else {
-                                        statement.execute([req.body.name, req.ip, req.body.id, i], function (err, results, fields) {
+                                        statement.execute([req.body.name, req.ip, req.cookies.voteId, req.body.id, i], function (err, results, fields) {
                                             if (err) {
                                                 console.log(err);
                                             };
@@ -290,26 +322,26 @@ async function startApp() {
     });
 
     app.get('/artworks', async (req, res) => {
-        await allRoutes(req);
-        res.render('artworks', { vars: defaults, title: 'All Artworks', cms });
+        await allRoutes(req, res);
+        res.render('artworks', { vars: defaults, title: 'All Artworks', cms, pageviews: req.pageViews });
     });
 
     app.get('/artworks/:artwork', async (req, res) => {
-        await allRoutes(req);
+        await allRoutes(req, res);
         var artwork = cms.artworks.find(artwork => artwork.slug === req.params.artwork);
         if (artwork) {
             db.query(`SELECT * FROM comments WHERE post_id = '${artwork._id}'`,
                 function (err, results, fields) {
-                    res.render('artwork', { vars: defaults, title: artwork.title, cms, artwork, comments: results });
+                    res.render('artwork', { vars: defaults, title: artwork.title, cms, pageviews: req.pageViews, artwork, comments: results });
                 }
             );
         } else {
-            res.render('404', { vars: defaults, title: '404', cms });
+            res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
         };
     });
 
     app.post('/artworks/:artwork', async (req, res) => {
-        await allRoutes(req);
+        await allRoutes(req, res);
         var artwork = cms.artworks.find(artwork => artwork.slug === req.params.artwork);
         if (artwork && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
             db.prepare("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", (err, statement) => {
@@ -326,11 +358,11 @@ async function startApp() {
     });
 
     app.get('/search', async (req, res) => {
-        await allRoutes(req);
+        await allRoutes(req, res);
         if (req.query.query) {
             db.query(`SELECT * FROM poll_responses`,
                 function (err, responses, fields) {
-                    res.render('search', { vars: defaults, title: 'Search Results', cms, query: req.query.query.toLowerCase(), responses });
+                    res.render('search', { vars: defaults, title: 'Search Results', cms, pageviews: req.pageViews, query: req.query.query.toLowerCase(), responses });
                 });
         } else {
             res.redirect('/');
@@ -417,8 +449,8 @@ async function startApp() {
     });
 
     app.get('*', async (req, res) => {
-        await allRoutes(req);
-        res.render('404', { vars: defaults, title: '404', cms });
+        await allRoutes(req, res);
+        res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
     });
 
     app.listen(port, () => {

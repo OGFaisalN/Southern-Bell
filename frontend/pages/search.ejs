@@ -56,7 +56,7 @@
 			</div>
 			<% }); %>
 			<% filteredArticles.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(article => { %>
-			<div class="article" style="background-image: url('<%- vars.asset_prefix %><%= article.images[0].path %>')">
+			<div class="article"<% if (article.images[0] != null) { %> style="background-image: url('<%- vars.asset_prefix %><%= article.images[0].path %>')"<% } %>>
 				<div class="inner">
 					<a href="<%- vars.domain %>/articles/<%= article.slug %>">
 						<h3>Article: <%= article.title %></h3>

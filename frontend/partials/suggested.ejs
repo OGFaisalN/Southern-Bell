@@ -7,7 +7,7 @@
 	<h2>Suggested articles</h2>
 	<div class="grid">
 		<% for (article of cms.articles.sort(() => Math.random() - 0.5).slice(0, 3)) { %>
-		<div class="article" style="background-image: url('<%- vars.asset_prefix %><%= article.images[0].path %>')">
+		<div class="article"<% if (article.images[0] != null) { %> style="background-image: url('<%- vars.asset_prefix %><%= article.images[0].path %>')"<% } %>>
 			<div class="inner">
 				<a href="<%- vars.domain %>/articles/<%= article.slug %>">
 					<h3><%= article.title %></h3>

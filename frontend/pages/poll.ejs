@@ -31,6 +31,7 @@
 				<div class="info">
 					<h1><%= poll.question %></h1>
 					<h3><%= poll.description %></h3>
+					<h5><%= pageviews %> Views</h5>
 					<p><%= answerCount.reduce((a, b) => a + b) %> Vote<% if (answerCount.reduce((a, b) => a + b) != 1) { %>s<% } %></p>
 				</div>
 				<div class="author">
