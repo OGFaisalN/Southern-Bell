@@ -84,17 +84,6 @@ app.use((req, res, next) => {
         next();
     });
 });
-app.use((err, req, res, next) => {
-    if (res.headersSent) {
-        return next(err);
-    };
-    if (process.env.NODE_ENV === 'production') {
-        return res.status(500).render('error', { error: 'internal server error; check logs for more information' });
-    } else {
-        console.error(err.stack);
-        return res.status(500).send(err.stack);
-    };
-});
 app.use(async (req, res, next) => {
     if (!(await cmsdata()).ok) {
         res.status(500).render('error', { error: 'error connecting to CMS; CMS connection failed' });
@@ -135,7 +124,7 @@ async function startApp() {
 
     var defaults = {
         environment: process.env.NODE_ENV || 'testing',
-        domain: process.env.NODE_ENV === 'production' ? cms.siteDetails[0]['domain-production'] : process.env.NODE_ENV === 'development' ? cms.siteDetails[0]['domain-development'] : '..',
+        domain: process.env.NODE_ENV === 'production' ? cms.siteDetails[0]['domain-production'] : process.env.NODE_ENV === 'development' ? cms.siteDetails[0]['domain-development'] : '../../../../..',
         asset_prefix: process.env.CMS_ASSET_PREFIX,
         asset_url: process.env.CMS_ASSET_URL
     };
@@ -151,14 +140,6 @@ async function startApp() {
         return this.getDate() === today.getDate() &&
             this.getMonth() === today.getMonth() &&
             this.getFullYear() === today.getFullYear()
-    };
-
-    Date.prototype.isYesterday = function () {
-        const yesterday = new Date()
-        yesterday.setDate(yesterday.getDate() - 1)
-        return this.getDate() === yesterday.getDate() &&
-            this.getMonth() === yesterday.getMonth() &&
-            this.getFullYear() === yesterday.getFullYear()
     };
 
     // Routes
@@ -212,9 +193,9 @@ async function startApp() {
         res.render('articles', { vars: defaults, title: 'All Articles', cms, pageviews: req.pageViews });
     });
 
-    app.get('/articles/:article', async (req, res) => {
+    app.get('/articles/:year/:article', async (req, res) => {
         await allRoutes(req, res);
-        var article = cms.articles.find(article => article.slug === req.params.article);
+        var article = cms.articles.find(article => { return article.slug === req.params.article && (new Date(article.date)).getFullYear() === Number(req.params.year) });
         if (article) {
             db.query(`SELECT * FROM comments WHERE post_id = '${article._id}'`,
                 function (err, results, fields) {
@@ -226,15 +207,15 @@ async function startApp() {
         };
     });
 
-    app.post('/articles/:article', async (req, res) => {
+    app.post('/articles/:year/:article', async (req, res) => {
         await allRoutes(req, res);
-        var article = cms.articles.find(article => article.slug === req.params.article);
+        var article = cms.articles.find(article => { return article.slug === req.params.article && (new Date(article.date)).getFullYear() === Number(req.params.year) });
         if (article && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
             db.query("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", [req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
                 if (err) {
                     console.log(err);
                 };
-                res.redirect(`/articles/${req.params.article}#${results.insertId}`);
+                res.redirect(`/articles/${req.params.year}/${req.params.article}#${results.insertId}`);
             });
         } else {
             res.redirect('/');
@@ -453,9 +434,13 @@ async function startApp() {
         res.send(feed.rss2());
     });
 
-    app.get('*', async (req, res) => {
+    app.use(async (req, res, next) => {
         await allRoutes(req, res);
-        res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
+        return res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
+    });
+
+    app.use(async (err, req, res, next) => {
+        return res.render('error', { error: 'internal server error; check logs' });
     });
 
     app.listen(port, () => {
