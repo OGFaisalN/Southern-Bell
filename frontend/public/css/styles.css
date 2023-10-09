@@ -796,7 +796,7 @@ footer .inner .bottom a {
 .articles.searchResults .grid {
     grid-template-columns: repeat(1, 1fr) !important;
     grid-template-areas: "." !important;
-	gap: 10vh;
+	gap: 1vh;
 }
 
 .articles.searchResults .grid .article {

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Error</title>
+	<style>
+		body {
+			background-color: #f8f8f8;
+			font-family: Arial, sans-serif;
+			font-size: 16px;
+			line-height: 1.5;
+			color: #333;
+			height: 100vh;
+			margin: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.container {
+			width: 60vw;
+			max-width: 600px;
+			margin: 0 auto;
+			padding: 40px 75px 45px 50px;
+			background-color: white;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		}
+
+		h1 {
+			font-size: 36px;
+			margin: 5px 0 0 0;
+		}
+
+		p {
+			margin: 10px 0 0 0;
+		}
+
+		ul {
+			list-style: none;
+			padding-left: 4px;
+		}
+
+		i {
+			width: 16px;
+			margin-right: 5px;
+			text-align: end;
+		}
+	</style>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+	<div class="container">
+		<h1>🏗️</h1>
+		<h1>Error</h1>
+		<p>Sorry, something went wrong and we are unable to load this app. Specifically, there was an <%= error %>. Please try again later or contact support.</p>
+		<ul>
+			<li><i class="fa-solid fa-database"></i> Database: <% if (error.includes("database")) { %>Server may be down, subscription may be expired, or host panel changed.<% } else { %>Checks passed, all looks good!<% } %></li>
+			<li><i class="fa-solid fa-server"></i> CMS: <% if (error.includes("CMS")) { %>Server may be down, subscription may be expired, or API access denied.<% } else { %>Checks passed, all looks good!<% } %></li>
+			<li><i class="fa-solid fa-chart-simple"></i> Google Analytics: <% if (error.includes("page views")) { %>Monthly limit may be reached, or property ID changed.<% } else { %>Checks passed, all looks good!<% } %></li>
+		</ul>
+	</div>
+</body>
+
+</html>

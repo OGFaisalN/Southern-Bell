@@ -24,7 +24,7 @@
 					<a href="<%- vars.domain %>/artworks/<%= artwork.slug %>">
 						<h3><%= artwork.title %></h3>
 					</a>
-					<p><a href="<%- vars.domain %>/tags/<%= artwork.tags[0].toLowerCase() %>"><%= artwork.tags[0] %></a> / <% var date = new Date(artwork.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((artwork.author != "") && (artwork.author != null)) { %> / <%= artwork.author %><% } %></p>
+					<p><a href="<%- vars.domain %>/tags/<%= article.tags[0].toLowerCase() %>"><%= article.tags[0] %></a> / <% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article.author != "") && (article.author != null)) { %> / <%= article.author %><% } %></p>
 				</div>
 			</div>
 			<% } %>

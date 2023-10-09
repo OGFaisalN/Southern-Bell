@@ -59,12 +59,12 @@ app.use((req, res, next) => {
             .then(() => {
                 db.query('INSERT INTO pageviews (url, count) VALUES (?, 1) ON DUPLICATE KEY UPDATE count = IF(TIMESTAMPDIFF(HOUR, timestamp, NOW()) <= 1, count, count + 1), timestamp = IF(TIMESTAMPDIFF(HOUR, timestamp, NOW()) <= 1, timestamp, NOW());', [req.originalUrl], (err, results) => {
                     if (err) {
-                        console.error('Error tracking pageview:', err);
+                        console.error('error tracking pageview:', err);
                     };
                 });
             })
             .catch((err) => {
-                console.error('Error tracking pageview:', err);
+                console.error('error tracking pageview:', err);
             });
     }
     next();
@@ -73,14 +73,14 @@ app.use((req, res, next) => {
     db.query('SELECT count FROM pageviews WHERE url = ?', [req.originalUrl], (err, results) => {
         if (err) {
             console.error(err);
-            res.status(500).send('Error retrieving page views');
+            res.status(500).render('error', { error: 'error retrieving page views; database connection failed' });
             return;
-        }
+        };
         if (results.length === 1) {
             req.pageViews = results[0].count;
         } else {
             req.pageViews = 0;
-        }
+        };
         next();
     });
 });
@@ -89,11 +89,18 @@ app.use((err, req, res, next) => {
         return next(err);
     };
     if (process.env.NODE_ENV === 'production') {
-        return res.status(500).render('error');
+        return res.status(500).render('error', { error: 'internal server error; check logs for more information' });
     } else {
         console.error(err.stack);
         return res.status(500).send(err.stack);
     };
+});
+app.use(async (req, res, next) => {
+    if (!(await cmsdata()).ok) {
+        res.status(500).render('error', { error: 'error connecting to CMS; CMS connection failed' });
+        return;
+    };
+    next();
 });
 
 function cmsdata() {
@@ -120,7 +127,9 @@ function cmsdata() {
 };
 
 async function startApp() {
-    var cms = JSON.parse(JSON.stringify((await cmsdata().then(res => res.json())).data).replaceAll('.spaces', 'clients'));
+    try {
+        var cms = JSON.parse(JSON.stringify((await cmsdata().then(res => res.json())).data).replaceAll('.spaces', 'clients'));
+    } catch { };
 
     // Defaults & Environment Variables
 
@@ -450,7 +459,11 @@ async function startApp() {
     });
 
     app.listen(port, () => {
-        console.log(`${cms.siteDetails[0].title} listening on port ${port}`);
+        try {
+            console.log(`${cms.siteDetails[0].title} listening on port ${port}`);
+        } catch {
+            console.log(`Southern Bell listening on port ${port}`);
+        };
     });
 }
 
