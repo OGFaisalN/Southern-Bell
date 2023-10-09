@@ -36,7 +36,10 @@ app.set('trust proxy', true);
 app.use(cookieParser());
 app.use(rateLimit({
     windowMs: 60 * 1000,
-    max: 15
+    max: 15,
+    skip: (req, res) => {
+        return req.ip !== undefined;
+    }
 }));
 app.use((req, res, next) => {
     if (req.method === 'GET') {
@@ -54,7 +57,7 @@ app.use((req, res, next) => {
             body: new URLSearchParams(pageviewData),
         })
             .then(() => {
-                db.query('INSERT INTO pageviews (url, count) VALUES (?, 1) ON DUPLICATE KEY UPDATE count = count + 1', [req.originalUrl], (err, results) => {
+                db.query('INSERT INTO pageviews (url, count) VALUES (?, 1) ON DUPLICATE KEY UPDATE count = IF(TIMESTAMPDIFF(HOUR, timestamp, NOW()) <= 1, count, count + 1), timestamp = IF(TIMESTAMPDIFF(HOUR, timestamp, NOW()) <= 1, timestamp, NOW());', [req.originalUrl], (err, results) => {
                     if (err) {
                         console.error('Error tracking pageview:', err);
                     };
@@ -184,13 +187,11 @@ async function startApp() {
         await allRoutes(req, res);
         var newspaper = cms.newspapers.find(newspaper => newspaper.slug === req.params.newspaper);
         if (newspaper && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
-            db.prepare("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", (err, statement) => {
-                statement.execute([req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
-                    if (err) {
-                        console.log(err);
-                    };
-                    res.redirect(`/newspapers/${req.params.newspaper}#${results.insertId}`);
-                });
+            db.query("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", [req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
+                if (err) {
+                    console.log(err);
+                };
+                res.redirect(`/newspapers/${req.params.newspaper}#${results.insertId}`);
             });
         } else {
             res.redirect('/');
@@ -220,13 +221,11 @@ async function startApp() {
         await allRoutes(req, res);
         var article = cms.articles.find(article => article.slug === req.params.article);
         if (article && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
-            db.prepare("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", (err, statement) => {
-                statement.execute([req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
-                    if (err) {
-                        console.log(err);
-                    };
-                    res.redirect(`/articles/${req.params.article}#${results.insertId}`);
-                });
+            db.query("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", [req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
+                if (err) {
+                    console.log(err);
+                };
+                res.redirect(`/articles/${req.params.article}#${results.insertId}`);
             });
         } else {
             res.redirect('/');
@@ -258,7 +257,6 @@ async function startApp() {
             voteId = uuid.v4();
             res.cookie('voteId', voteId);
         };
-        console.log(voteId);
         var poll = cms.polls.find(poll => poll.slug === req.params.poll);
         if (poll) {
             db.query(`SELECT * FROM poll_responses WHERE poll_id = '${poll._id}'`,
@@ -308,13 +306,11 @@ async function startApp() {
                 }
             );
         } else if (poll && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
-            db.prepare("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", (err, statement) => {
-                statement.execute([req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
-                    if (err) {
-                        console.log(err);
-                    };
-                    res.redirect(`/polls/${req.params.poll}#${results.insertId}`);
-                });
+            db.query("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", [req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
+                if (err) {
+                    console.log(err);
+                };
+                res.redirect(`/polls/${req.params.poll}#${results.insertId}`);
             });
         } else {
             res.redirect('/');
