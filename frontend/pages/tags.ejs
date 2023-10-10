@@ -9,11 +9,13 @@
 	}
 	var tags = {};
 	for (article of cms.articles) {
-		for (tag of article.tags) {
-			if (!tags[tag]) {
-				tags[tag] = [];
+		if (article.tags) {
+			for (tag of article.tags) {
+				if (!tags[tag]) {
+					tags[tag] = [];
+				};
+				tags[tag].push(article);
 			};
-			tags[tag].push(article);
 		};
 	};
 	function toTitleCase(str) {

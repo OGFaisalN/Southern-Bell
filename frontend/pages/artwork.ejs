@@ -21,7 +21,7 @@
 			<div class="left">
 				<div class="info">
 					<h1><%= artwork.title %></h1>
-					<p>Tags: <% for (tag of artwork.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>"><%= toTitleCase(tag) %></a> <% } %></p>
+					<% if (artwork.tags != null) { %><p>Tags: <% for (tag of artwork.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>"><%= toTitleCase(tag) %></a> <% } %></p><% } %>
 				</div>
 				<div class="author">
 					<img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>" />

@@ -23,7 +23,7 @@
 					<h1><%= article.title %></h1>
 					<% if (article.description != null) { %><h3><%= article.description.slice(0, 97) %>...</h3><% } %>
 					<h5><%= pageviews %> Views</h5>
-					<p>Tags: <% for (tag of article.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>"><%= toTitleCase(tag) %></a> <% } %></p>
+					<% if (article.tags != null) { %><p>Tags: <% for (tag of article.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>"><%= toTitleCase(tag) %></a> <% } %></p><% } %>
 				</div>
 				<div class="author">
 					<img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>" />
