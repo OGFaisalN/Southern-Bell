@@ -427,7 +427,7 @@ async function startApp() {
                     }
                 ],
                 date: new Date(post.date),
-                image: `${defaults.asset_prefix}${post.images[0].path}`
+                image: (post.images[0]) ? `${defaults.asset_prefix}${post.images[0].path}` : ""
             });
         });
         res.set('Content-Type', 'text/xml');
@@ -440,6 +440,7 @@ async function startApp() {
     });
 
     app.use(async (err, req, res, next) => {
+        console.log(err);
         return res.render('error', { error: 'internal server error; check logs' });
     });
 

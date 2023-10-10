@@ -406,7 +406,8 @@ header .main .search form input::placeholder {
 	flex-direction: column;
     justify-content: flex-end;
 	background-color: var(--background);
-	background-size: contain;
+    background-size: cover;
+    background-position: bottom;
 	border-bottom: 4px solid #ececec;
 	transition: 0.25s;
 	padding-top: 150px;
@@ -579,7 +580,8 @@ header .main .search form input::placeholder {
 }
 
 .article-i .content * {
-	margin: 10px 0;
+	margin: 10px 0;	
+    font-weight: revert !important;
 }
 
 .article-i .content b {

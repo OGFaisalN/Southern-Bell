@@ -21,7 +21,7 @@
 			<div class="left">
 				<div class="info">
 					<h1><%= article.title %></h1>
-					<h3><%= article.description %></h3>
+					<% if (article.description != null) { %><h3><%= article.description.slice(0, 97) %>...</h3><% } %>
 					<h5><%= pageviews %> Views</h5>
 					<p>Tags: <% for (tag of article.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>"><%= toTitleCase(tag) %></a> <% } %></p>
 				</div>
@@ -47,7 +47,7 @@
 			<% } %>
 		</div>
 		<% } %>
-		<style>.article-i .content:before { content: '(<% if ((article.author != "") && (article.author != null)) { %><%= article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %>) — ' }</style>
+		<style>.article-i .content:before { content: '(<% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %>) — ' }</style>
 		<div class="content"><%- article.content.replaceAll('/.spaces/', vars.asset_url) %></div>
 		<div class="comments">
 			<h1>Comments</h1>

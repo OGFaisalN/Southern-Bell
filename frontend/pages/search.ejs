@@ -4,9 +4,8 @@
 	<%- include('../partials/head.ejs'); %>
 	<% const filteredArticles = cms.articles.filter(article => {
 		const title = article.title.toLowerCase();
-		const description = (article.description || "").toLowerCase();
 		const content = article.content.toLowerCase();
-		return title.includes(query) || description.includes(query) || content.includes(query);
+		return title.includes(query) || content.includes(query);
 	});
 	const filteredNewspapers = cms.newspapers.filter(newspaper => newspaper.title.toLowerCase().includes(query));
 	var tags = {};
@@ -61,7 +60,7 @@
 					<a href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>">
 						<h3>Article: <%= article.title %></h3>
 					</a>
-					<h4><%= article.description %></h4>
+					<% if (article.description != null) { %><h4><%= article.description.slice(0, 97) %>...</h4><% } %>
 					<p><a href="<%- vars.domain %>/tags/<%= article.tags[0].toLowerCase() %>"><%= article.tags[0] %></a> / <% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article.author != "") && (article.author != null)) { %> / <%= article.author %><% } %></p>
 				</div>
 			</div>
