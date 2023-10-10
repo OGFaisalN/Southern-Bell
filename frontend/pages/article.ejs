@@ -21,7 +21,7 @@
 			<div class="left">
 				<div class="info">
 					<h1><%= article.title %></h1>
-					<% if (article.description != null) { %><h3><%= article.description.slice(0, 97) %>...</h3><% } %>
+					<% if (article.description != null) { %><h3><%= article.description.slice(0, 50) %>...</h3><% } %>
 					<h5><%= pageviews %> Views</h5>
 					<% if (article.tags != null) { %><p>Tags: <% for (tag of article.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>"><%= toTitleCase(tag) %></a> <% } %></p><% } %>
 				</div>
@@ -43,7 +43,7 @@
 		<% if (article.images[0] != null) { %>
 		<div class="images">
 			<% for (image of article.images) { %>
-			<div class="image" style="background-image: url('<%- vars.asset_prefix %><%= image.path %>');<% if ((image.height / image.width) >= 1.25) { %> width: <%= image.width %>px;<% } %>"><% if (image.description != "") { %><h2><%= image.description %></h2><% } %></div>
+			<a class="image" style="background-image: url('<%- vars.asset_prefix %><%= image.path %>');<% if ((image.height / image.width) >= 1.25) { %> width: <%= image.width %>px;<% } %>" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>"<% if (image.description != "") { %> data-title="<%= image.description %>"<% } %>><% if (image.description != "") { %><h2><%= image.description %></h2><% } %></a>
 			<% } %>
 		</div>
 		<% } %>

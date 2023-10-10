@@ -407,7 +407,8 @@ header .main .search form input::placeholder {
     justify-content: flex-end;
 	background-color: var(--background);
     background-size: cover;
-    background-position: bottom;
+    background-position-x: center;
+	background-position-y: -100px;
 	border-bottom: 4px solid #ececec;
 	transition: 0.25s;
 	padding-top: 150px;
@@ -558,6 +559,8 @@ header .main .search form input::placeholder {
 
 .article-i .image:first-of-type {
 	height: 60vh;
+	background-size: contain;
+	background-repeat: no-repeat;
 	grid-column-start: 1;
 	grid-column-end: 3;
 	display: flex;
@@ -594,6 +597,10 @@ header .main .search form input::placeholder {
 
 .article-i .content a {
 	text-decoration: underline;
+}
+
+.article-i .content img {
+	width: 100%;
 }
 
 .article-i object {
@@ -810,4 +817,13 @@ footer .inner .bottom a {
 .articles.searchResults .grid .article .inner {
 	width: 100%;
     gap: 0px;
+}
+
+.lb-outerContainer {
+    width: 90vw !important;
+}
+
+.lightbox .lb-image {
+    width: 100% !important;
+    height: unset !important;
 }

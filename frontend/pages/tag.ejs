@@ -31,7 +31,7 @@
 					<a href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>">
 						<h3><%= article.title %></h3>
 					</a>
-					<h4><%= article.description.slice(0, 97) %>...</h4>
+					<h4><%= article.description.slice(0, 50) %>...</h4>
 					<p><% if (article.tags != null) { %><a href="<%- vars.domain %>/tags/<%= article.tags[0].toLowerCase() %>"><%= article.tags[0] %></a> / <% } %><% var date = new Date(article._created * 1000); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
 				</div>
 			</div>
