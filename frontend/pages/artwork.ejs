@@ -21,20 +21,21 @@
 			<div class="left">
 				<div class="info">
 					<h1><%= artwork.title %></h1>
-					<% if (artwork.tags != null) { %><p>Tags: <% for (tag of artwork.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>"><%= toTitleCase(tag) %></a> <% } %></p><% } %>
+					<% if (artwork.description != null) { %><h3><%= artwork.description.slice(0, 50) %>...</h3><% } %>
+					<h5><%= pageviews %> Views | Published <% var date = new Date(artwork.date); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((artwork._created != artwork._modified) && (date < (new Date(artwork._modified * 1000)))) { %> | Edited <% var date = new Date(artwork._modified * 1000); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } } %></h5>
+					<% if (artwork.tags != null) { %><p>Tags: <% for (tag of artwork.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>">#<%= tag.toLowerCase().replaceAll(" ", "-") %></a> <% } %></p><% } %>
 				</div>
 				<div class="author">
-					<img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>" />
+					<img src="<%- vars.asset_prefix %><% if ((artwork.author != "") && (artwork.author != null)) { %><%= cms.siteDetails[0].unknown.path %><% } else { %><%= cms.siteDetails[0].favicon.path %><% } %>" />
 					<div class="info">
-						<h4>By <% if ((artwork.author != "") && (artwork.author != null)) { %><%= artwork.author %><% } else { %><a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a> Writers, <a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a><% } %></h4>
-						<h5>Published <% var date = new Date(artwork.date); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></h5>
-						<% if ((artwork._created != artwork._modified) && (date < (new Date(artwork._modified * 1000)))) { %><h5>Edited <% var date = new Date(artwork._modified * 1000); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></h5><% } } %>
+						<h4><% if ((artwork.author != "") && (artwork.author != null)) { %><%= artwork.author %><% } else { %><%= cms.siteDetails[0].title %><% } %></h4>
+						<h5><a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a> - Writer<% if ((artwork.author != "") && (artwork.author != null)) { %><% } else { %>s<% } %></h5>
 					</div>
 				</div>
 			</div>
 			<div class="right">
 				<div class="icons">
-					<i class="fas fa-link" onClick="const el = document.createElement('textarea'); el.value = window.location.href; el.setAttribute('readonly', ''); el.style.position = 'absolute'; el.style.left = '-9999px'; document.body.appendChild(el); const selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false; el.select(); document.execCommand('copy'); document.body.removeChild(el); if (selected) { document.getSelection().removeAllRanges(); document.getSelection().addRange(selected); } alert('Link copied!');"></i>
+					<i class="fas fa-link" onClick="copyLink();"></i>
 				</div>
 			</div>
 		</div>

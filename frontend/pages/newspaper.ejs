@@ -17,20 +17,20 @@
 				<div class="info">
 					<h1><%= newspaper.title %></h1>
 					<h3><%= newspaper.description %></h3>
-					<h5><%= pageviews %> Views</h5>
+					<h5><%= pageviews %> Views | Published <% var date = new Date(newspaper.date); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((newspaper._created != newspaper._modified) && (date < (new Date(newspaper._modified * 1000)))) { %> | Edited <% var date = new Date(newspaper._modified * 1000); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } } %></h5>
+					<% if (newspaper.tags != null) { %><p>Tags: <% for (tag of newspaper.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>">#<%= tag.toLowerCase().replaceAll(" ", "-") %></a> <% } %></p><% } %>
 				</div>
 				<div class="author">
 					<img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>" />
 					<div class="info">
-						<h4>By <a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a> Writers, <a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a></h4>
-						<h5>Published <% var date = new Date(newspaper.date); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></h5>
-						<% if ((newspaper._created != newspaper._modified) && (date < (new Date(newspaper._modified * 1000)))) { %><h5>Edited <% var date = new Date(newspaper._modified * 1000); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></h5><% } } %>
+						<h4><%= cms.siteDetails[0].title %></h4>
+						<h5><a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a> - Writers</h5>
 					</div>
 				</div>
 			</div>
 			<div class="right">
 				<div class="icons">
-					<i class="fas fa-link" onClick="const el = document.createElement('textarea'); el.value = window.location.href; el.setAttribute('readonly', ''); el.style.position = 'absolute'; el.style.left = '-9999px'; document.body.appendChild(el); const selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false; el.select(); document.execCommand('copy'); document.body.removeChild(el); if (selected) { document.getSelection().removeAllRanges(); document.getSelection().addRange(selected); } alert('Link copied!');"></i>
+					<i class="fas fa-link" onClick="copyLink();"></i>
 				</div>
 			</div>
 		</div>
