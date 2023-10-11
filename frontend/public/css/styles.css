@@ -43,6 +43,14 @@
 		border-radius: 100px;
 	}
 
+	header .main {
+		flex-direction: column !important;
+	}
+	
+	header .main a img {
+		height: 50px !important;
+	}
+
 	header .main a img,
 	footer .inner .top img {
 		max-width: 70vw;
@@ -61,6 +69,10 @@
 		position: relative !important;
 		top: 0px !important;
 		right: unset !important;
+	}
+
+	header .main .search form input:hover, header .main .search form input:focus {
+		width: 50vw !important;
 	}
 
 	.hero {
@@ -223,7 +235,7 @@ header .announcement a {
 
 header .main {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
 	gap: 20px;
@@ -232,13 +244,21 @@ header .main {
 	border-bottom: 1px solid lightgray;
 }
 
+header .main.home {
+	flex-direction: column !important;
+}
+
 header .main a {
 	padding: 10px;
 }
 
 header .main a img {
-	height: 50px;
+	height: 39px;
 	padding-right: 10px;
+}
+
+header .main.home a img {
+	height: 50px !important;
 }
 
 header .main .links {
@@ -249,7 +269,6 @@ header .main .links {
 }
 
 header .main .search {
-	position: fixed;
 	top: 40px;
 	right: 40px;
 	display: flex;
@@ -260,10 +279,15 @@ header .main .search {
 	z-index: 100;
 }
 
+header .main.home .search {
+	position: fixed;
+}
+
 header .main .search img {
-	height: 25px;
-	rotate: 90deg;
-	cursor: pointer;
+    height: 15px;
+    rotate: 90deg;
+    cursor: pointer;
+    margin-left: -45px;
 }
 
 header .main .search form {
@@ -276,13 +300,13 @@ header .main .search.active form {
 }
 
 header .main .search form input {
-	width: 15vw;
-	border-radius: 5px;
-	border: 2px solid var(--text);
-	background-color: var(--background);
-	color: var(--text);
-	padding: 6px 10px;
-	transition: 0.5s;
+    width: 15vw;
+    border-radius: 24px;
+    border: 2px solid #D2D2D2;
+    background-color: var(--background);
+    color: var(--text);
+    padding: 8px 12px;
+    transition: 0.5s;
 }
 
 header .main .search form input:hover,
