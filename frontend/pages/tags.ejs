@@ -6,11 +6,12 @@
 		var yesterday = new Date();
 		yesterday.setDate(yesterday.getDate() - 1);
 		return date.toDateString() === yesterday.toDateString();
-	}
+	};
 	var tags = {};
 	for (article of cms.articles) {
 		if (article.tags) {
 			for (tag of article.tags) {
+				tag = tag.toLowerCase();
 				if (!tags[tag]) {
 					tags[tag] = [];
 				};
@@ -18,6 +19,11 @@
 			};
 		};
 	};
+	var sortedTagsObj = {};
+	for (tag of Object.keys(tags).sort()) {
+		sortedTagsObj[tag] = tags[tag];
+	};
+	tags = sortedTagsObj;
 	function toTitleCase(str) {
 		return str.replace(/\b\w+/g, function(txt) {
 			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -37,8 +43,8 @@
 			<% if (Object.keys(tags).length != 0) { for (tag in tags) { %>
 			<div class="article" style="padding-top: 0;">
 				<div class="inner">
-					<a href="<%- vars.domain %>/tags/<%= tag %>">
-						<h3><%= toTitleCase(tag) %></h3>
+					<a href="<%- vars.domain %>/tags/<%= tag.toLowerCase().replaceAll(" ", "-") %>">
+						<h3><%= tag.toLowerCase().replaceAll(" ", "-") %></h3>
 					</a>
 					<p><%- tags[tag].length %> Article<% if (tags[tag].length != 1) { %>s<% } %></p>
 				</div>

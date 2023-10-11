@@ -1,3 +1,9 @@
+@media screen and (max-width: 1400px) {
+	header .main {
+		flex-direction: column !important;
+	}
+}
+
 @media screen and (max-width: 1200px) {
 	.hero {
 		display: flex !important;
@@ -69,6 +75,10 @@
 		position: relative !important;
 		top: 0px !important;
 		right: unset !important;
+	}
+
+	header .main .search form input {
+		width: 25vw !important;
 	}
 
 	header .main .search form input:hover, header .main .search form input:focus {
@@ -563,6 +573,11 @@ header .main .search form input::placeholder {
 	margin: 0;
 }
 
+.article-i .split .left .author .info h4 {
+    font-weight: 600;
+    color: black;
+}
+
 .article-i .split .right .icons i {
 	cursor: pointer;
 }
@@ -576,18 +591,23 @@ header .main .search form input::placeholder {
 
 .article-i .image {
 	height: 30vh;
+	width: 100% !important;
 	background-size: cover;
 	background-position: center;
     position: relative;
 }
 
 .article-i .image:first-of-type {
-	height: 60vh;
+	height: unset;
 	background-size: contain;
 	background-repeat: no-repeat;
 	grid-column-start: 1;
 	grid-column-end: 3;
 	display: flex;
+}
+
+.article-i .image:first-of-type img {
+    width: 100%;
 }
 
 .article-i .image h2 {
