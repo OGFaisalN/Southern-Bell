@@ -22,3 +22,7 @@ function copyLink() {
     };
     alert('Link copied!');
 };
+
+try {
+    jQuery(".article-i .split .left .info h1").fitText(1.4);
+} catch { };

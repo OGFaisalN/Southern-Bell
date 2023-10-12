@@ -1,4 +1,4 @@
-<% var currentSlug = (article || []).slug;
+<% var article = article || poll || newspaper; var currentSlug = (article || []).slug;
 function ifYesterday(date) { 
 	var yesterday = new Date();
 	yesterday.setDate(yesterday.getDate() - 1);
