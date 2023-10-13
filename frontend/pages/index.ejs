@@ -38,15 +38,12 @@
 		<hr>
 		<div class="grid">
 			<% for (let i = 0; i < 3 && i < cms.articles.length; i++) { const article = cms.articles.sort((a, b) => new Date(b.date) - new Date(a.date))[i]; %>
-			<div class="article" style="<% if (article.images[0] != null) { %>background-image: url('<%- vars.asset_prefix %><%= article.images[0].path %>')<% } else { %>padding-top: unset !important; justify-content: center; height: 100%;<% } %>">
-				<div class="inner">
-					<a href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>">
-						<h3><%= article.title %></h3>
-					</a>
-					<% if (article.description != null) { %><h4><%= article.description.slice(0, 50) %>...</h4><% } %>
-					<p><% if (article.tags != null) { %><a href="<%- vars.domain %>/tags/<%= article.tags[0].toLowerCase() %>"><%= article.tags[0] %></a> / <% } %><% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article.author != "") && (article.author != null)) { %> / <%= article.author %><% } %></p>
-				</div>
-			</div>
+			<a class="article" href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>">
+				<img src="<% if (article.images[0] != null) { %><%- vars.asset_prefix %><%= article.images[0].path %><% } %>" />
+				<h3><%= article.title %></h3>
+				<% if (article.description != null) { %><h4><%= article.description.slice(0, 50) %>...</h4><% } %>
+				<p><% if (article.tags != null) { %><a href="<%- vars.domain %>/tags/<%= article.tags[0].toLowerCase() %>"><%= article.tags[0] %></a> / <% } %><% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article.author != "") && (article.author != null)) { %> / <%= article.author %><% } %></p>
+			</a>
 			<% } %>
 		</div>
 	</div>

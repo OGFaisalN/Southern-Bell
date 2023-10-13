@@ -133,6 +133,16 @@ async function startApp() {
 
     async function allRoutes(req, res) {
         cms = (await cmsdata().then(res => res.json())).data;
+        if (!req.session.cookiesDenied) {
+            req.session.cookiesDenied = false;
+        } else if (req.session.cookiesDenied === true) {
+            res.clearCookie("sessionid");
+            req.session.destroy();
+            res.send("You have denied cookies. If you would like to re-enable cookies, click <a href='/enablecookies'>here</a>.");
+            return false;
+        } else {
+            return;
+        };
     };
 
     Date.prototype.isToday = function () {
@@ -434,6 +444,16 @@ async function startApp() {
         res.send(feed.rss2());
     });
 
+    app.get('/denycookies', async (req, res) => {
+        req.session.cookiesDenied = true;
+        res.redirect('/');
+    });
+
+    app.get('/enablecookies', async (req, res) => {
+        req.session.cookiesDenied = false;
+        res.redirect('/');
+    });
+
     app.use(async (req, res, next) => {
         await allRoutes(req, res);
         return res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
@@ -451,6 +471,6 @@ async function startApp() {
             console.log(`Southern Bell listening on port ${port}`);
         };
     });
-}
+};
 
 startApp();
