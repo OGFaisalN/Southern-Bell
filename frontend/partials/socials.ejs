@@ -1,0 +1,3 @@
+<% cms.siteDetails[0].socials.sort((a, b) => a._o - b._o); for (item of cms.siteDetails[0].socials) { %>
+<a href="<%= item.url %>" title="<%= item.title %>"><i class="fas fa-<%= item.data.icon %>"></i></a>
+<% } %>

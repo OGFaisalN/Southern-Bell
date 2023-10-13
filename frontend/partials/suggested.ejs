@@ -1,5 +1,4 @@
-<% var article = article || poll || newspaper; var currentSlug = (article || []).slug;
-function ifYesterday(date) { 
+<% function ifYesterday(date) { 
 	var yesterday = new Date();
 	yesterday.setDate(yesterday.getDate() - 1);
 	return date.toDateString() === yesterday.toDateString();
@@ -7,7 +6,7 @@ function ifYesterday(date) {
 <div class="articles">
 	<h2>Suggested articles</h2>
 	<div class="grid">
-		<% for (article of cms.articles.filter(a => a.slug !== currentSlug).sort(() => Math.random() - 0.5).slice(0, 3)) { %>
+		<% for (article of cms.articles.filter(a => a.slug !== (article || []).slug).sort(() => Math.random() - 0.5).slice(0, 3)) { %>
 		<div class="article" <% if (article.images[0] != null) { %> style="background-image: url('<%- vars.asset_prefix %><%= article.images[0].path %>')" <% } %>>
 			<div class="inner">
 				<a href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>">

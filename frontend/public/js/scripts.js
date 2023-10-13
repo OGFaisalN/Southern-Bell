@@ -23,6 +23,26 @@ function copyLink() {
     alert('Link copied!');
 };
 
+function shareToFacebook() {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${domain}`, '_blank');
+};
+
+function shareToTwitter() {
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(window.location.href)}`, '_blank');
+};
+
+function shareToWhatsapp() {
+    window.open(`https://wa.me/?text=${encodeURIComponent(window.location.href)}`, '_blank');
+};
+
+function shareToTelegram() {
+    window.open(`https://telegram.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${document.title.split(" |")[0]}`, '_blank');
+};
+
+function shareToLine() {
+    window.open(`https://line.me/R/share?text=${encodeURIComponent(window.location.href)}`, '_blank');
+};
+
 try {
     jQuery(".article-i .split .left .info h1").fitText(1.4);
 } catch { };

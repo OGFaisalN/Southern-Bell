@@ -174,6 +174,11 @@
 		width: unset !important;
 		gap: 30px !important;
 	}
+
+	.toTop {
+		bottom: 20px !important;
+		right: 20px !important;
+	}
 }
 
 :root {
@@ -257,13 +262,40 @@ header .announcement {
 	position: fixed;
 	top: 45px;
 	left: -75px;
-	rotate: -38deg;
+	rotate: -35deg;
 	background-color: var(--theme);
 	z-index: 100;
 }
 
 header .announcement a {
 	color: var(--background);
+}
+
+header .socials {
+    position: fixed;
+    top: 150px;
+    left: 30px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(10px, 1fr));
+    gap: 10px;
+    justify-items: start;
+    align-items: start;
+}
+
+header .socials i {
+    border: 1px solid #ECECEC;
+    padding: 15px;
+    border-radius: 100%;
+    height: 20px;
+    width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background);
+}
+
+header .socials a:nth-child(even) i {
+	margin-top: -30px;
 }
 
 header .main {
@@ -603,8 +635,28 @@ header .main .search form input::placeholder {
     color: black;
 }
 
+/*.article-i .split .right .icons {
+	display: flex;
+	flex-direction: row-reverse;
+	gap: 10px;
+}*/
+
+.article-i .split .right .icons {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(10px, 1fr));
+	gap: 10px;
+}
+
 .article-i .split .right .icons i {
 	cursor: pointer;
+	font-size: 17.5px;
+    transition: 0.1s;
+}
+
+.article-i .split .right .icons i:hover {
+    color: var(--theme);
+    margin-top: -3px;
+    transition: 0.1s;
 }
 
 .article-i .images {
@@ -779,7 +831,7 @@ footer {
 	width: 100%;
 	background-size: cover;
 	background-position-y: center;
-	padding-top: 125px;
+	padding-top: 175px;
 }
 
 footer .inner {
@@ -835,10 +887,33 @@ footer .inner .bottom {
 	width: 75%;
 	color: var(--text);
 	font-size: 12px;
+    gap: 15px;
 }
 
 footer .inner .bottom a {
 	color: var(--text);
+}
+
+footer .inner .bottom p {
+	margin: 0;
+}
+
+footer .inner .bottom .socials {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+footer .inner .bottom .socials i {
+    border: 1px solid var(--text);
+    padding: 15px;
+    border-radius: 100%;
+    height: 20px;
+    width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .toTop {
