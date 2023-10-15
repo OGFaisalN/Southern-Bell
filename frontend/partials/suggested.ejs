@@ -3,19 +3,18 @@
 	yesterday.setDate(yesterday.getDate() - 1);
 	return date.toDateString() === yesterday.toDateString();
 }; %>
-<div class="articles">
+<div class="articles individual">
 	<h2>Suggested articles</h2>
 	<div class="grid">
-		<% for (article of cms.articles.filter(a => a.slug !== (article || []).slug).sort(() => Math.random() - 0.5).slice(0, 3)) { %>
-		<div class="article" <% if (article.images[0] != null) { %> style="background-image: url('<%- vars.asset_prefix %><%= article.images[0].path %>')" <% } %>>
-			<div class="inner">
-				<a href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>">
+		<% const articles = cms.articles.filter(a => a.slug !== (article || []).slug).sort(() => Math.random() - 0.5).slice(0, 3); for (let i = 0; i < 3; i++) { const article = articles[i]; %>
+			<a class="article<% if (i % 3 === 0) { %> left<% } else if (i === 1 || (i - 1) % 3 === 0) { %> middle<% } else if ((i - 2) % 3 === 0) { %> right<% } %>" href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>">
+				<div class="inner">
+					<img src="<% if (article.images[0] != null) { %><%- vars.asset_prefix %><%= article.images[0].path %>" <% if (article.images[0].width < article.images[0].height) { %>style="width: min-content;" <% } } else { %> "<% } %> />
 					<h3><%= article.title %></h3>
-				</a>
-				<% if (article.description != null) { %><h4><%= article.description.slice(0, 50) %>...</h4><% } %>
-				<p><% if (article.tags != null) { %><a href="<%- vars.domain %>/tags/<%= article.tags[0].toLowerCase() %>"><%= article.tags[0] %></a> / <% } %><% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article.author != "") && (article.author != null)) { %> / <%= article.author %><% } %></p>
-			</div>
-		</div>
+					<% if (article.description != null) { %><h4><%= article.description.slice(0, 50) %>...</h4><% } %>
+					<p><% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article.author != "") && (article.author != null)) { %> / <%= article.author %><% } %></p>
+				</div>
+			</a>
 		<% } %>
 	</div>
 </div>

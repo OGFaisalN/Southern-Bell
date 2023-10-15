@@ -52,56 +52,51 @@
 	<div class="articles searchResults">
 		<div class="grid">
 			<% filteredNewspapers.sort((a, b) => b._created - a._created).forEach(newspaper => { %>
-			<div class="article" style="background-image: url('<%- vars.asset_prefix %><%= newspaper.image.path %>')">
+			<a class="article" href="<%- vars.domain %>/newspaper/<%= newspaper.slug %>">
+				<img src="<%- vars.asset_prefix %><%= newspaper.image.path %>" />
 				<div class="inner">
-					<a href="<%- vars.domain %>/newspaper/<%= newspaper.slug %>">
-						<h3>Newspaper: <%= newspaper.title %></h3>
-					</a>
+					<h3>Newspaper: <%= newspaper.title %></h3>
 					<p><% var date = new Date(newspaper.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
 				</div>
-			</div>
+			</a>
 			<% }); %>
 			<% filteredArticles.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(article => { %>
-			<div class="article"<% if (article.images[0] != null) { %> style="background-image: url('<%- vars.asset_prefix %><%= article.images[0].path %>')"<% } %>>
+			<a class="article" href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>">
+				<img src="<% if (article.images[0] != null) { %><%- vars.asset_prefix %><%= article.images[0].path %><% } else { %> <% } %>" />
 				<div class="inner">
-					<a href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>">
-						<h3>Article: <%= article.title %></h3>
-					</a>
+					<h3>Article: <%= article.title %></h3>
 					<% if (article.description != null) { %><h4><%= article.description.slice(0, 50) %>...</h4><% } %>
-					<p><% if (article.tags != null) { %><a href="<%- vars.domain %>/tags/<%= article.tags[0].toLowerCase() %>"><%= article.tags[0] %></a> / <% } %><% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article.author != "") && (article.author != null)) { %> / <%= article.author %><% } %></p>
+					<p><% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article.author != "") && (article.author != null)) { %> / <%= article.author %><% } %></p>
 				</div>
-			</div>
+			</a>
 			<% }); %>
 			<% filteredTags.sort((a, b) => a.localeCompare(b)).forEach(tag => { %>
-			<div class="article" style="padding-top: 0px !important;">
+			<a class="article" href="<%- vars.domain %>/tags/<%= tag %>">
+				<img src=" ">
 				<div class="inner">
-					<a href="<%- vars.domain %>/tags/<%= tag %>">
-						<h3>Tag: <%= tag %></h3>
-					</a>
+					<h3>Tag: <%= tag %></h3>
 					<p><%- tags[tag].length %> Article<% if (tags[tag].length != 1) { %>s<% } %></p>
 				</div>
-			</div>
+			</a>
 			<% }); %>
 			<% filteredPolls.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(poll => { %>
-			<div class="article" style="padding-top: 0px !important;">
+			<a class="article" href="<%- vars.domain %>/polls/<%= poll.slug %>">
+				<img src=" ">
 				<div class="inner">
-					<a href="<%- vars.domain %>/polls/<%= poll.slug %>">
-						<h3>Poll: <%= poll.question %></h3>
-					</a>
+					<h3>Poll: <%= poll.question %></h3>
 					<h4><%= poll.description %></h4>
 					<p><% var votes = 0; for (response of responses) { if (response.poll_id === poll._id) { votes++ }; }; %><%= votes %> Vote<% if (votes != 1) { %>s<% } %> / <% var date = new Date(poll.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
 				</div>
-			</div>
+			</a>
 			<% }); %>
 			<% filteredArtworks.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(artwork => { %>
-			<div class="article" style="background-image: url('<%- vars.asset_prefix %><%= artwork.artwork.path %>');">
+			<a class="article" href="<%- vars.domain %>/artworks/<%= artwork.slug %>">
+				<img src="<%- vars.asset_prefix %><%= artwork.artwork.path %>" />
 				<div class="inner">
-					<a href="<%- vars.domain %>/artworks/<%= artwork.slug %>">
-						<h3>Artwork: <%= artwork.title %></h3>
-					</a>
-					<p><% if (artwork.tags != null) { %><a href="<%- vars.domain %>/tags/<%= artwork.tags[0].toLowerCase() %>"><%= artwork.tags[0] %></a> / <% } %><% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article.author != "") && (article.author != null)) { %> / <%= article.author %><% } %></p>
+					<h3>Artwork: <%= artwork.title %></h3>
+					<p><% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article.author != "") && (article.author != null)) { %> / <%= article.author %><% } %></p>
 				</div>
-			</div>
+			</a>
 			<% }); %>
 		</div>
 	</div>
