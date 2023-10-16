@@ -446,7 +446,7 @@ async function startApp() {
 
     app.get('/denycookies', async (req, res) => {
         req.session.cookiesDenied = true;
-        res.redirect('/');
+        res.redirect(cms.siteDetails[0].denycookiesredirect);
     });
 
     app.get('/enablecookies', async (req, res) => {

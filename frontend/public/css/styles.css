@@ -12,6 +12,10 @@
 		position: fixed !important;
 		top: 35px !important;
 	}
+
+	.articles .grid {
+		grid-template-columns: repeat(3, 30%) !important;
+	}
 }
 
 @media screen and (max-width: 1200px) {
@@ -226,6 +230,14 @@
 }
 
 html {
+	background: var(--theme);
+	background: -moz-linear-gradient(150deg, var(--theme) 0%, transparent 10%);
+	background: -webkit-linear-gradient(
+		150deg,
+		var(--theme) 0%,
+		transparent 10%
+	);
+	background: linear-gradient(150deg, var(--theme) 0%, transparent 10%);
 	background-color: var(--background);
 	color: var(--text);
 	font-family: Montserrat, sans-serif;
@@ -326,6 +338,7 @@ header .socials i {
 	align-items: center;
 	justify-content: center;
 	background-color: var(--background);
+	font-size: 20px;
 }
 
 header .socials a:nth-child(even) i {
@@ -495,7 +508,7 @@ header .main .search form input::placeholder {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	background-color: #f7f7f7;
+	background: #f7f7f7 var(--noise) repeat 0 0;
 	color: var(--text);
 	gap: 20px;
 	width: 100%;
@@ -600,6 +613,12 @@ header .main .search form input::placeholder {
 .articles .grid .article img {
 	width: 100%;
 	height: 200px;
+	transition: 0.5s;
+}
+
+.articles .grid .article img:hover {
+	box-shadow: var(--theme) 0px 0px 70px -15px;
+	transition: 0.5s;
 }
 
 .articles .grid .article h3 {
@@ -660,6 +679,15 @@ header .main .search form input::placeholder {
 
 .article-i > img {
 	width: 100%;
+}
+
+.article-i .image, .article-i img {
+	transition: 0.5s;
+}
+
+.article-i .image:hover, .article-i img:hover {
+	box-shadow: var(--theme) 0px 0px 70px -15px;
+	transition: 0.5s;
 }
 
 .article-i .split {
@@ -1000,6 +1028,7 @@ footer .inner .bottom .socials i {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	font-size: 20px;
 }
 
 .toTop {
@@ -1067,4 +1096,25 @@ footer .inner .bottom .socials i {
 .lightbox .lb-image {
 	width: 100% !important;
 	height: unset !important;
+}
+
+.advertisement {
+	width: 100%;
+	padding: 100px 0;
+	background-color: #f7f7f7;
+	display: flex;
+	justify-content: center;
+}
+
+.advertisement a {
+	max-width: 75%;
+	width: max-content;
+	display: flex;
+	justify-content: center;
+}
+
+.advertisement a img {
+	width: 100%;
+	max-width: 1000px;
+	box-shadow: var(--theme) 0px 0px 30px 0px;
 }

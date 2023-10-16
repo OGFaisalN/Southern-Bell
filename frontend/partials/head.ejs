@@ -4,7 +4,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 	:root {
-		--theme: <%=cms.siteDetails[0].color %>
+		--theme: <%=cms.siteDetails[0].color %>;
+		--noise: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].noise.path %>');
 	}
 </style>
 <style>
