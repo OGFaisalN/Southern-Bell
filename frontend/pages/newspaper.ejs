@@ -45,9 +45,11 @@
 			<% if (newspaper.articles.length != 0) { %>
 			<div class="content">
 				<% for (article of newspaper.articles) { article = cms.articles.find(a => a._id === article._id); if (article) { %>
-				<h2><%= article.title %></h2>
-			<style>.article-i .content:before { content: '(<% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %>) — ' }</style>
-				<%- article.content.replaceAll('/.spaces/', vars.asset_url) %>
+				<div class="article <%= article._id %>">
+					<h2><%= article.title %></h2>
+					<style>.article-i .content .<%= article._id %>:before { content: '(<% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %>) — ' }</style>
+					<%- article.content.replaceAll('/.spaces/', vars.asset_url) %>
+				</div>
 				<br />
 				<% } } %>
 			</div>
