@@ -454,6 +454,11 @@ async function startApp() {
         res.redirect('/');
     });
 
+    app.get('/robots.txt', function (req, res) {
+        res.type('text/plain');
+        res.send((defaults.environment === 'production') ? "User-agent: *\nAllow: /" : "User-agent: *\nDisallow: /");
+    });
+
     app.use(async (req, res, next) => {
         await allRoutes(req, res);
         return res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });

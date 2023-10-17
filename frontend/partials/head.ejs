@@ -1,7 +1,19 @@
-<link rel="icon" href="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>">
-<title><% if (title != '') { %><%- title %> | <% } %><%= cms.siteDetails[0].title %></title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>">
+<title><% if (title != '') { %><%- title %> | <% } %><%= cms.siteDetails[0].title %></title>
+<meta name="title" content="<% if (title != '') { %><%- title %> | <% } %><%= cms.siteDetails[0].title %>" />
+<meta name="description" content="<%= cms.siteDetails[0].description %>" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="<%- vars.domain %>" />
+<meta property="og:title" content="<% if (title != '') { %><%- title %> | <% } %><%= cms.siteDetails[0].title %>" />
+<meta property="og:description" content="<%= cms.siteDetails[0].description %>" />
+<meta property="og:image" content="<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>" />
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content="<%- vars.domain %>" />
+<meta property="twitter:title" content="<% if (title != '') { %><%- title %> | <% } %><%= cms.siteDetails[0].title %>" />
+<meta property="twitter:description" content="<%= cms.siteDetails[0].description %>" />
+<meta property="twitter:image" content="<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>" />
 <style>
 	:root {
 		--theme: <%=cms.siteDetails[0].color %>;
