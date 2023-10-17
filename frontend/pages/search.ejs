@@ -62,7 +62,7 @@
 			<% }); %>
 			<% filteredArticles.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(article => { %>
 			<a class="article" href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>" title="Article: <%= article.title %>">
-				<img src="<% if (article.images[0] != null) { %><%- vars.asset_prefix %><%= article.images[0].path %><% } else { %> <% } %>"<% if (article.images[0].description != "") { %>alt="<%= article.images[0].description %>"<% } %> />
+				<img src="<% if (article.images[0] != null) { %><%- vars.asset_prefix %><%= article.images[0].path %>" <% if (article.images[0].description != "") { %>alt="<%= article.images[0].description %>"<% } %><% } else { %> "<% } %> />
 				<div class="inner">
 					<h3>Article: <%= article.title %></h3>
 					<% if (article.description != null) { %><h4><%= article.description.slice(0, 50) %>...</h4><% } %>
