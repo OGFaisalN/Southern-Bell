@@ -26,7 +26,7 @@
 					<% if (artwork.tags != null) { %><p>Tags: <% for (tag of artwork.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>">#<%= tag.toLowerCase().replaceAll(" ", "-") %></a> <% } %></p><% } %>
 				</div>
 				<div class="author">
-					<img src="<%- vars.asset_prefix %><% if ((artwork.author != "") && (artwork.author != null)) { %><%= cms.siteDetails[0].unknown.path %><% } else { %><%= cms.siteDetails[0].favicon.path %><% } %>" />
+					<img src="<%- vars.asset_prefix %><% if ((artwork.author != "") && (artwork.author != null)) { %><%= cms.siteDetails[0].unknown.path %><% } else { %><%= cms.siteDetails[0].favicon.path %><% } %>" alt="Author" />
 					<div class="info">
 						<h4><% if ((artwork.author != "") && (artwork.author != null)) { %><%= artwork.author %><% } else { %><%= cms.siteDetails[0].title %><% } %></h4>
 						<h5><a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a> - Writer<% if ((artwork.author != "") && (artwork.author != null)) { %><% } else { %>s<% } %></h5>
@@ -44,7 +44,7 @@
 				</div>
 			</div>
 		</div>
-		<img src="<%- vars.asset_prefix %><%= artwork.artwork.path %>" />
+		<img src="<%- vars.asset_prefix %><%= artwork.artwork.path %>"<% if (artwork.artwork.description != "") { %>alt="<%= artwork.artwork.description %>"<% } %> />
 		<h4 style="max-width: 700px"><%= artwork.description %></h4>
 		<div class="comments">
 			<h1>Comments</h1>

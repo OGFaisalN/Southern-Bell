@@ -21,7 +21,7 @@
 					<% if (newspaper.tags != null) { %><p>Tags: <% for (tag of newspaper.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>">#<%= tag.toLowerCase().replaceAll(" ", "-") %></a> <% } %></p><% } %>
 				</div>
 				<div class="author">
-					<img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>" />
+					<img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>" alt="Author" />
 					<div class="info">
 						<h4><%= cms.siteDetails[0].title %></h4>
 						<h5><a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a> - Writers</h5>

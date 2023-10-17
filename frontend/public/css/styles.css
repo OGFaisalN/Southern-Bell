@@ -52,10 +52,11 @@
 
 	.articles h2 {
 		width: 90% !important;
+		font-size: 40px !important;
 	}
 
 	.articles hr {
-		margin-left: 5.5%;
+		margin-left: 5.5% !important;
 	}
 
 	.articles .grid {
@@ -64,7 +65,7 @@
 	}
 
 	.articles .grid .article {
-		padding: 50px !important;
+		padding: 50px 20px !important;
 		border: none !important;
 		border-bottom: 1px solid var(--text) !important;
 	}
@@ -79,6 +80,10 @@
 }
 
 @media screen and (max-width: 800px) {
+	html {
+		background: var(--background) !important;
+	}
+	
 	.mobileOnly {
 		display: block !important;
 	}
@@ -158,6 +163,10 @@
 		border-right: unset !important;
 	}
 
+	.articles .grid .article:nth-last-child(2) {
+		border-bottom: 1px solid var(--text) !important;
+	}
+
 	.banner {
 		width: 70vw !important;
 		padding: 5vw 15vw !important;
@@ -230,7 +239,6 @@
 }
 
 html {
-	background: var(--theme);
 	background: -moz-linear-gradient(150deg, var(--theme) 0%, transparent 10%);
 	background: -webkit-linear-gradient(
 		150deg,

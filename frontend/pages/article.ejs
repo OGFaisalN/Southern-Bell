@@ -26,7 +26,7 @@
 					<% if (article.tags != null) { %><p>Tags: <% for (tag of article.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>">#<%= tag.toLowerCase().replaceAll(" ", "-") %></a> <% } %></p><% } %>
 				</div>
 				<div class="author">
-					<img src="<%- vars.asset_prefix %><% if ((article.author != "") && (article.author != null)) { %><%= cms.siteDetails[0].unknown.path %><% } else { %><%= cms.siteDetails[0].favicon.path %><% } %>" />
+					<img src="<%- vars.asset_prefix %><% if ((article.author != "") && (article.author != null)) { %><%= cms.siteDetails[0].unknown.path %><% } else { %><%= cms.siteDetails[0].favicon.path %><% } %>" alt="Author" />
 					<div class="info">
 						<h4><% if ((article.author != "") && (article.author != null)) { %><%= article.author %><% } else { %><%= cms.siteDetails[0].title %><% } %></h4>
 						<h5><a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a> - Writer<% if ((article.author != "") && (article.author != null)) { %><% } else { %>s<% } %></h5>
