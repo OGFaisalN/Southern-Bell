@@ -52,7 +52,7 @@
 	<div class="articles searchResults">
 		<div class="grid">
 			<% filteredNewspapers.sort((a, b) => b._created - a._created).forEach(newspaper => { %>
-			<a class="article" href="<%- vars.domain %>/newspaper/<%= newspaper.slug %>">
+			<a class="article" href="<%- vars.domain %>/newspaper/<%= newspaper.slug %>" title="Newspaper: <%= newspaper.title %>">
 				<img src="<%- vars.asset_prefix %><%= newspaper.image.path %>"<% if (newspaper.image.description != "") { %>alt="<%= newspaper.image.description %>"<% } %> />
 				<div class="inner">
 					<h3>Newspaper: <%= newspaper.title %></h3>
@@ -61,7 +61,7 @@
 			</a>
 			<% }); %>
 			<% filteredArticles.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(article => { %>
-			<a class="article" href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>">
+			<a class="article" href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>" title="Article: <%= article.title %>">
 				<img src="<% if (article.images[0] != null) { %><%- vars.asset_prefix %><%= article.images[0].path %><% } else { %> <% } %>"<% if (article.images[0].description != "") { %>alt="<%= article.images[0].description %>"<% } %> />
 				<div class="inner">
 					<h3>Article: <%= article.title %></h3>
@@ -71,7 +71,7 @@
 			</a>
 			<% }); %>
 			<% filteredTags.sort((a, b) => a.localeCompare(b)).forEach(tag => { %>
-			<a class="article" href="<%- vars.domain %>/tags/<%= tag %>">
+			<a class="article" href="<%- vars.domain %>/tags/<%= tag %>" title="Tag: <%= tag %>">
 				<img src=" " alt="">
 				<div class="inner">
 					<h3>Tag: <%= tag %></h3>
@@ -80,7 +80,7 @@
 			</a>
 			<% }); %>
 			<% filteredPolls.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(poll => { %>
-			<a class="article" href="<%- vars.domain %>/polls/<%= poll.slug %>">
+			<a class="article" href="<%- vars.domain %>/polls/<%= poll.slug %>" title="Poll: <%= poll.question %>">
 				<img src=" " alt="">
 				<div class="inner">
 					<h3>Poll: <%= poll.question %></h3>
@@ -90,7 +90,7 @@
 			</a>
 			<% }); %>
 			<% filteredArtworks.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(artwork => { %>
-			<a class="article" href="<%- vars.domain %>/artworks/<%= artwork.slug %>">
+			<a class="article" href="<%- vars.domain %>/artworks/<%= artwork.slug %>" title="Artwork: <%= artwork.title %>">
 				<img src="<%- vars.asset_prefix %><%= artwork.artwork.path %>"<% if (artwork.artwork.description != "") { %>alt="<%= artwork.artwork.description %>"<% } %> />
 				<div class="inner">
 					<h3>Artwork: <%= artwork.title %></h3>

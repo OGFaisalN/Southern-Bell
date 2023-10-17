@@ -23,13 +23,13 @@
 					<h1><%= artwork.title %></h1>
 					<% if (artwork.description != null) { %><h3><%= artwork.description.slice(0, 50) %>...</h3><% } %>
 					<h5><%= pageviews %> Views | Published <% var date = new Date(artwork.date); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((artwork._created != artwork._modified) && (date < (new Date(artwork._modified * 1000)))) { %> | Edited <% var date = new Date(artwork._modified * 1000); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } } %></h5>
-					<% if (artwork.tags != null) { %><p>Tags: <% for (tag of artwork.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>">#<%= tag.toLowerCase().replaceAll(" ", "-") %></a> <% } %></p><% } %>
+					<% if (artwork.tags != null) { %><p>Tags: <% for (tag of artwork.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>" title="#<%= tag.toLowerCase().replaceAll(" ", "-") %></a>">#<%= tag.toLowerCase().replaceAll(" ", "-") %></a> <% } %></p><% } %>
 				</div>
 				<div class="author">
 					<img src="<%- vars.asset_prefix %><% if ((artwork.author != "") && (artwork.author != null)) { %><%= cms.siteDetails[0].unknown.path %><% } else { %><%= cms.siteDetails[0].favicon.path %><% } %>" alt="Author" />
 					<div class="info">
 						<h4><% if ((artwork.author != "") && (artwork.author != null)) { %><%= artwork.author %><% } else { %><%= cms.siteDetails[0].title %><% } %></h4>
-						<h5><a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a> - Writer<% if ((artwork.author != "") && (artwork.author != null)) { %><% } else { %>s<% } %></h5>
+						<h5><a href="<%- vars.domain %>" title="<%= cms.siteDetails[0].title %>"><%= cms.siteDetails[0].title %></a> - Writer<% if ((artwork.author != "") && (artwork.author != null)) { %><% } else { %>s<% } %></h5>
 					</div>
 				</div>
 			</div>

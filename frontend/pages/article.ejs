@@ -23,13 +23,13 @@
 					<h1><%= article.title %></h1>
 					<% if (article.description != null) { %><h3><%= article.description.slice(0, 50) %>...</h3><% } %>
 					<h5><%= pageviews %> Views | Published <% var date = new Date(article.date); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article._created != article._modified) && (date < (new Date(article._modified * 1000)))) { %> | Edited <% var date = new Date(article._modified * 1000); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } } %></h5>
-					<% if (article.tags != null) { %><p>Tags: <% for (tag of article.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>">#<%= tag.toLowerCase().replaceAll(" ", "-") %></a> <% } %></p><% } %>
+					<% if (article.tags != null) { %><p>Tags: <% for (tag of article.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>" title="#<%= tag.toLowerCase().replaceAll(" ", "-") %></a>">#<%= tag.toLowerCase().replaceAll(" ", "-") %></a> <% } %></p><% } %>
 				</div>
 				<div class="author">
 					<img src="<%- vars.asset_prefix %><% if ((article.author != "") && (article.author != null)) { %><%= cms.siteDetails[0].unknown.path %><% } else { %><%= cms.siteDetails[0].favicon.path %><% } %>" alt="Author" />
 					<div class="info">
 						<h4><% if ((article.author != "") && (article.author != null)) { %><%= article.author %><% } else { %><%= cms.siteDetails[0].title %><% } %></h4>
-						<h5><a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a> - Writer<% if ((article.author != "") && (article.author != null)) { %><% } else { %>s<% } %></h5>
+						<h5><a href="<%- vars.domain %>" title="<%= cms.siteDetails[0].title %>"><%= cms.siteDetails[0].title %></a> - Writer<% if ((article.author != "") && (article.author != null)) { %><% } else { %>s<% } %></h5>
 					</div>
 				</div>
 			</div>
@@ -47,9 +47,9 @@
 		<% if (article.images[0] != null) { %>
 		<div class="images">
 			<% for (image of article.images) { if (image._id === article.images[0]._id) { %>
-			<a class="image" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>" <% if (image.description != "") { %> data-title="<%= image.description %>" <% } %>><img src="<%- vars.asset_prefix %><%= image.path %>" /><% if (image.description != "") { %><h2><%= image.description %></h2><% } %></a>
+			<a class="image" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>" <% if (image.description != "") { %> data-title="<%= image.description %>" <% } %> title="<%= image.description %>"><img src="<%- vars.asset_prefix %><%= image.path %>" /><% if (image.description != "") { %><h2><%= image.description %></h2><% } %></a>
 			<% } else { %>
-			<a class="image" style="background-image: url('<%- vars.asset_prefix %><%= image.path %>');<% if ((image.height / image.width) >= 1.25) { %> width: <%= image.width %>px;<% } %>" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>" <% if (image.description != "") { %> data-title="<%= image.description %>" <% } %>><% if (image.description != "") { %><h2><%= image.description %></h2><% } %></a>
+			<a class="image" style="background-image: url('<%- vars.asset_prefix %><%= image.path %>');<% if ((image.height / image.width) >= 1.25) { %> width: <%= image.width %>px;<% } %>" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>" <% if (image.description != "") { %> data-title="<%= image.description %>" <% } %> title="<%= image.description %>"><% if (image.description != "") { %><h2><%= image.description %></h2><% } %></a>
 			<% } } %>
 		</div>
 		<% } %>
