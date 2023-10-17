@@ -187,12 +187,17 @@ async function startApp() {
         await allRoutes(req, res);
         var newspaper = cms.newspapers.find(newspaper => newspaper.slug === req.params.newspaper);
         if (newspaper && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
-            db.query("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", [req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
-                if (err) {
-                    console.log(err);
-                };
-                res.redirect(`/newspapers/${req.params.newspaper}#${results.insertId}`);
-            });
+            try {
+                db.query("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", [req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
+                    if (err) {
+                        console.log(err);
+                    };
+                    res.redirect(`/newspapers/${req.params.newspaper}#${results.insertId}`);
+                });
+            } catch {
+                console.log(`DoS Attack Attempted: IP is ${req.ip}, URL is ${req.originalUrl}, Query is ${JSON.stringify(req.query)}, Body is ${JSON.stringify(req.body)}`);
+                res.redirect(`/newspapers/${req.params.newspaper}`);
+            };
         } else {
             res.redirect('/');
         };
@@ -221,12 +226,17 @@ async function startApp() {
         await allRoutes(req, res);
         var article = cms.articles.find(article => { return article.slug === req.params.article && (new Date(article.date)).getFullYear() === Number(req.params.year) });
         if (article && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
-            db.query("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", [req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
-                if (err) {
-                    console.log(err);
-                };
-                res.redirect(`/articles/${req.params.year}/${req.params.article}#${results.insertId}`);
-            });
+            try {
+                db.query("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", [req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
+                    if (err) {
+                        console.log(err);
+                    };
+                    res.redirect(`/articles/${req.params.year}/${req.params.article}#${results.insertId}`);
+                });
+            } catch {
+                console.log(`DoS Attack Attempted: IP is ${req.ip}, URL is ${req.originalUrl}, Query is ${JSON.stringify(req.query)}, Body is ${JSON.stringify(req.body)}`);
+                res.redirect(`/articles/${req.params.year}/${req.params.article}`);
+            };
         } else {
             res.redirect('/');
         };
@@ -285,19 +295,24 @@ async function startApp() {
                     if (responses.length === 0) {
                         for (let i = 0; i < poll.answers.length; i++) {
                             if (poll.answers[i] === req.body.answer) {
-                                db.prepare("INSERT INTO poll_responses (name, ip, session_id, poll_id, response_id) VALUES (?, ?, ?, ?, ?)", (err, statement) => {
-                                    if (err) {
-                                        console.log(err);
-                                        res.redirect(`/polls/${req.params.poll}?error=There was an error submitting your vote!`);
-                                    } else {
-                                        statement.execute([req.body.name, req.ip, req.cookies.voteId, req.body.id, i], function (err, results, fields) {
-                                            if (err) {
-                                                console.log(err);
-                                            };
-                                            res.redirect(`/polls/${req.params.poll}`);
-                                        });
-                                    };
-                                });
+                                try {
+                                    db.prepare("INSERT INTO poll_responses (name, ip, session_id, poll_id, response_id) VALUES (?, ?, ?, ?, ?)", (err, statement) => {
+                                        if (err) {
+                                            console.log(err);
+                                            res.redirect(`/polls/${req.params.poll}?error=There was an error submitting your vote!`);
+                                        } else {
+                                            statement.execute([req.body.name, req.ip, req.cookies.voteId, req.body.id, i], function (err, results, fields) {
+                                                if (err) {
+                                                    console.log(err);
+                                                };
+                                                res.redirect(`/polls/${req.params.poll}`);
+                                            });
+                                        };
+                                    });
+                                } catch {
+                                    console.log(`DoS Attack Attempted: IP is ${req.ip}, URL is ${req.originalUrl}, Query is ${JSON.stringify(req.query)}, Body is ${JSON.stringify(req.body)}`);
+                                    res.redirect(`/polls/${req.params.poll}`);
+                                };
                             };
                         };
                     } else {
