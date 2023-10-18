@@ -1,4 +1,5 @@
-<% if (cms.siteDetails[0].advertisement != null) { %><div class="advertisement"><a href="<%= cms.siteDetails[0]['advertisement-link'] %>" title="Advertisement"><img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].advertisement.path %>" alt="Advertisement" /></a></div><% } %>
+<% if (cms.siteDetails[0].advertisement != null) { %><div class="advertisement noMobile"><a href="<%= cms.siteDetails[0]['advertisement-link'] %>" title="Advertisement"><img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].advertisement.path %>" alt="Advertisement" /></a></div><% } %>
+<% if (cms.siteDetails[0]['advertisement-mobile'] != null) { %><div class="advertisement mobileOnly" style="display: none;"><a href="<%= cms.siteDetails[0]['advertisement-link'] %>" title="Advertisement"><img src="<%- vars.asset_prefix %><%= cms.siteDetails[0]['advertisement-mobile'].path %>" alt="Advertisement" /></a></div><% } %>
 <footer style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>')">
 	<div class="inner">
 		<div class="top">
