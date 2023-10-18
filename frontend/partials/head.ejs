@@ -4,6 +4,9 @@
 <title><% if (title != '') { %><%- title %> | <% } %><%= cms.siteDetails[0].title %></title>
 <meta name="title" content="<% if (title != '') { %><%- title %> | <% } %><%= cms.siteDetails[0].title %>" />
 <meta name="description" content="<%= cms.siteDetails[0].description %>" />
+<meta name="theme-color" content="<%=cms.siteDetails[0].color %>">
+<meta name="apple-mobile-web-app-status-bar-style" content="<%=cms.siteDetails[0].color %>">
+<meta name="msapplication-navbutton-color" content="<%=cms.siteDetails[0].color %>">
 <meta property="og:type" content="website" />
 <meta property="og:url" content="<%- vars.domain %>" />
 <meta property="og:title" content="<% if (title != '') { %><%- title %> | <% } %><%= cms.siteDetails[0].title %>" />
