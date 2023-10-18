@@ -621,6 +621,7 @@ header .main .search form input::placeholder {
 .articles .grid .article img {
 	width: 100%;
 	height: 200px;
+	box-shadow: var(--theme) 0px 1px 4px;
 	transition: 0.5s;
 }
 
@@ -690,6 +691,7 @@ header .main .search form input::placeholder {
 }
 
 .article-i .image, .article-i img {
+	box-shadow: var(--theme) 0px 1px 4px;
 	transition: 0.5s;
 }
 
@@ -876,6 +878,7 @@ header .main .search form input::placeholder {
 
 .article-i .new {
 	display: flex;
+	align-items: center;
 	gap: 10px;
 }
 
@@ -887,15 +890,15 @@ header .main .search form input::placeholder {
 .article-i .new input,
 .article-i .new select {
 	border: 1px solid var(--theme);
-	border-radius: 5px;
-	padding: 5px 10px;
+	border-radius: 1px;
+	padding: 10px 15px;
 }
 
 .article-i .new button {
 	background-color: var(--theme);
 	border: 1px solid var(--theme);
-	border-radius: 5px;
-	padding: 5px 10px;
+	border-radius: 1px;
+	padding: 10px 15px;
 	color: var(--background);
 	cursor: pointer;
 }
@@ -914,7 +917,7 @@ header .main .search form input::placeholder {
 
 .article-i .comments .comment {
 	border: 1px solid var(--theme);
-	border-radius: 5px;
+	border-radius: 1px;
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
@@ -1037,6 +1040,13 @@ footer .inner .bottom .socials i {
 	align-items: center;
 	justify-content: center;
 	font-size: 20px;
+	transition: 0.5s;
+}
+
+footer .inner .bottom .socials i:hover {
+	background-color: var(--background);
+	color: var(--text);
+	transition: 0.5s;
 }
 
 .toTop {
@@ -1125,4 +1135,56 @@ footer .inner .bottom .socials i {
 	width: 100%;
 	max-width: 1000px;
 	box-shadow: var(--theme) 0px 0px 30px 0px;
+}
+
+.split {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+}
+
+.split .articles .grid {
+	grid-template-columns: repeat(2, 1fr) !important;
+	grid-template-areas: ". ." !important;
+}
+
+.split .articles .grid .article {
+	padding: 50px 50px !important;
+	border: none !important;
+	border-bottom: 1px solid var(--text) !important;
+}
+
+.split articles .grid .article:nth-child(odd) {
+	border-right: 1px solid var(--text) !important;
+}
+
+.split .articles .grid .article:nth-last-child(-n + 2) {
+	border-bottom: none !important;
+}
+
+.split .sidebar {
+	width: 30%;
+	display: flex;
+	flex-direction: column;
+	padding: 15px 30px;
+}
+
+.split .sidebar * {
+	margin: 0;
+}
+
+.split .sidebar h3 {
+	font-size: 20px;
+	font-weight: bold;
+	margin: 20px 0 10px 0;
+}
+
+.split .sidebar ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.split .sidebar ul li {
+	margin: 10px 0;
 }

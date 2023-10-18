@@ -39,7 +39,8 @@ app.use(rateLimit({
     max: 15,
     skip: (req, res) => {
         return req.ip !== undefined;
-    }
+    },
+    message: "Too many requests from this IP, please try again in a minute."
 }));
 app.use((req, res, next) => {
     if (req.method === 'GET') {
@@ -138,7 +139,7 @@ async function startApp() {
         } else if (req.session.cookiesDenied === true) {
             res.clearCookie("sessionid");
             req.session.destroy();
-            res.send("You have denied cookies. If you would like to re-enable cookies, click <a href='/enablecookies'>here</a>.");
+            res.send("You have denied cookies. If you would like to re-enable cookies, click <a href='/enablecookies'>here</a> or force reload the page.");
             return false;
         } else {
             return;

@@ -51,9 +51,9 @@
 			<form action="" method="post" class="new">
 				<h3>New comment:</h3>
 				<input name="id" value="<%= artwork._id %>" hidden>
-				<input name="name" type="text" placeholder="Your Name">
-				<input name="email" type="email" placeholder="Your Email">
-				<input name="content" type="text" placeholder="Your Comment">
+				<input name="name" type="text" placeholder="Your Name" required>
+				<input name="email" type="email" placeholder="Your Email" required>
+				<input name="content" type="text" placeholder="Your Comment" required>
 				<button>Post Comment</button>
 			</form>
 			<% if (comments.length > 0) { %>
