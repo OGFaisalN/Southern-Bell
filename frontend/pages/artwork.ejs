@@ -1,4 +1,4 @@
-<html>
+<html lang="en">
 
 <head>
 	<%- include('../partials/head.ejs'); %>
@@ -21,33 +21,39 @@
 			<div class="left">
 				<div class="info">
 					<h1><%= artwork.title %></h1>
-					<p>Tags: <% for (tag of artwork.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>"><%= toTitleCase(tag) %></a> <% } %></p>
+					<% if (artwork.description != null) { %><h3><%= artwork.description.slice(0, 50) %>...</h3><% } %>
+					<h5><%= pageviews %> Views | Published <% var date = new Date(artwork.date); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((artwork._created != artwork._modified) && (date < (new Date(artwork._modified * 1000)))) { %> | Edited <% var date = new Date(artwork._modified * 1000); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } } %></h5>
+					<% if (artwork.tags != null) { %><p>Tags: <% for (tag of artwork.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>" title="#<%= tag.toLowerCase().replaceAll(" ", "-") %></a>">#<%= tag.toLowerCase().replaceAll(" ", "-") %></a> <% } %></p><% } %>
 				</div>
 				<div class="author">
-					<img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>" />
+					<img src="<%- vars.asset_prefix %><% if ((artwork.author != "") && (artwork.author != null)) { %><%= cms.siteDetails[0].unknown.path %><% } else { %><%= cms.siteDetails[0].favicon.path %><% } %>" alt="Author" />
 					<div class="info">
-						<h4>By <% if ((artwork.author != "") && (artwork.author != null)) { %><%= artwork.author %><% } else { %><a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a> Writers, <a href="<%- vars.domain %>"><%= cms.siteDetails[0].title %></a><% } %></h4>
-						<h5>Published <% var date = new Date(artwork.date); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></h5>
-						<% if ((artwork._created != artwork._modified) && (date < (new Date(artwork._modified * 1000)))) { %><h5>Edited <% var date = new Date(artwork._modified * 1000); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></h5><% } } %>
+						<h4><% if ((artwork.author != "") && (artwork.author != null)) { %><%= artwork.author %><% } else { %><%= cms.siteDetails[0].title %><% } %></h4>
+						<h5><a href="<%- vars.domain %>" title="<%= cms.siteDetails[0].title %>"><%= cms.siteDetails[0].title %></a> - Writer<% if ((artwork.author != "") && (artwork.author != null)) { %><% } else { %>s<% } %></h5>
 					</div>
 				</div>
 			</div>
 			<div class="right">
 				<div class="icons">
-					<i class="fas fa-link" onClick="const el = document.createElement('textarea'); el.value = window.location.href; el.setAttribute('readonly', ''); el.style.position = 'absolute'; el.style.left = '-9999px'; document.body.appendChild(el); const selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false; el.select(); document.execCommand('copy'); document.body.removeChild(el); if (selected) { document.getSelection().removeAllRanges(); document.getSelection().addRange(selected); } alert('Link copied!');"></i>
+					<i class="fas fa-copy" onClick="copyLink();"></i>
+					<i class="fa-brands fa-facebook" onClick="shareToFacebook();"></i>
+					<i class="fa-brands fa-x-twitter" onClick="shareToTwitter();"></i>
+					<i class="fa-brands fa-whatsapp" onClick="shareToWhatsapp();"></i>
+					<i class="fa-brands fa-telegram" onClick="shareToTelegram();"></i>
+					<i class="fa-brands fa-line" onClick="shareToLine();"></i>
 				</div>
 			</div>
 		</div>
-		<img src="<%- vars.asset_prefix %><%= artwork.artwork.path %>" />
+		<img src="<%- vars.asset_prefix %><%= artwork.artwork.path %>"<% if (artwork.artwork.description != "") { %>alt="<%= artwork.artwork.description %>"<% } %> />
 		<h4 style="max-width: 700px"><%= artwork.description %></h4>
 		<div class="comments">
 			<h1>Comments</h1>
 			<form action="" method="post" class="new">
 				<h3>New comment:</h3>
 				<input name="id" value="<%= artwork._id %>" hidden>
-				<input name="name" type="text" placeholder="Your Name">
-				<input name="email" type="email" placeholder="Your Email">
-				<input name="content" type="text" placeholder="Your Comment">
+				<input name="name" type="text" placeholder="Your Name" required>
+				<input name="email" type="email" placeholder="Your Email" required>
+				<input name="content" type="text" placeholder="Your Comment" required>
 				<button>Post Comment</button>
 			</form>
 			<% if (comments.length > 0) { %>

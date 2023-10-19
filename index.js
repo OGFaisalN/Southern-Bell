@@ -39,7 +39,8 @@ app.use(rateLimit({
     max: 15,
     skip: (req, res) => {
         return req.ip !== undefined;
-    }
+    },
+    message: "Too many requests from this IP, please try again in a minute."
 }));
 app.use((req, res, next) => {
     if (req.method === 'GET') {
@@ -59,12 +60,12 @@ app.use((req, res, next) => {
             .then(() => {
                 db.query('INSERT INTO pageviews (url, count) VALUES (?, 1) ON DUPLICATE KEY UPDATE count = IF(TIMESTAMPDIFF(HOUR, timestamp, NOW()) <= 1, count, count + 1), timestamp = IF(TIMESTAMPDIFF(HOUR, timestamp, NOW()) <= 1, timestamp, NOW());', [req.originalUrl], (err, results) => {
                     if (err) {
-                        console.error('Error tracking pageview:', err);
+                        console.error('error tracking pageview:', err);
                     };
                 });
             })
             .catch((err) => {
-                console.error('Error tracking pageview:', err);
+                console.error('error tracking pageview:', err);
             });
     }
     next();
@@ -73,27 +74,23 @@ app.use((req, res, next) => {
     db.query('SELECT count FROM pageviews WHERE url = ?', [req.originalUrl], (err, results) => {
         if (err) {
             console.error(err);
-            res.status(500).send('Error retrieving page views');
+            res.status(500).render('error', { error: 'error retrieving page views; database connection failed' });
             return;
-        }
+        };
         if (results.length === 1) {
             req.pageViews = results[0].count;
         } else {
             req.pageViews = 0;
-        }
+        };
         next();
     });
 });
-app.use((err, req, res, next) => {
-    if (res.headersSent) {
-        return next(err);
+app.use(async (req, res, next) => {
+    if (!(await cmsdata()).ok) {
+        res.status(500).render('error', { error: 'error connecting to CMS; CMS connection failed' });
+        return;
     };
-    if (process.env.NODE_ENV === 'production') {
-        return res.status(500).render('error');
-    } else {
-        console.error(err.stack);
-        return res.status(500).send(err.stack);
-    };
+    next();
 });
 
 function cmsdata() {
@@ -120,13 +117,15 @@ function cmsdata() {
 };
 
 async function startApp() {
-    var cms = JSON.parse(JSON.stringify((await cmsdata().then(res => res.json())).data).replaceAll('.spaces', 'clients'));
+    try {
+        var cms = JSON.parse(JSON.stringify((await cmsdata().then(res => res.json())).data).replaceAll('.spaces', 'clients'));
+    } catch { };
 
     // Defaults & Environment Variables
 
     var defaults = {
         environment: process.env.NODE_ENV || 'testing',
-        domain: process.env.NODE_ENV === 'production' ? cms.siteDetails[0]['domain-production'] : process.env.NODE_ENV === 'development' ? cms.siteDetails[0]['domain-development'] : '..',
+        domain: process.env.NODE_ENV === 'production' ? cms.siteDetails[0]['domain-production'] : process.env.NODE_ENV === 'development' ? cms.siteDetails[0]['domain-development'] : '../../../../..',
         asset_prefix: process.env.CMS_ASSET_PREFIX,
         asset_url: process.env.CMS_ASSET_URL
     };
@@ -135,6 +134,16 @@ async function startApp() {
 
     async function allRoutes(req, res) {
         cms = (await cmsdata().then(res => res.json())).data;
+        if (!req.session.cookiesDenied) {
+            req.session.cookiesDenied = false;
+        } else if (req.session.cookiesDenied === true) {
+            res.clearCookie("sessionid");
+            req.session.destroy();
+            res.send("You have denied cookies. If you would like to re-enable cookies, click <a href='/enablecookies'>here</a> or force reload the page.");
+            return false;
+        } else {
+            return;
+        };
     };
 
     Date.prototype.isToday = function () {
@@ -142,14 +151,6 @@ async function startApp() {
         return this.getDate() === today.getDate() &&
             this.getMonth() === today.getMonth() &&
             this.getFullYear() === today.getFullYear()
-    };
-
-    Date.prototype.isYesterday = function () {
-        const yesterday = new Date()
-        yesterday.setDate(yesterday.getDate() - 1)
-        return this.getDate() === yesterday.getDate() &&
-            this.getMonth() === yesterday.getMonth() &&
-            this.getFullYear() === yesterday.getFullYear()
     };
 
     // Routes
@@ -187,12 +188,17 @@ async function startApp() {
         await allRoutes(req, res);
         var newspaper = cms.newspapers.find(newspaper => newspaper.slug === req.params.newspaper);
         if (newspaper && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
-            db.query("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", [req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
-                if (err) {
-                    console.log(err);
-                };
-                res.redirect(`/newspapers/${req.params.newspaper}#${results.insertId}`);
-            });
+            try {
+                db.query("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", [req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
+                    if (err) {
+                        console.log(err);
+                    };
+                    res.redirect(`/newspapers/${req.params.newspaper}#${results.insertId}`);
+                });
+            } catch {
+                console.log(`DoS Attack Attempted: IP is ${req.ip}, URL is ${req.originalUrl}, Query is ${JSON.stringify(req.query)}, Body is ${JSON.stringify(req.body)}`);
+                res.redirect(`/newspapers/${req.params.newspaper}`);
+            };
         } else {
             res.redirect('/');
         };
@@ -203,9 +209,9 @@ async function startApp() {
         res.render('articles', { vars: defaults, title: 'All Articles', cms, pageviews: req.pageViews });
     });
 
-    app.get('/articles/:article', async (req, res) => {
+    app.get('/articles/:year/:article', async (req, res) => {
         await allRoutes(req, res);
-        var article = cms.articles.find(article => article.slug === req.params.article);
+        var article = cms.articles.find(article => { return article.slug === req.params.article && (new Date(article.date)).getFullYear() === Number(req.params.year) });
         if (article) {
             db.query(`SELECT * FROM comments WHERE post_id = '${article._id}'`,
                 function (err, results, fields) {
@@ -217,16 +223,21 @@ async function startApp() {
         };
     });
 
-    app.post('/articles/:article', async (req, res) => {
+    app.post('/articles/:year/:article', async (req, res) => {
         await allRoutes(req, res);
-        var article = cms.articles.find(article => article.slug === req.params.article);
+        var article = cms.articles.find(article => { return article.slug === req.params.article && (new Date(article.date)).getFullYear() === Number(req.params.year) });
         if (article && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
-            db.query("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", [req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
-                if (err) {
-                    console.log(err);
-                };
-                res.redirect(`/articles/${req.params.article}#${results.insertId}`);
-            });
+            try {
+                db.query("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", [req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
+                    if (err) {
+                        console.log(err);
+                    };
+                    res.redirect(`/articles/${req.params.year}/${req.params.article}#${results.insertId}`);
+                });
+            } catch {
+                console.log(`DoS Attack Attempted: IP is ${req.ip}, URL is ${req.originalUrl}, Query is ${JSON.stringify(req.query)}, Body is ${JSON.stringify(req.body)}`);
+                res.redirect(`/articles/${req.params.year}/${req.params.article}`);
+            };
         } else {
             res.redirect('/');
         };
@@ -239,7 +250,7 @@ async function startApp() {
 
     app.get('/tags/:tag', async (req, res) => {
         await allRoutes(req, res);
-        res.render('tag', { vars: defaults, title: `#${req.params.tag.toLowerCase()}`, cms, pageviews: req.pageViews, tag: req.params.tag.toLowerCase() });
+        res.render('tag', { vars: defaults, title: `#${req.params.tag.toLowerCase().replaceAll(" ", "-")}`, cms, pageviews: req.pageViews, tag: req.params.tag });
     });
 
     app.get('/polls', async (req, res) => {
@@ -285,19 +296,24 @@ async function startApp() {
                     if (responses.length === 0) {
                         for (let i = 0; i < poll.answers.length; i++) {
                             if (poll.answers[i] === req.body.answer) {
-                                db.prepare("INSERT INTO poll_responses (name, ip, session_id, poll_id, response_id) VALUES (?, ?, ?, ?, ?)", (err, statement) => {
-                                    if (err) {
-                                        console.log(err);
-                                        res.redirect(`/polls/${req.params.poll}?error=There was an error submitting your vote!`);
-                                    } else {
-                                        statement.execute([req.body.name, req.ip, req.cookies.voteId, req.body.id, i], function (err, results, fields) {
-                                            if (err) {
-                                                console.log(err);
-                                            };
-                                            res.redirect(`/polls/${req.params.poll}`);
-                                        });
-                                    };
-                                });
+                                try {
+                                    db.prepare("INSERT INTO poll_responses (name, ip, session_id, poll_id, response_id) VALUES (?, ?, ?, ?, ?)", (err, statement) => {
+                                        if (err) {
+                                            console.log(err);
+                                            res.redirect(`/polls/${req.params.poll}?error=There was an error submitting your vote!`);
+                                        } else {
+                                            statement.execute([req.body.name, req.ip, req.cookies.voteId, req.body.id, i], function (err, results, fields) {
+                                                if (err) {
+                                                    console.log(err);
+                                                };
+                                                res.redirect(`/polls/${req.params.poll}`);
+                                            });
+                                        };
+                                    });
+                                } catch {
+                                    console.log(`DoS Attack Attempted: IP is ${req.ip}, URL is ${req.originalUrl}, Query is ${JSON.stringify(req.query)}, Body is ${JSON.stringify(req.body)}`);
+                                    res.redirect(`/polls/${req.params.poll}`);
+                                };
                             };
                         };
                     } else {
@@ -437,21 +453,45 @@ async function startApp() {
                     }
                 ],
                 date: new Date(post.date),
-                image: `${defaults.asset_prefix}${post.images[0].path}`
+                image: (post.images[0]) ? `${defaults.asset_prefix}${post.images[0].path}` : ""
             });
         });
         res.set('Content-Type', 'text/xml');
         res.send(feed.rss2());
     });
 
-    app.get('*', async (req, res) => {
+    app.get('/denycookies', async (req, res) => {
+        req.session.cookiesDenied = true;
+        res.redirect(cms.siteDetails[0].denycookiesredirect);
+    });
+
+    app.get('/enablecookies', async (req, res) => {
+        req.session.cookiesDenied = false;
+        res.redirect('/');
+    });
+
+    app.get('/robots.txt', function (req, res) {
+        res.type('text/plain');
+        res.send((defaults.environment === 'production') ? "User-agent: *\nAllow: /" : "User-agent: *\nDisallow: /");
+    });
+
+    app.use(async (req, res, next) => {
         await allRoutes(req, res);
-        res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
+        return res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
+    });
+
+    app.use(async (err, req, res, next) => {
+        console.log(err);
+        return res.render('error', { error: 'internal server error; check logs' });
     });
 
     app.listen(port, () => {
-        console.log(`${cms.siteDetails[0].title} listening on port ${port}`);
+        try {
+            console.log(`${cms.siteDetails[0].title} listening on port ${port}`);
+        } catch {
+            console.log(`Southern Bell listening on port ${port}`);
+        };
     });
-}
+};
 
 startApp();

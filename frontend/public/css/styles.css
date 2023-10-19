@@ -1,9 +1,41 @@
+@media screen and (max-width: 1400px) {
+	header .main {
+		padding: 24px 0 20px 0 !important;
+		flex-direction: row !important;
+	}
+
+	header .main.home {
+		padding: 50px 0 20px 0 !important;
+	}
+
+	header .main .search {
+		position: fixed !important;
+		top: 35px !important;
+	}
+
+	.articles .grid {
+		grid-template-columns: repeat(3, 30%) !important;
+	}
+}
+
 @media screen and (max-width: 1200px) {
+	header .main {
+		flex-direction: column !important;
+	}
+
+	header .main .search {
+		position: flex !important;
+	}
+
 	.hero {
 		display: flex !important;
 		flex-direction: column;
 		gap: 20px;
 		height: 100% !important;
+	}
+
+	.hero.onlyOne {
+		height: 300px !important;
 	}
 
 	.hero .newspaper {
@@ -18,15 +50,42 @@
 		width: 100%;
 	}
 
+	.articles h2 {
+		width: 90% !important;
+		font-size: 40px !important;
+	}
+
+	.articles hr {
+		margin-left: 5.5% !important;
+	}
+
 	.articles .grid {
 		grid-template-columns: repeat(2, 1fr) !important;
 		grid-template-areas: ". ." !important;
 	}
+
+	.articles .grid .article {
+		padding: 50px 20px !important;
+		border: none !important;
+		border-bottom: 1px solid var(--text) !important;
+	}
+
+	.articles .grid .article:nth-child(odd) {
+		border-right: 1px solid var(--text) !important;
+	}
+
+	.articles .grid .article:nth-last-child(-n + 2) {
+		border-bottom: none !important;
+	}
 }
 
 @media screen and (max-width: 800px) {
+	html {
+		background: var(--background) !important;
+	}
+	
 	.mobileOnly {
-		display: block !important;
+		display: flex !important;
 	}
 
 	.noMobile {
@@ -41,6 +100,19 @@
 		left: 0px !important;
 		padding: 10px 20px !important;
 		border-radius: 100px;
+		margin-bottom: 30px;
+	}
+
+	header .main {
+		flex-direction: column !important;
+	}
+
+	header .main.home {
+		margin-top: -26px;
+	}
+
+	header .main a img {
+		height: 50px !important;
 	}
 
 	header .main a img,
@@ -63,6 +135,19 @@
 		right: unset !important;
 	}
 
+	header .main .search form input {
+		width: 25vw !important;
+	}
+
+	header .main .search form input:hover,
+	header .main .search form input:focus {
+		width: 50vw !important;
+	}
+
+	header .socials {
+		display: none !important;
+	}
+
 	.hero {
 		height: 100vh !important;
 		width: 85% !important;
@@ -72,6 +157,14 @@
 		grid-template-columns: repeat(1, 1fr) !important;
 		grid-template-areas: "." !important;
 		width: 90% !important;
+	}
+
+	.articles .grid .article:nth-child(odd) {
+		border-right: unset !important;
+	}
+
+	.articles .grid .article:nth-last-child(2) {
+		border-bottom: 1px solid var(--text) !important;
 	}
 
 	.banner {
@@ -119,15 +212,19 @@
 	}
 
 	.articles.searchResults .grid .article {
-		flex-direction: column !important;
-		padding-top: 150px !important;
 		padding-left: unset !important;
-		background-size: cover;
+		border-right: unset !important;
+		justify-content: flex-start;
 	}
 
 	.articles.searchResults .grid .article .inner {
 		width: unset !important;
 		gap: 30px !important;
+	}
+
+	.toTop {
+		bottom: 20px !important;
+		right: 20px !important;
 	}
 }
 
@@ -142,6 +239,13 @@
 }
 
 html {
+	background: -moz-linear-gradient(150deg, var(--theme) 0%, transparent 10%);
+	background: -webkit-linear-gradient(
+		150deg,
+		var(--theme) 0%,
+		transparent 10%
+	);
+	background: linear-gradient(150deg, var(--theme) 0%, transparent 10%);
 	background-color: var(--background);
 	color: var(--text);
 	font-family: Montserrat, sans-serif;
@@ -212,7 +316,7 @@ header .announcement {
 	position: fixed;
 	top: 45px;
 	left: -75px;
-	rotate: -38deg;
+	rotate: -35deg;
 	background-color: var(--theme);
 	z-index: 100;
 }
@@ -221,15 +325,47 @@ header .announcement a {
 	color: var(--background);
 }
 
+header .socials {
+	position: fixed;
+	top: 150px;
+	left: 30px;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(10px, 1fr));
+	gap: 10px;
+	justify-items: start;
+	align-items: start;
+}
+
+header .socials i {
+	border: 1px solid #ececec;
+	padding: 15px;
+	border-radius: 100%;
+	height: 20px;
+	width: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--background);
+	font-size: 20px;
+}
+
+header .socials a:nth-child(even) i {
+	margin-top: -30px;
+}
+
 header .main {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
-	gap: 20px;
+	gap: 5px;
 	width: 75%;
 	padding: 50px 0 20px 0;
 	border-bottom: 1px solid lightgray;
+}
+
+header .main.home {
+	flex-direction: column !important;
 }
 
 header .main a {
@@ -237,8 +373,12 @@ header .main a {
 }
 
 header .main a img {
-	height: 50px;
+	height: 39px;
 	padding-right: 10px;
+}
+
+header .main.home a img {
+	height: 50px !important;
 }
 
 header .main .links {
@@ -249,7 +389,6 @@ header .main .links {
 }
 
 header .main .search {
-	position: fixed;
 	top: 40px;
 	right: 40px;
 	display: flex;
@@ -260,10 +399,15 @@ header .main .search {
 	z-index: 100;
 }
 
+header .main.home .search {
+	position: fixed;
+}
+
 header .main .search img {
-	height: 25px;
+	height: 15px;
 	rotate: 90deg;
 	cursor: pointer;
+	margin-left: -45px;
 }
 
 header .main .search form {
@@ -277,11 +421,12 @@ header .main .search.active form {
 
 header .main .search form input {
 	width: 15vw;
-	border-radius: 5px;
-	border: 2px solid var(--text);
+	min-width: 100px;
+	border-radius: 24px;
+	border: 2px solid #d2d2d2;
 	background-color: var(--background);
 	color: var(--text);
-	padding: 6px 10px;
+	padding: 8px 12px;
 	transition: 0.5s;
 }
 
@@ -305,7 +450,7 @@ header .main .search form input::placeholder {
 	width: 75%;
 	height: 30vw;
 	gap: 20px;
-	padding: 20px 0;
+	padding: 20px 0 50px 0;
 }
 
 .side {
@@ -353,7 +498,7 @@ header .main .search form input::placeholder {
 	align-items: flex-start;
 	gap: 20px;
 	color: var(--background);
-    max-width: 80%;
+	max-width: 80%;
 }
 
 .hero .newspaper div h2 {
@@ -371,15 +516,22 @@ header .main .search form input::placeholder {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	background: #f7f7f7 var(--noise) repeat 0 0;
+	color: var(--text);
 	gap: 20px;
 	width: 100%;
-	background-color: #f7f7f7;
-	padding: 50px 0;
+	padding: 100px 0;
+}
+
+.articles.individual {
+	background-color: #161616;
+	color: var(--background);
 }
 
 .articles h2 {
 	width: 75%;
-	font-size: 36px;
+	font-size: 50px;
+	font-weight: 600;
 	margin: 0;
 }
 
@@ -393,23 +545,37 @@ header .main .search form input::placeholder {
 
 .articles .grid {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(3, 25%);
 	grid-template-rows: 1fr;
-	gap: 2vw;
 	grid-auto-flow: row;
 	grid-template-areas: ". . .";
-	width: 75%;
+	width: 100%;
+	border-top: 1px solid var(--text);
+	border-bottom: 1px solid var(--text);
+	justify-items: stretch;
+	align-items: stretch;
+	justify-content: center;
+}
+
+.articles.individual .grid {
+	border-top: 1px solid #c7c7c7;
+	border-bottom: 1px solid #c7c7c7;
 }
 
 .articles .grid .article {
 	display: flex;
 	flex-direction: column;
-    justify-content: flex-end;
-	background-color: var(--background);
-	background-size: contain;
-	border-bottom: 4px solid #ececec;
+	align-items: center;
+	justify-content: center;
+	color: var(--text);
+	border-bottom: 1px solid var(--text);
 	transition: 0.25s;
-	padding-top: 150px;
+	padding: 50px;
+}
+
+.articles.individual .grid .article {
+	border-bottom: 1px solid #c7c7c7;
+	color: var(--background);
 }
 
 .articles .grid .article:hover {
@@ -421,33 +587,72 @@ header .main .search form input::placeholder {
 	transition: 0.5s;
 }
 
+.articles .grid .article.left {
+	padding: 50px 50px 50px 0;
+}
+
+.articles .grid .article.middle {
+	border-left: 1px solid var(--text);
+	border-right: 1px solid var(--text);
+}
+
+.articles.individual .grid .article.middle {
+	border-left: 1px solid #c7c7c7;
+	border-right: 1px solid #c7c7c7;
+}
+
+.articles .grid .article.right {
+	padding: 50px 0 50px 50px;
+}
+
+.articles .grid .article:nth-last-child(-n + 3) {
+	border-bottom: none;
+}
+
 .articles .grid .article .inner {
-	background-color: var(--background);
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
-	gap: 15px;
-	padding: 40px;
+	justify-content: flex-start;
+	gap: 20px;
+	height: 100%;
+	width: 100%;
 }
 
-.articles .grid .article .inner h3 {
+.articles .grid .article img {
+	width: 100%;
+	height: 200px;
+	box-shadow: var(--theme) 0px 1px 4px;
+	transition: 0.5s;
+}
+
+.articles .grid .article img:hover {
+	box-shadow: var(--theme) 0px 0px 70px -15px;
+	transition: 0.5s;
+}
+
+.articles .grid .article h3 {
 	font-size: 24px;
+	font-weight: 500;
 	margin: 0;
 }
 
-.articles .grid .article .inner h4 {
+.articles .grid .article h4 {
 	font-size: 14px;
+	color: #535353;
 	margin: 0;
 }
 
-.articles .grid .article .inner p {
+.articles.individual .grid .article h4 {
+	color: #c7c7c7;
+}
+
+.articles .grid .article p {
 	font-size: 12px;
 	text-transform: uppercase;
-	color: #9a9a9a;
 	margin: 0;
 }
 
-.articles .grid .article .inner p a {
+.articles .grid .article p a {
 	color: #313131;
 }
 
@@ -482,7 +687,17 @@ header .main .search form input::placeholder {
 }
 
 .article-i > img {
-    width: 100%;
+	width: 100%;
+}
+
+.article-i .image, .article-i img {
+	box-shadow: var(--theme) 0px 1px 4px;
+	transition: 0.5s;
+}
+
+.article-i .image:hover, .article-i img:hover {
+	box-shadow: var(--theme) 0px 0px 70px -15px;
+	transition: 0.5s;
 }
 
 .article-i .split {
@@ -526,6 +741,7 @@ header .main .search form input::placeholder {
 }
 
 .article-i .split .left .author img {
+	height: 63px;
 	border-radius: 100%;
 }
 
@@ -537,8 +753,33 @@ header .main .search form input::placeholder {
 	margin: 0;
 }
 
+.article-i .split .left .author .info h4 {
+	font-weight: 600;
+	color: black;
+}
+
+/*.article-i .split .right .icons {
+	display: flex;
+	flex-direction: row-reverse;
+	gap: 10px;
+}*/
+
+.article-i .split .right .icons {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(10px, 1fr));
+	gap: 10px;
+}
+
 .article-i .split .right .icons i {
 	cursor: pointer;
+	font-size: 17.5px;
+	transition: 0.1s;
+}
+
+.article-i .split .right .icons i:hover {
+	color: var(--theme);
+	margin-top: -3px;
+	transition: 0.1s;
 }
 
 .article-i .images {
@@ -550,28 +791,35 @@ header .main .search form input::placeholder {
 
 .article-i .image {
 	height: 30vh;
+	width: 100% !important;
 	background-size: cover;
 	background-position: center;
-    position: relative;
+	position: relative;
 }
 
 .article-i .image:first-of-type {
-	height: 60vh;
+	height: unset;
+	background-size: contain;
+	background-repeat: no-repeat;
 	grid-column-start: 1;
 	grid-column-end: 3;
 	display: flex;
 }
 
+.article-i .image:first-of-type img {
+	width: 100%;
+}
+
 .article-i .image h2 {
-    position: absolute;
-    bottom: 0px;
-    left: 15px;
-    font-size: 14px;
-    margin: 0;
-    background: var(--background);
-    padding: 7px 15px 0 15px;
-    border-radius: 10px 10px 0px 0px;
-    max-width: 95%;
+	position: absolute;
+	bottom: 0px;
+	left: 15px;
+	font-size: 14px;
+	margin: 0;
+	background: var(--background);
+	padding: 7px 15px 0 15px;
+	border-radius: 10px 10px 0px 0px;
+	max-width: 95%;
 }
 
 .article-i .content:before {
@@ -580,6 +828,7 @@ header .main .search form input::placeholder {
 
 .article-i .content * {
 	margin: 10px 0;
+	font-weight: revert !important;
 }
 
 .article-i .content b {
@@ -592,6 +841,10 @@ header .main .search form input::placeholder {
 
 .article-i .content a {
 	text-decoration: underline;
+}
+
+.article-i .content img {
+	width: 100%;
 }
 
 .article-i object {
@@ -625,6 +878,7 @@ header .main .search form input::placeholder {
 
 .article-i .new {
 	display: flex;
+	align-items: center;
 	gap: 10px;
 }
 
@@ -636,22 +890,22 @@ header .main .search form input::placeholder {
 .article-i .new input,
 .article-i .new select {
 	border: 1px solid var(--theme);
-	border-radius: 5px;
-	padding: 5px 10px;
+	border-radius: 1px;
+	padding: 10px 15px;
 }
 
 .article-i .new button {
 	background-color: var(--theme);
 	border: 1px solid var(--theme);
-	border-radius: 5px;
-	padding: 5px 10px;
+	border-radius: 1px;
+	padding: 10px 15px;
 	color: var(--background);
 	cursor: pointer;
 }
 
 .article-i .new button:hover {
-    opacity: 0.75;
-    letter-spacing: 1px;
+	opacity: 0.75;
+	letter-spacing: 1px;
 }
 
 .article-i .comments hr {
@@ -663,7 +917,7 @@ header .main .search form input::placeholder {
 
 .article-i .comments .comment {
 	border: 1px solid var(--theme);
-	border-radius: 5px;
+	border-radius: 1px;
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
@@ -693,15 +947,16 @@ header .main .search form input::placeholder {
 
 .about .split img {
 	border-radius: 100%;
-    height: max-content;
+	height: max-content;
 }
 
 footer {
 	text-align: center;
+	min-height: calc(70vh - 175px - 80px);
 	width: 100%;
 	background-size: cover;
 	background-position-y: center;
-	padding-top: 125px;
+	padding-top: 175px;
 }
 
 footer .inner {
@@ -711,9 +966,9 @@ footer .inner {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: flex-end;
+	justify-content: center;
 	gap: 20px;
-	padding: 20px;
+	padding: 40px 0;
 }
 
 footer .inner .top {
@@ -722,7 +977,7 @@ footer .inner .top {
 	align-items: center;
 	gap: 20px;
 	width: 75%;
-	padding-bottom: 60px;
+	padding-bottom: 30px;
 	border-bottom: 1px solid #5e5e5e;
 }
 
@@ -755,12 +1010,43 @@ footer .inner .bottom {
 	flex-direction: column;
 	align-items: center;
 	width: 75%;
-	color: var(--text);
+	color: var(--background);
 	font-size: 12px;
+	gap: 15px;
 }
 
 footer .inner .bottom a {
+	color: var(--background);
+}
+
+footer .inner .bottom p {
+	margin: 0;
+}
+
+footer .inner .bottom .socials {
+	display: flex;
+	gap: 10px;
+	justify-content: center;
+	align-items: center;
+}
+
+footer .inner .bottom .socials i {
+	border: 1px solid var(--background);
+	padding: 15px;
+	border-radius: 100%;
+	height: 20px;
+	width: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 20px;
+	transition: 0.5s;
+}
+
+footer .inner .bottom .socials i:hover {
+	background-color: var(--background);
 	color: var(--text);
+	transition: 0.5s;
 }
 
 .toTop {
@@ -790,22 +1076,115 @@ footer .inner .bottom a {
 }
 
 .articles.searchResults {
-    padding: 100px 0 200px 0;
+	padding: 100px 0 200px 0;
 }
 
 .articles.searchResults .grid {
-    grid-template-columns: repeat(1, 1fr) !important;
-    grid-template-areas: "." !important;
-	gap: 10vh;
+	grid-template-columns: repeat(1, 1fr) !important;
+	grid-template-areas: "." !important;
+	gap: 1vh;
 }
 
 .articles.searchResults .grid .article {
-    flex-direction: row-reverse;
-    padding-top: 0;
-    padding-left: 200px;
+	flex-direction: row;
+	padding: 20px 200px !important;
+	gap: 30px;
 }
 
 .articles.searchResults .grid .article .inner {
 	width: 100%;
-    gap: 0px;
+	justify-content: center;
+	gap: 0px;
+}
+
+.articles.searchResults .grid .article img {
+	width: 200px;
+	height: 100px;
+}
+
+.articles.searchResults .grid .article:nth-last-child(2),
+.articles.searchResults .grid .article:nth-last-child(3) {
+	border-bottom: 1px solid var(--text) !important;
+}
+
+.lb-outerContainer {
+	width: 90vw !important;
+}
+
+.lightbox .lb-image {
+	width: 100% !important;
+	height: unset !important;
+}
+
+.advertisement {
+	width: 100%;
+	padding: 100px 0;
+	background-color: #f7f7f7;
+	display: flex;
+	justify-content: center;
+}
+
+.advertisement a {
+	max-width: 75%;
+	width: max-content;
+	display: flex;
+	justify-content: center;
+}
+
+.advertisement a img {
+	width: 100%;
+	max-width: 1000px;
+	box-shadow: var(--theme) 0px 0px 30px 0px;
+}
+
+.split {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+}
+
+.split .articles .grid {
+	grid-template-columns: repeat(2, 1fr) !important;
+	grid-template-areas: ". ." !important;
+}
+
+.split .articles .grid .article {
+	padding: 50px 50px !important;
+	border: none !important;
+	border-bottom: 1px solid var(--text) !important;
+}
+
+.split articles .grid .article:nth-child(odd) {
+	border-right: 1px solid var(--text) !important;
+}
+
+.split .articles .grid .article:nth-last-child(-n + 2) {
+	border-bottom: none !important;
+}
+
+.split .sidebar {
+	width: 30%;
+	display: flex;
+	flex-direction: column;
+	padding: 15px 30px;
+}
+
+.split .sidebar * {
+	margin: 0;
+}
+
+.split .sidebar h3 {
+	font-size: 20px;
+	font-weight: bold;
+	margin: 20px 0 10px 0;
+}
+
+.split .sidebar ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.split .sidebar ul li {
+	margin: 10px 0;
 }

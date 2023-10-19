@@ -1,4 +1,4 @@
-<html>
+<html lang="en">
 
 <head>
 	<%- include('../partials/head.ejs'); %>
@@ -6,16 +6,24 @@
 		var yesterday = new Date();
 		yesterday.setDate(yesterday.getDate() - 1);
 		return date.toDateString() === yesterday.toDateString();
-	}
+	};
 	var tags = {};
 	for (article of cms.articles) {
-		for (tag of article.tags) {
-			if (!tags[tag]) {
-				tags[tag] = [];
+		if (article.tags) {
+			for (tag of article.tags) {
+				tag = tag.toLowerCase();
+				if (!tags[tag]) {
+					tags[tag] = [];
+				};
+				tags[tag].push(article);
 			};
-			tags[tag].push(article);
 		};
 	};
+	var sortedTagsObj = {};
+	for (tag of Object.keys(tags).sort()) {
+		sortedTagsObj[tag] = tags[tag];
+	};
+	tags = sortedTagsObj;
 	function toTitleCase(str) {
 		return str.replace(/\b\w+/g, function(txt) {
 			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -32,15 +40,13 @@
 	</div>
 	<div class="articles">
 		<div class="grid">
-			<% if (Object.keys(tags).length != 0) { for (tag in tags) { %>
-			<div class="article" style="padding-top: 0;">
+			<% if (Object.keys(tags).length != 0) { for (let i = 0; i < Object.keys(tags).length; i++) { const tag = Object.keys(tags)[i]; %>
+			<a class="article<% if (i % 3 === 0) { %> left<% } else if (i === 1 || (i - 1) % 3 === 0) { %> middle<% } else if ((i - 2) % 3 === 0) { %> right<% } %>" href="<%- vars.domain %>/tags/<%= tag.toLowerCase().replaceAll(" ", "-") %>" title="#<%= tag.toLowerCase().replaceAll(" ", "-") %>">
 				<div class="inner">
-					<a href="<%- vars.domain %>/tags/<%= tag %>">
-						<h3><%= toTitleCase(tag) %></h3>
-					</a>
+					<h3><%= tag.toLowerCase().replaceAll(" ", "-") %></h3>
 					<p><%- tags[tag].length %> Article<% if (tags[tag].length != 1) { %>s<% } %></p>
 				</div>
-			</div>
+			</a>
 			<% } } else { %>No tags found<% } %>
 		</div>
 	</div>
