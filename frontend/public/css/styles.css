@@ -708,6 +708,10 @@ header .main .search form input::placeholder {
 	transition: 0.5s;
 }
 
+.article-i .image img:hover {
+    box-shadow: none;
+}
+
 .article-i .split {
 	display: flex;
 	flex-direction: row;
@@ -816,6 +820,7 @@ header .main .search form input::placeholder {
 
 .article-i .image:first-of-type img {
 	width: 100%;
+    margin: 0;
 }
 
 .article-i .image h2 {
