@@ -44,7 +44,7 @@
 				</div>
 			</div>
 		</div>
-		<% if (article.images[0] != null) { %>
+		<% if ((article.images[0] != null) && (article.hideCoverImages != true)) { %>
 		<div class="images">
 			<% for (image of article.images) { if (image._id === article.images[0]._id) { %>
 			<a class="image" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>" <% if (image.description != "") { %> data-title="<%= image.description %>" <% } %> title="<%= image.description %>"><img src="<%- vars.asset_prefix %><%= image.path %>" /><% if (image.description != "") { %><h2><%= image.description %></h2><% } %></a>
