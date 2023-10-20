@@ -557,6 +557,14 @@ header .main .search form input::placeholder {
 	justify-content: center;
 }
 
+.articles .grid.hideBorder1 .article:nth-last-child(2) {
+	border-bottom: 1px solid var(--text);
+}
+
+.articles .grid.hideBorder1 .article:nth-last-child(3), .articles .grid.hideBorder2 .article:nth-last-child(3) {
+	border-bottom: 1px solid var(--text);
+}
+
 .articles.individual .grid {
 	border-top: 1px solid #c7c7c7;
 	border-bottom: 1px solid #c7c7c7;
@@ -1156,6 +1164,10 @@ footer .inner .bottom .socials i:hover {
 
 .split articles .grid .article:nth-child(odd) {
 	border-right: 1px solid var(--text) !important;
+}
+
+.split .articles .grid.hideBorder1 .article:nth-last-child(2) {
+    border-bottom: 1px solid var(--text) !important;
 }
 
 .split .articles .grid .article:nth-last-child(-n + 2) {
