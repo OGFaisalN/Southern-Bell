@@ -180,6 +180,16 @@ async function startApp() {
         };
     });
 
+    app.get('/articles/:year/:article', async (req, res) => {
+        await allRoutes(req, res);
+        var article = cms.articles.find(article => { return article.slug === req.params.article && (new Date(article.date)).getFullYear() === Number(req.params.year) });
+        if (article) {
+            res.render('article', { vars: defaults, title: article.title, cms, pageviews: req.pageViews, article });
+        } else {
+            res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
+        };
+    });
+
     app.get('/articles', async (req, res) => {
         await allRoutes(req, res);
         res.render('articles', { vars: defaults, title: 'All Articles', cms, pageviews: req.pageViews });
