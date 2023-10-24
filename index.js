@@ -174,73 +174,15 @@ async function startApp() {
         await allRoutes(req, res);
         var newspaper = cms.newspapers.find(newspaper => newspaper.slug === req.params.newspaper);
         if (newspaper) {
-            db.query(`SELECT * FROM comments WHERE post_id = '${newspaper._id}'`,
-                function (err, results, fields) {
-                    res.render('newspaper', { vars: defaults, title: newspaper.title, cms, pageviews: req.pageViews, newspaper, comments: results });
-                }
-            );
+                    res.render('newspaper', { vars: defaults, title: newspaper.title, cms, pageviews: req.pageViews, newspaper });
         } else {
             res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
-        };
-    });
-
-    app.post('/newspapers/:newspaper', async (req, res) => {
-        await allRoutes(req, res);
-        var newspaper = cms.newspapers.find(newspaper => newspaper.slug === req.params.newspaper);
-        if (newspaper && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
-            try {
-                db.query("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", [req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
-                    if (err) {
-                        console.log(err);
-                    };
-                    res.redirect(`/newspapers/${req.params.newspaper}#${results.insertId}`);
-                });
-            } catch {
-                console.log(`DoS Attack Attempted: IP is ${req.ip}, URL is ${req.originalUrl}, Query is ${JSON.stringify(req.query)}, Body is ${JSON.stringify(req.body)}`);
-                res.redirect(`/newspapers/${req.params.newspaper}`);
-            };
-        } else {
-            res.redirect('/');
         };
     });
 
     app.get('/articles', async (req, res) => {
         await allRoutes(req, res);
         res.render('articles', { vars: defaults, title: 'All Articles', cms, pageviews: req.pageViews });
-    });
-
-    app.get('/articles/:year/:article', async (req, res) => {
-        await allRoutes(req, res);
-        var article = cms.articles.find(article => { return article.slug === req.params.article && (new Date(article.date)).getFullYear() === Number(req.params.year) });
-        if (article) {
-            db.query(`SELECT * FROM comments WHERE post_id = '${article._id}'`,
-                function (err, results, fields) {
-                    res.render('article', { vars: defaults, title: article.title, cms, pageviews: req.pageViews, article, comments: results });
-                }
-            );
-        } else {
-            res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
-        };
-    });
-
-    app.post('/articles/:year/:article', async (req, res) => {
-        await allRoutes(req, res);
-        var article = cms.articles.find(article => { return article.slug === req.params.article && (new Date(article.date)).getFullYear() === Number(req.params.year) });
-        if (article && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
-            try {
-                db.query("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", [req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
-                    if (err) {
-                        console.log(err);
-                    };
-                    res.redirect(`/articles/${req.params.year}/${req.params.article}#${results.insertId}`);
-                });
-            } catch {
-                console.log(`DoS Attack Attempted: IP is ${req.ip}, URL is ${req.originalUrl}, Query is ${JSON.stringify(req.query)}, Body is ${JSON.stringify(req.body)}`);
-                res.redirect(`/articles/${req.params.year}/${req.params.article}`);
-            };
-        } else {
-            res.redirect('/');
-        };
     });
 
     app.get('/tags', async (req, res) => {
@@ -272,11 +214,7 @@ async function startApp() {
         if (poll) {
             db.query(`SELECT * FROM poll_responses WHERE poll_id = '${poll._id}'`,
                 function (err, responses, fields) {
-                    db.query(`SELECT * FROM comments WHERE post_id = '${poll._id}'`,
-                        function (err, results, fields) {
-                            res.render('poll', { vars: defaults, title: poll.question, cms, pageviews: req.pageViews, poll, comments: results, responses, error: req.query.error });
-                        }
-                    );
+                    res.render('poll', { vars: defaults, title: poll.question, cms, pageviews: req.pageViews, poll, responses, error: req.query.error });
                 }
             );
         } else {
@@ -321,13 +259,6 @@ async function startApp() {
                     };
                 }
             );
-        } else if (poll && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
-            db.query("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", [req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
-                if (err) {
-                    console.log(err);
-                };
-                res.redirect(`/polls/${req.params.poll}#${results.insertId}`);
-            });
         } else {
             res.redirect('/');
         };
@@ -342,30 +273,9 @@ async function startApp() {
         await allRoutes(req, res);
         var artwork = cms.artworks.find(artwork => artwork.slug === req.params.artwork);
         if (artwork) {
-            db.query(`SELECT * FROM comments WHERE post_id = '${artwork._id}'`,
-                function (err, results, fields) {
-                    res.render('artwork', { vars: defaults, title: artwork.title, cms, pageviews: req.pageViews, artwork, comments: results });
-                }
-            );
+            res.render('artwork', { vars: defaults, title: artwork.title, cms, pageviews: req.pageViews, artwork });
         } else {
             res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
-        };
-    });
-
-    app.post('/artworks/:artwork', async (req, res) => {
-        await allRoutes(req, res);
-        var artwork = cms.artworks.find(artwork => artwork.slug === req.params.artwork);
-        if (artwork && req.body.id && (req.body.name.length > 0) && (req.body.email.includes('.')) && (req.body.email.length > 0) && (req.body.content.length > 0)) {
-            db.prepare("INSERT INTO comments (author_name, author_email, post_id, content) VALUES (?, ?, ?, ?)", (err, statement) => {
-                statement.execute([req.body.name, req.body.email, req.body.id, req.body.content], function (err, results, fields) {
-                    if (err) {
-                        console.log(err);
-                    };
-                    res.redirect(`/artworks/${req.params.artwork}#${results.insertId}`);
-                });
-            });
-        } else {
-            res.redirect('/');
         };
     });
 
