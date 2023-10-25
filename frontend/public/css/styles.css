@@ -754,6 +754,7 @@ header .main .search form input::placeholder {
 
 .article-i .split .left .author img {
 	height: 63px;
+	width: 63px;
 	border-radius: 100%;
 }
 
