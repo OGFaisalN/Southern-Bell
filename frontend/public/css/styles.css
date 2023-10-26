@@ -817,6 +817,7 @@ header .main .search form input::placeholder {
 	grid-column-start: 1;
 	grid-column-end: 3;
 	display: flex;
+	border-top: 10px solid var(--theme);
 }
 
 .article-i .image:first-of-type img {
