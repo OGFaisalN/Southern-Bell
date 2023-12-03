@@ -119,26 +119,6 @@
 			<% } } %>
 		</div>
 		<% } %>
-		<div class="comments">
-			<h1>Comments</h1>
-			<form action="" method="post" class="new">
-				<h3>New comment:</h3>
-				<input name="id" value="<%= newspaper._id %>" hidden>
-				<input name="name" type="text" placeholder="Your Name" required>
-				<input name="email" type="email" placeholder="Your Email" required>
-				<input name="content" type="text" placeholder="Your Comment" required>
-				<button>Post Comment</button>
-			</form>
-			<% if (comments.length > 0) { %>
-			<hr><% } %>
-			<% for (comment of comments.reverse()) { %>
-			<div id="<%= comment.id %>" class="comment">
-				<h4><%= comment.author_name %>
-					<h5><% var date = new Date(comment.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></h5>
-					<p><%= comment.content %></p>
-			</div>
-			<% } %>
-		</div>
 	</div>
 	<%- include('../partials/suggested.ejs'); %>
 	<%- include('../partials/footer.ejs'); %>
