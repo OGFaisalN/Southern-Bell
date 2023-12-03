@@ -9,7 +9,7 @@
 	};
 	var tags = {};
 	for (article of cms.articles) {
-		if (article.tags) {
+		if (article.tags && !article.unlisted) {
 			for (tag of article.tags) {
 				tag = tag.toLowerCase();
 				if (!tags[tag]) {

@@ -351,7 +351,7 @@ async function startApp() {
                 image: `${defaults.asset_prefix}${post.image.path}`
             });
         });
-        cms.articles.forEach(post => {
+        cms.articles.filter(article => !article.unlisted).forEach(post => {
             feed.addItem({
                 title: post.title,
                 id: `${cms.siteDetails[0]['domain-production']}${post.slug}`,
