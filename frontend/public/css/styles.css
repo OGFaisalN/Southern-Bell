@@ -159,6 +159,10 @@
 		width: 90% !important;
 	}
 
+	.articles .grid .article {
+		width: 90% !important;
+	}
+
 	.articles .grid .article:nth-child(odd) {
 		border-right: unset !important;
 	}
