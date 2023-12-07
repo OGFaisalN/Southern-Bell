@@ -9,9 +9,9 @@
 		</div>
 		<div class="bottom">
 			<div class="socials"><%- include('socials.ejs') %></div>
-			<p>&copy; <%= cms.siteDetails[0].title %> <%= cms.siteDetails[0].est %> - <%= new Date().getFullYear() %> | <a href="<%- vars.domain %>/admin" title="Open administrator view">Admin<a href="https://dangoweb.com/?from=<%= cms.siteDetails[0].title.toLowerCase().replaceAll(' ', '-') %>" style="display: none;"> (Host)</a></a> | <%- vars.environment.replace(/\w\S*/g, function(txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase() }) %> Version | <%= pageviews %> Views</p>
+			<p>&copy; <%= cms.siteDetails[0].title %> <%= cms.siteDetails[0].est %> - <%= new Date().getFullYear() %> | <a href="<%- vars.domain %>/admin" title="Open administrator view">Admin<a href="https://dangoweb.com/?from=<%= cms.siteDetails[0].title.toLowerCase().replaceAll(' ', '-') %>" style="display: none;"> (Host)</a></a> | <% if (vars.environment != "production") { %><%- vars.environment.replace(/\w\S*/g, function(txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase() }) %> Version<% } else { %><a href="https://faisaln.com/">Website Credits</a><% } %> | <%= pageviews %> Views</p>
 			<p>We use cookies for analytics and security. <a href="<%- vars.domain %>/denycookies" title="Deny cookies">Click here to deny cookies and leave.</a></p>
-			<!-- We use "Lightbox2" by  -->
+			<!-- We use "Lightbox2" by Lokesh Dhakar -->
 		</div>
 	</div>
 </footer>

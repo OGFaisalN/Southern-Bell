@@ -45,13 +45,13 @@
 			</div>
 		</div>
 		<% if ((article.images[0] != null) && (article.hideCoverImages != true)) { %>
-		<div class="images">
+		<% if (article.images.length > 1) { %><div class="images"><% } %>
 			<% for (image of article.images) { if (image._id === article.images[0]._id) { %>
 			<a class="image" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>" <% if (image.description != "") { %> data-title="<%= image.description %>" <% } %> title="<%= image.description %>"><img src="<%- vars.asset_prefix %><%= image.path %>" /><% if (image.description != "") { %><h2><%= image.description %></h2><% } %></a>
 			<% } else { %>
 			<a class="image" style="background-image: url('<%- vars.asset_prefix %><%= image.path %>');<% if ((image.height / image.width) >= 1.25) { %> width: <%= image.width %>px;<% } %>" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>" <% if (image.description != "") { %> data-title="<%= image.description %>" <% } %> title="<%= image.description %>"><% if (image.description != "") { %><h2><%= image.description %></h2><% } %></a>
 			<% } } %>
-		</div>
+		<% if (article.images.length > 1) { %></div><% } %>
 		<% } %>
 		<style>
 			.article-i .content:before {

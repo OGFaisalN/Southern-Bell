@@ -83,7 +83,7 @@
 	html {
 		background: var(--background) !important;
 	}
-	
+
 	.mobileOnly {
 		display: flex !important;
 	}
@@ -157,6 +157,14 @@
 		grid-template-columns: repeat(1, 1fr) !important;
 		grid-template-areas: "." !important;
 		width: 90% !important;
+	}
+
+	.articles .grid .article {
+		width: 90% !important;
+	}
+
+	.articles .grid .article img {
+		width: 100% !important;
 	}
 
 	.articles .grid .article:nth-child(odd) {
@@ -293,7 +301,7 @@ a:hover {
 }
 
 img[alt=""] {
-    box-shadow: none !important;
+	box-shadow: none !important;
 }
 
 .mobileOnly {
@@ -580,15 +588,18 @@ header .main .search form input::placeholder {
 	border-bottom: none;
 }
 
-.articles .grid.hideBorder0 .article:nth-last-child(1) {
+.articles .grid.hideBorder0 .article:nth-last-child(1),
+.articles .grid.hideBorder1 .article:nth-last-child(1),
+.articles .grid.hideBorder2 .article:nth-last-child(1) {
 	border-bottom: none;
 }
 
-.articles .grid.hideBorder0 .article:nth-last-child(2), .articles .grid.hideBorder1 .article:nth-last-child(2) {
+.articles .grid.hideBorder0 .article:nth-last-child(2),
+.articles .grid.hideBorder2 .article:nth-last-child(2) {
 	border-bottom: none;
 }
 
-.articles .grid.hideBorder0 .article:nth-last-child(3), .articles .grid.hideBorder1 .article:nth-last-child(3), .articles .grid.hideBorder2 .article:nth-last-child(3) {
+.articles .grid.hideBorder0 .article:nth-last-child(3) {
 	border-bottom: none;
 }
 
@@ -721,18 +732,20 @@ header .main .search form input::placeholder {
 	width: 100%;
 }
 
-.article-i .image, .article-i img {
+.article-i .image,
+.article-i img {
 	box-shadow: var(--theme) 0px 1px 4px;
 	transition: 0.5s;
 }
 
-.article-i .image:hover, .article-i img:hover {
+.article-i .image:hover,
+.article-i img:hover {
 	box-shadow: var(--theme) 0px 0px 70px -15px;
 	transition: 0.5s;
 }
 
 .article-i .image img:hover {
-    box-shadow: none;
+	box-shadow: none;
 }
 
 .article-i .split {
@@ -825,7 +838,7 @@ header .main .search form input::placeholder {
 	width: 100%;
 }
 
-.article-i .image {
+.article-i .images .image {
 	height: 30vh;
 	width: 100% !important;
 	background-size: cover;
@@ -835,6 +848,7 @@ header .main .search form input::placeholder {
 
 .article-i .image:first-of-type {
 	height: unset;
+	width: fit-content;
 	background-size: contain;
 	background-repeat: no-repeat;
 	grid-column-start: 1;
@@ -843,9 +857,13 @@ header .main .search form input::placeholder {
 	border-top: 10px solid var(--theme);
 }
 
-.article-i .image:first-of-type img {
+.article-i .images .image:first-of-type img {
 	width: 100%;
-    margin: 0;
+	max-width: 100%;
+}
+
+.article-i .image {
+	margin: 0;
 }
 
 .article-i .image h2 {
@@ -864,7 +882,7 @@ header .main .search form input::placeholder {
 	font-weight: bold;
 }
 
-.article-i .content * {
+.article-i .content *:not(img) {
 	margin: 10px 0;
 	font-weight: revert !important;
 }
@@ -1196,7 +1214,7 @@ footer .inner .bottom .socials i:hover {
 }
 
 .split .articles .grid.hideBorder1 .article:nth-last-child(2) {
-    border-bottom: 1px solid var(--text) !important;
+	border-bottom: 1px solid var(--text) !important;
 }
 
 .split .articles .grid .article:nth-last-child(-n + 2) {

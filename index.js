@@ -174,7 +174,7 @@ async function startApp() {
         await allRoutes(req, res);
         var newspaper = cms.newspapers.find(newspaper => newspaper.slug === req.params.newspaper);
         if (newspaper) {
-                    res.render('newspaper', { vars: defaults, title: newspaper.title, cms, pageviews: req.pageViews, newspaper });
+            res.render('newspaper', { vars: defaults, title: newspaper.title, cms, pageviews: req.pageViews, newspaper });
         } else {
             res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
         };
@@ -245,21 +245,17 @@ async function startApp() {
                         for (let i = 0; i < poll.answers.length; i++) {
                             if (poll.answers[i] === req.body.answer) {
                                 try {
-                                    db.prepare("INSERT INTO poll_responses (name, ip, session_id, poll_id, response_id) VALUES (?, ?, ?, ?, ?)", (err, statement) => {
+                                    query = db.format("INSERT INTO poll_responses (name, ip, session_id, poll_id, response_id) VALUES (?, ?, ?, ?, ?)", [req.body.name, req.ip, req.cookies.voteId, req.body.id, i]);
+                                    db.query(query, function (err, results, fields) {
                                         if (err) {
                                             console.log(err);
                                             res.redirect(`/polls/${req.params.poll}?error=There was an error submitting your vote!`);
                                         } else {
-                                            statement.execute([req.body.name, req.ip, req.cookies.voteId, req.body.id, i], function (err, results, fields) {
-                                                if (err) {
-                                                    console.log(err);
-                                                };
-                                                res.redirect(`/polls/${req.params.poll}`);
-                                            });
+                                            res.redirect(`/polls/${req.params.poll}`);
                                         };
                                     });
-                                } catch {
-                                    console.log(`DoS Attack Attempted: IP is ${req.ip}, URL is ${req.originalUrl}, Query is ${JSON.stringify(req.query)}, Body is ${JSON.stringify(req.body)}`);
+                                } catch (error) {
+                                    console.log(`DoS Attack Attempted: IP is ${req.ip}, URL is ${req.originalUrl}, Query is ${JSON.stringify(req.query)}, Body is ${JSON.stringify(req.body)}`, error);
                                     res.redirect(`/polls/${req.params.poll}`);
                                 };
                             };
