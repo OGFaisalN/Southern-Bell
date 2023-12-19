@@ -16,6 +16,7 @@
 		<h1>All Polls</h1>
 		<h3><%- cms.polls.length %> Poll<% if (cms.polls.length != 1) { %>s<% } %></h3>
 	</div>
+	<% if (cms.polls.length > 0) { %>
 	<div class="articles">
 		<div class="grid hideBorder<%= cms.polls.length % 3 %>">
 			<% const polls = cms.polls.sort((a, b) => new Date(b.date) - new Date(a.date)); for (let i = 0; i < polls.length; i++) { const poll = polls[i]; %>
@@ -29,6 +30,9 @@
 			<% } %>
 		</div>
 	</div>
+	<% } else { %>
+	<h3>There's nothing here <i>yet</i>!</h3>
+	<% } %>
 	<%- include('../partials/footer.ejs'); %>
 </body>
 <%- include('../partials/foot.ejs'); %>

@@ -16,6 +16,7 @@
 		<h1>All Articles</h1>
 		<h3><%- cms.articles.filter(article => !article.unlisted).length %> Article<% if (cms.articles.filter(article => !article.unlisted).length != 1) { %>s<% } %></h3>
 	</div>
+	<% if (cms.articles.filter(article => !article.unlisted).length > 0) { %>
 	<div class="articles">
 		<div class="grid hideBorder<%= cms.articles.filter(article => !article.unlisted).length % 3 %>">
 			<% const articles = cms.articles.sort((a, b) => new Date(b.date) - new Date(a.date)).filter(article => !article.unlisted); for (let i = 0; i < articles.length; i++) { const article = articles[i]; %>
@@ -30,6 +31,9 @@
 			<% } %>
 		</div>
 	</div>
+	<% } else { %>
+	<h3>There's nothing here <i>yet</i>!</h3>
+	<% } %>
 	<%- include('../partials/footer.ejs'); %>
 </body>
 <%- include('../partials/foot.ejs'); %>

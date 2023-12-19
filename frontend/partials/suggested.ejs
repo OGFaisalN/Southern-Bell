@@ -3,6 +3,7 @@
 	yesterday.setDate(yesterday.getDate() - 1);
 	return date.toDateString() === yesterday.toDateString();
 }; %>
+<% if (cms.articles.filter(a => a.slug !== ((typeof article !== 'undefined') ? article.slug : '')).filter(article => !article.unlisted).length > 3) { %>
 <div class="articles individual">
 	<h2>Suggested articles</h2>
 	<div class="grid">
@@ -18,3 +19,4 @@
 		<% } %>
 	</div>
 </div>
+<% } %>

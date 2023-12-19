@@ -33,6 +33,7 @@
 			</a><% } %>
 		</div>
 	</div>
+	<% if (cms.articles.length > 0) { %>
 	<div class="articles" style="padding: 100px 0 0 0;">
 		<h2>Latest Articles</h2>
 		<hr>
@@ -49,6 +50,7 @@
 			<% } %>
 		</div>
 	</div>
+	<% }; if (cms.artworks.length > 0) { %>
 	<div class="articles">
 		<h2>Latest Artwork</h2>
 		<hr>
@@ -64,6 +66,7 @@
 			<% } %>
 		</div>
 	</div>
+	<% } %>
 	<%- include('../partials/footer.ejs'); %>
 </body>
 <%- include('../partials/foot.ejs'); %>

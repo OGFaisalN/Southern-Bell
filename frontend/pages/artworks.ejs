@@ -16,6 +16,7 @@
 		<h1>All Artwork</h1>
 		<h3><%- cms.artworks.length %> Artwork</h3>
 	</div>
+	<% if (cms.artworks.length > 0) { %>
 	<div class="articles">
 		<div class="grid hideBorder<%= cms.artworks.length % 3 %>">
 			<% const artworks = cms.artworks.sort((a, b) => new Date(b.date) - new Date(a.date)); for (let i = 0; i < artworks.length; i++) { const artwork = artworks[i]; %>
@@ -30,6 +31,9 @@
 			<% } %>
 		</div>
 	</div>
+	<% } else { %>
+	<h3>There's nothing here <i>yet</i>!</h3>
+	<% } %>
 	<%- include('../partials/footer.ejs'); %>
 </body>
 <%- include('../partials/foot.ejs'); %>

@@ -23,7 +23,7 @@
 					<h1><%= article.title %></h1>
 					<% if (article.description != null) { %><h3><% if (article.description.length > 50) { %><%= article.description.slice(0, 47) %>...<% } else { %><%= article.description %><% } %></h3><% } %>
 					<h5><%= pageviews %> Views | Published <% var date = new Date(article.date); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article._created != article._modified) && (date < (new Date(article._modified * 1000)))) { %> | Edited <% var date = new Date(article._modified * 1000); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } } %></h5>
-					<% if (article.tags != null) { %><p>Tags: <% for (tag of article.tags) { %><a href="<%- vars.domain %>/tags/<%= tag %>" title="#<%= tag.toLowerCase().replaceAll(" ", "-") %></a>">#<%= tag.toLowerCase().replaceAll(" ", "-") %></a> <% } %></p><% } %>
+					<% if (article.tags != null) { %><p>Tags: <% for (tag of article.tags) { %><a href="<%- vars.domain %>/tags/<%= tag.replaceAll(" ", "-") %>" title="#<%= tag.toLowerCase().replaceAll(" ", "-") %>">#<%= tag.toLowerCase().replaceAll(" ", "-") %></a> <% } %></p><% } %>
 				</div>
 				<div class="author">
 					<img src="<%- vars.asset_prefix %><% if ((article.author != "") && (article.author != null)) { %><%= cms.siteDetails[0].unknown.path %><% } else { %><%= cms.siteDetails[0].favicon.path %><% } %>" alt="Author" />
