@@ -38,6 +38,7 @@
 		<h1>All Tags</h1>
 		<h3><%= Object.keys(tags).length %> Tag<% if (Object.keys(tags).length != 1) { %>s<% } %></h3>
 	</div>
+	<% if (Object.keys(tags).length != 0) { %>
 	<div class="articles">
 		<div class="grid hideBorder<%= Object.keys(tags).length % 3 %>">
 			<% if (Object.keys(tags).length != 0) { for (let i = 0; i < Object.keys(tags).length; i++) { const tag = Object.keys(tags)[i]; %>
@@ -50,6 +51,9 @@
 			<% } } else { %>No tags found<% } %>
 		</div>
 	</div>
+	<% } else { %>
+	<h3>There's nothing here <i>yet</i>!</h3>
+	<% } %>
 	<%- include('../partials/footer.ejs'); %>
 </body>
 <%- include('../partials/foot.ejs'); %>

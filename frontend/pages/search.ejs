@@ -5,7 +5,8 @@
 	<% const filteredArticles = cms.articles.filter(article => {
 		const title = article.title.toLowerCase();
 		const content = article.content.toLowerCase();
-		return title.includes(query) || content.includes(query);
+		const author = (((article.author != "") && (article.author != null)) ? article.author : cms.siteDetails[0].title).toLowerCase();
+		return title.includes(query) || content.includes(query) || author.includes(query);
 	});
 	const filteredNewspapers = cms.newspapers.filter(newspaper => newspaper.title.toLowerCase().includes(query));
 	var tags = {};
@@ -33,7 +34,8 @@
 	const filteredArtworks = cms.artworks.filter(artwork => {
 		const title = artwork.title.toLowerCase();
 		const description = artwork.description.toLowerCase();
-		return title.includes(query) || description.includes(query);
+		const author = artwork.author.toLowerCase();
+		return title.includes(query) || description.includes(query) || author.includes(query);
 	});
 	function ifYesterday(date) { 
 		var yesterday = new Date();
@@ -47,13 +49,14 @@
 	<div class="banner" style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>');">
 		<i class="fa-solid fa-magnifying-glass"></i>
 		<h1>Search results for '<%- query %>'</h1>
-		<h3><%- filteredArticles.length + filteredNewspapers.length %> Results</h3>
+		<h3><%- filteredNewspapers.length + filteredArticles.length + filteredTags.length + filteredPolls.length %> Results</h3>
 	</div>
+	<% if (filteredNewspapers.length + filteredArticles.length + filteredTags.length + filteredPolls.length > 0) { %>
 	<div class="articles searchResults">
 		<div class="grid">
 			<% filteredNewspapers.sort((a, b) => b._created - a._created).forEach(newspaper => { %>
 			<a class="article" href="<%- vars.domain %>/newspaper/<%= newspaper.slug %>" title="Newspaper: <%= newspaper.title %>">
-				<img src="<%- vars.asset_prefix %><%= newspaper.image.path %>"<% if (newspaper.image.description != "") { %>alt="<%= newspaper.image.description %>"<% } %> />
+				<img src="<%- vars.asset_prefix %><%= newspaper.image.path %>" <% if (newspaper.image.description != "") { %>alt="<%= newspaper.image.description %>" <% } %> />
 				<div class="inner">
 					<h3>Newspaper: <%= newspaper.title %></h3>
 					<p><% var date = new Date(newspaper.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
@@ -62,44 +65,47 @@
 			<% }); %>
 			<% filteredArticles.sort((a, b) => new Date(b.date) - new Date(a.date)).filter(article => !article.unlisted).forEach(article => { %>
 			<a class="article" href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>" title="Article: <%= article.title %>">
-				<img src="<% if (article.images[0] != null) { %><%- vars.asset_prefix %><%= article.images[0].path %>" <% if (article.images[0].description != "") { %>alt="<%= article.images[0].description %>"<% } %><% } else { %> "<% } %> />
-				<div class="inner">
-					<h3>Article: <%= article.title %></h3>
-					<% if (article.description != null) { %><h4><%= article.description.slice(0, 50) %>...</h4><% } %>
-					<p><% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article.author != "") && (article.author != null)) { %> / <%= article.author %><% } %></p>
-				</div>
-			</a>
-			<% }); %>
-			<% filteredTags.sort((a, b) => a.localeCompare(b)).forEach(tag => { %>
-			<a class="article" href="<%- vars.domain %>/tags/<%= tag %>" title="Tag: <%= tag %>">
-				<img src=" " alt="">
-				<div class="inner">
-					<h3>Tag: <%= tag %></h3>
-					<p><%- tags[tag].length %> Article<% if (tags[tag].length != 1) { %>s<% } %></p>
-				</div>
-			</a>
-			<% }); %>
-			<% filteredPolls.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(poll => { %>
-			<a class="article" href="<%- vars.domain %>/polls/<%= poll.slug %>" title="Poll: <%= poll.question %>">
-				<img src=" " alt="">
-				<div class="inner">
-					<h3>Poll: <%= poll.question %></h3>
-					<h4><%= poll.description %></h4>
-					<p><% var votes = 0; for (response of responses) { if (response.poll_id === poll._id) { votes++ }; }; %><%= votes %> Vote<% if (votes != 1) { %>s<% } %> / <% var date = new Date(poll.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
-				</div>
-			</a>
-			<% }); %>
-			<% filteredArtworks.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(artwork => { %>
-			<a class="article" href="<%- vars.domain %>/artworks/<%= artwork.slug %>" title="Artwork: <%= artwork.title %>">
-				<img src="<%- vars.asset_prefix %><%= artwork.artwork.path %>"<% if (artwork.artwork.description != "") { %>alt="<%= artwork.artwork.description %>"<% } %> />
-				<div class="inner">
-					<h3>Artwork: <%= artwork.title %></h3>
-					<p><% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article.author != "") && (article.author != null)) { %> / <%= article.author %><% } %></p>
-				</div>
-			</a>
-			<% }); %>
+				<img src="<% if (article.images[0] != null) { %><%- vars.asset_prefix %><%= article.images[0].path %>" <% if (article.images[0].description != "") { %>alt="<%= article.images[0].description %>" <% } %><% } else { %> "<% } %> />
+				<div class=" inner">
+				<h3>Article: <%= article.title %></h3>
+				<% if (article.description != null) { %><h4><% if (article.description.length > 50) { %><%= article.description.slice(0, 47) %>...<% } else { %><%= article.description %><% } %></h4><% } %>
+				<p><% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article.author != "") && (article.author != null)) { %> / <%= article.author %><% } %></p>
 		</div>
+		</a>
+		<% }); %>
+		<% filteredTags.sort((a, b) => a.localeCompare(b)).forEach(tag => { %>
+		<a class="article" href="<%- vars.domain %>/tags/<%= tag.replaceAll(" ", "-") %>" title="Tag: <%= tag %>">
+			<img src=" " alt="">
+			<div class="inner">
+				<h3>Tag: <%= tag %></h3>
+				<p><%- tags[tag].length %> Article<% if (tags[tag].length != 1) { %>s<% } %></p>
+			</div>
+		</a>
+		<% }); %>
+		<% filteredPolls.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(poll => { %>
+		<a class="article" href="<%- vars.domain %>/polls/<%= poll.slug %>" title="Poll: <%= poll.question %>">
+			<img src=" " alt="">
+			<div class="inner">
+				<h3>Poll: <%= poll.question %></h3>
+				<h4><%= poll.description %></h4>
+				<p><% var votes = 0; for (response of responses) { if (response.poll_id === poll._id) { votes++ }; }; %><%= votes %> Vote<% if (votes != 1) { %>s<% } %> / <% var date = new Date(poll.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
+			</div>
+		</a>
+		<% }); %>
+		<% filteredArtworks.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(artwork => { %>
+		<a class="article" href="<%- vars.domain %>/artworks/<%= artwork.slug %>" title="Artwork: <%= artwork.title %>">
+			<img src="<%- vars.asset_prefix %><%= artwork.artwork.path %>" <% if (artwork.artwork.description != "") { %>alt="<%= artwork.artwork.description %>" <% } %> />
+			<div class="inner">
+				<h3>Artwork: <%= artwork.title %></h3>
+				<p><% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article.author != "") && (article.author != null)) { %> / <%= article.author %><% } %></p>
+			</div>
+		</a>
+		<% }); %>
 	</div>
+	</div>
+	<% } else { %>
+	<h3>There's nothing here <i>yet</i>!</h3>
+	<% } %>
 	<%- include('../partials/footer.ejs'); %>
 </body>
 <%- include('../partials/foot.ejs'); %>

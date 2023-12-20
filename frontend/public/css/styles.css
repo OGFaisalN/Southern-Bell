@@ -318,6 +318,7 @@ body {
 	align-items: center;
 	margin: 0;
 	padding: 0;
+    overflow-x: hidden;
 }
 
 header {
@@ -736,6 +737,7 @@ header .main .search form input::placeholder {
 .article-i img {
 	box-shadow: var(--theme) 0px 1px 4px;
 	transition: 0.5s;
+    width: 100%;
 }
 
 .article-i .image:hover,
@@ -753,6 +755,7 @@ header .main .search form input::placeholder {
 	flex-direction: row;
 	align-items: flex-start;
 	width: 100%;
+    gap: 10px;
 }
 
 .article-i .split .left {
