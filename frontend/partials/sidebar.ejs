@@ -1,10 +1,12 @@
 <div class="sidebar">
+    <% if (cms.articles.sort((a, b) => new Date(b.date) - new Date(a.date)).filter(article => !article.unlisted).length > 0) { %>
 	<h3>Recent Articles</h3>
 	<ul>
-		<% for (let i = 0; i < 5 && i < cms.articles.length; i++) { %>
-		<li><a href="<%- vars.domain %>/articles/<%= new Date(cms.articles[i].date).getFullYear() %>/<%= cms.articles[i].slug %>"><%= cms.articles[i].title %></a></li>
+		<% for (let i = 0; i < 5 && i < cms.articles.sort((a, b) => new Date(b.date) - new Date(a.date)).filter(article => !article.unlisted).length; i++) { const article = cms.articles.sort((a, b) => new Date(b.date) - new Date(a.date)).filter(article => !article.unlisted)[i]; %>
+		<li><a href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>"><%= article.title %></a></li>
 		<% } %>
 	</ul>
+    <% } %>
     <%  var tags = {};
     for (article of cms.articles) {
         if (article.tags && !article.unlisted) {
