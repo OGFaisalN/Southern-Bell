@@ -47,6 +47,10 @@
 	}
 
 	.hero .side {
+		display: none;
+	}
+
+	.hero .side {
 		width: 100%;
 	}
 
@@ -149,7 +153,7 @@
 	}
 
 	.hero {
-		height: 100vh !important;
+		height: 50vh !important;
 		width: 85% !important;
 	}
 
@@ -165,6 +169,7 @@
 
 	.articles .grid .article img {
 		width: 100% !important;
+		height: unset !important;
 	}
 
 	.articles .grid .article:nth-child(odd) {

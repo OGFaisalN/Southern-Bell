@@ -1,6 +1,6 @@
 <% if (cms.siteDetails[0].advertisement != null) { %><div class="advertisement noMobile"><a href="<%= cms.siteDetails[0]['advertisement-link'] %>" title="Advertisement"><img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].advertisement.path %>" alt="Advertisement" /></a></div><% } %>
 <% if (cms.siteDetails[0]['advertisement-mobile'] != null) { %><div class="advertisement mobileOnly" style="display: none;"><a href="<%= cms.siteDetails[0]['advertisement-link'] %>" title="Advertisement"><img src="<%- vars.asset_prefix %><%= cms.siteDetails[0]['advertisement-mobile'].path %>" alt="Advertisement" /></a></div><% } %>
-<footer style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>')">
+<footer style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>'); background-position-y: <%= cms.siteDetails[0].background.fp.y * cms.siteDetails[0].background.height %>px;"><%= cms.siteDetails[0].background.fp.y * cms.siteDetails[0].background.height %>/<%= cms.siteDetails[0].background.height %>
 	<div class="inner">
 		<div class="top">
 			<img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].logo.path %>" alt="<%= cms.siteDetails[0].title %>" />
