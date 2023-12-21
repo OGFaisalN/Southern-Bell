@@ -48,7 +48,7 @@
 				<div class="article <%= article._id %>">
 					<% if (article.images[0] != null) { %>
 					<div class="images">
-						<% for (image of article.images) { if (image._id === article.images[0]._id) { %>
+						<% let imageCategories = [[], [], [], []]; article.images.forEach((image, index) => { imageCategories[index % 4].push(image); }); for (image of article.images) { if (image._id === article.images[0]._id) { %>
 						<a class="image" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>" <% if (image.description != "") { %> data-title="<%= image.description %>" <% } %> title="<%= image.description %>"><img src="<%- vars.asset_prefix %><%= image.path %>" /><% if (image.description != "") { %><h2><%= image.description %></h2><% } %></a>
 						<% } else { %>
 						<a class="image" style="background-image: url('<%- vars.asset_prefix %><%= image.path %>');<% if ((image.height / image.width) >= 1.25) { %> width: <%= image.width %>px;<% } %>" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>" <% if (image.description != "") { %> data-title="<%= image.description %>" <% } %> title="<%= image.description %>"><% if (image.description != "") { %><h2><%= image.description %></h2><% } %></a>
@@ -100,11 +100,10 @@
 			<div class="article <%= article._id %>">
 				<% if (article.images[0] != null) { %>
 				<% if (article.images.length > 1) { %><div class="images"><% } %>
-					<% for (image of article.images) { if (image._id === article.images[0]._id) { %>
-					<a class="image" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>" <% if (image.description != "") { %> data-title="<%= image.description %>" <% } %> title="<%= image.description %>"><img src="<%- vars.asset_prefix %><%= image.path %>" /><% if (image.description != "") { %><h2><%= image.description %></h2><% } %></a>
-					<% } else { %>
-					<a class="image" style="background-image: url('<%- vars.asset_prefix %><%= image.path %>');<% if ((image.height / image.width) >= 1.25) { %> width: <%= image.width %>px;<% } %>" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>" <% if (image.description != "") { %> data-title="<%= image.description %>" <% } %> title="<%= image.description %>"><% if (image.description != "") { %><h2><%= image.description %></h2><% } %></a>
-					<% } } %>
+					<a class="image" href="<%- vars.asset_prefix %><%= article.images[0].path %>" data-lightbox="<%= article.images[0]._id %>" <% if (article.images[0].description != "") { %> data-title="<%= article.images[0].description %>" <% } %> title="<%= article.images[0].description %>"><img src="<%- vars.asset_prefix %><%= article.images[0].path %>" /><% if (article.images[0].description != "") { %><h2><%= article.images[0].description %></h2><% } %></a>
+					<% let imageColumns = []; article.images.slice(1).forEach((image, index) => { let columnIndex = index % 4; if (!imageColumns[columnIndex]) { imageColumns[columnIndex] = []; } imageColumns[columnIndex].push(image); }); for (column of imageColumns) { %><div class="column" id="<%= imageColumns.length %>"><% for (image of column) { %>
+					<a class="image" style="background-image: url('<%- vars.asset_prefix %><%= image.path %>'); height: <% if (image.height > 400) { %>calc(<%= image.height %>px / <%= imageColumns.length %>);<% } else { %><%= image.height %>px;<% } %>" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>" <% if (image.description != "") { %> data-title="<%= image.description %>" <% } %> title="<%= image.description %>"><% if (image.description != "") { %><h2><%= image.description %></h2><% } %></a>
+					<% } %></div><% } %>
 				<% if (article.images.length > 1) { %></div><% } %>
 				<% } %>
 				<h2><%= article.title %></h2>

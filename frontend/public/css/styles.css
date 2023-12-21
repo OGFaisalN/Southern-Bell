@@ -318,7 +318,7 @@ body {
 	align-items: center;
 	margin: 0;
 	padding: 0;
-    overflow-x: hidden;
+	overflow-x: hidden;
 }
 
 header {
@@ -737,7 +737,7 @@ header .main .search form input::placeholder {
 .article-i img {
 	box-shadow: var(--theme) 0px 1px 4px;
 	transition: 0.5s;
-    width: 100%;
+	width: 100%;
 }
 
 .article-i .image:hover,
@@ -755,7 +755,7 @@ header .main .search form input::placeholder {
 	flex-direction: row;
 	align-items: flex-start;
 	width: 100%;
-    gap: 10px;
+	gap: 10px;
 }
 
 .article-i .split .left {
@@ -835,18 +835,61 @@ header .main .search form input::placeholder {
 }
 
 .article-i .images {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(200px, 1fr));
-	gap: 20px;
 	width: 100%;
+	display: -ms-flexbox;
+	display: flex;
+	-ms-flex-wrap: wrap;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.article-i .images .column[id="4"] {
+	-ms-flex: calc(25% - 4px - 4px - 4px);
+	flex: calc(25% - 4px - 4px - 4px);
+	max-width: 25%;
+}
+
+.article-i .images .column[id="3"] {
+	-ms-flex: calc(33% - 4px - 4px);
+	flex: calc(33% - 4px - 4px);
+	max-width: 33%;
+}
+
+.article-i .images .column[id="2"] {
+	-ms-flex: calc(50% - 4px);
+	flex: calc(50% - 4px);
+	max-width: 50%;
+}
+
+.article-i .images .column[id="1"] {
+	-ms-flex: 100%;
+	flex: 100%;
+	max-width: 100%;
+}
+
+@media screen and (max-width: 800px) {
+	.article-i .images .column {
+		-ms-flex: calc(50% - 4px) !important;
+		flex: calc(50% - 4px) !important;
+		max-width: 50% !important;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.article-i .images .column {
+		-ms-flex: 100% !important;
+		flex: 100% !important;
+		max-width: 100% !important;
+	}
 }
 
 .article-i .images .image {
-	height: 30vh;
 	width: 100% !important;
 	background-size: cover;
 	background-position: center;
 	position: relative;
+	margin-top: 8px;
+	vertical-align: middle;
 }
 
 .article-i .image:first-of-type {
