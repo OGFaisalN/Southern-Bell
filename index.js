@@ -72,7 +72,8 @@ app.use((req, res, next) => {
 });
 app.use((req, res, next) => {
     db.query('SELECT count FROM pageviews WHERE url = ?', [req.originalUrl], (err, results) => {
-        if (err) {
+        skipPageViewsErrors = true;
+        if (err && !skipPageViewsErrors) {
             console.error(err);
             res.status(500).render('error', { error: 'error retrieving page views; database connection failed' });
             return;
