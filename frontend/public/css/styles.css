@@ -198,11 +198,7 @@
 		grid-template-columns: repeat(1, minmax(200px, 1fr)) !important;
 	}
 
-	.article-i .image {
-		height: 20vh !important;
-	}
-
-	.article-i .image:first-of-type {
+	.article-i:has(.images) .image:first-of-type {
 		height: 30vh !important;
 		grid-column-end: unset !important;
 	}
@@ -238,6 +234,20 @@
 	.toTop {
 		bottom: 20px !important;
 		right: 20px !important;
+	}
+
+	.split .articles .grid {
+		width: 100% !important;
+		overflow: hidden;
+	}
+
+	.split .articles .grid .article img {
+		width: min-content !important;
+		height: 200px !important;
+	}
+
+	.split .sidebar {
+		display: none !important;
 	}
 }
 
