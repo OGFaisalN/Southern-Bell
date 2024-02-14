@@ -46,3 +46,13 @@ function shareToLine() {
 try {
     jQuery(".article-i .split .left .info h1").fitText(1.4);
 } catch { };
+
+//try {
+document.querySelectorAll('.images').forEach(slider => {
+    classes = "";
+    slider.classList.forEach(class1 => { classes += `.${class1}` });
+    new Splide(classes, {
+        heightRatio: 0.5,
+    }).mount();
+});
+//} catch { };
