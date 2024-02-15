@@ -96,7 +96,7 @@
 		display: none !important;
 	}
 
-	header .announcement {
+	header .announcement, header .alert {
 		position: relative !important;
 		width: max-content !important;
 		rotate: unset !important;
@@ -105,6 +105,7 @@
 		padding: 10px 20px !important;
 		border-radius: 100px;
 		margin-bottom: 30px;
+		height: unset !important;
 	}
 
 	header .main {
@@ -322,12 +323,12 @@ body {
 }
 
 header {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: space-between;
-	width: 95%;
-	font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    font-weight: bold;
 }
 
 header.collapsed .main {
@@ -346,11 +347,8 @@ header .announcement {
 	left: -75px;
 	rotate: -35deg;
 	background-color: var(--theme);
-	z-index: 100;
-}
-
-header .announcement a {
 	color: var(--background);
+	z-index: 100;
 }
 
 header .socials {
@@ -394,6 +392,7 @@ header .main {
 
 header .main.home {
 	flex-direction: column !important;
+    padding-top: 80px;
 }
 
 header .main a {
@@ -417,7 +416,7 @@ header .main .links {
 }
 
 header .main .search {
-	top: 40px;
+	top: 70px;
 	right: 40px;
 	display: flex;
 	flex-direction: row-reverse;
@@ -466,6 +465,21 @@ header .main .search form input:focus {
 
 header .main .search form input::placeholder {
 	color: var(--text);
+}
+
+header .alert {
+    background: var(--theme);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    height: 40px;
+    position: fixed;
+}
+
+header .alert a {
+    color: var(--background);
 }
 
 .hero {
@@ -618,6 +632,11 @@ header .main .search form input::placeholder {
 	border-bottom: 1px solid var(--text);
 	transition: 0.25s;
 	padding: 50px;
+}
+
+.articles .grid .article img {
+	width: 100% !important;
+	height: unset !important;
 }
 
 .articles.individual .grid .article {
@@ -1198,6 +1217,14 @@ footer .inner .bottom .socials i:hover {
 	margin: 10px 0;
 }
 
+.images {
+    margin-bottom: 40px !important;
+}
+
+.images .splide__track {
+    border-radius: 10px;
+}
+
 .images .splide__list {
     height: unset;
 }
@@ -1224,10 +1251,6 @@ footer .inner .bottom .socials i:hover {
 
 .images .splide__list > .splide__slide:only-child {
     height: unset !important;
-}
-
-.images .splide__slide {
-	border-radius: 10px;
 }
 
 .images .splide__slide img {
