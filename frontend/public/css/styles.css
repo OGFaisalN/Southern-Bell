@@ -386,13 +386,13 @@ header .main {
 	justify-content: space-between;
 	gap: 5px;
 	width: 75%;
-	padding: 50px 0 20px 0;
+	padding: 90px 0 20px 0;
 	border-bottom: 1px solid lightgray;
 }
 
 header .main.home {
 	flex-direction: column !important;
-    padding-top: 80px;
+    padding-top: 120px;
 }
 
 header .main a {
