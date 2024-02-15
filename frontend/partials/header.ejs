@@ -1,7 +1,9 @@
 <header>
-	<div class="announcement">
-		<a href="<%- vars.domain %>/newspapers/<%= cms.newspapers[cms.newspapers.length - 1].slug %>" title="Latest Newspaper">Latest Newspaper</a>
-	</div>
+	<% if (title === cms.newspapers[cms.newspapers.length - 1].title) { %>
+	<div class="announcement">Latest Newspaper</div>
+	<% } else { %>
+	<div class="alert"><a href="<%- vars.domain %>/newspapers/<%= cms.newspapers[cms.newspapers.length - 1].slug %>" title="Latest Newspaper">Latest — <%= cms.newspapers[cms.newspapers.length - 1].title %></a></div>
+	<% } %>
 	<div class="socials">
 		<%- include('socials.ejs') %>
 	</div>

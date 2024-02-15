@@ -44,7 +44,18 @@
 				</div>
 			</div>
 		</div>
-		<img src="<%- vars.asset_prefix %><%= artwork.artwork.path %>"<% if (artwork.artwork.description != "") { %>alt="<%= artwork.artwork.description %>"<% } %> />
+		<section class="images splide <%= article.slug %>" aria-label="Image gallery for <%= artwork.title %>">
+			<div class="splide__track">
+				<ul class="splide__list">
+					<a class="splide__slide" href="<%- vars.asset_prefix %><%= artwork.artwork.path %>" data-lightbox="<%= artwork.artwork._id %>">
+						<img src="<%- vars.asset_prefix %><%= artwork.artwork.path %>" alt="<%= artwork.artwork.description %>">
+						<div>
+							<%= artwork.artwork.description %>
+						</div>
+					</a>
+				</ul>
+			</div>
+		</section>
 		<h4 style="max-width: 700px"><%= artwork.description %></h4>
 	</div>
 	<%- include('../partials/suggested.ejs'); %>
