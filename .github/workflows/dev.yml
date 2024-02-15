@@ -1,18 +1,18 @@
 name: Deploy Node.js App
 on:
-  push:
-    branches:
-      - dev
+    push:
+        branches:
+            - dev
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-    - name: executing remote ssh commands using SSH key
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        port: ${{ secrets.PORT }}
-        script: cd /home/dangoweb/domains/faisaln.com/southern-bell && git pull && cloudlinux-selector restart --json --interpreter nodejs --app-root "/home/dangoweb/domains/faisaln.com/southern-bell"
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+        steps:
+            - name: executing remote ssh commands using SSH key
+              uses: appleboy/ssh-action@v0.1.10
+              with:
+                  host: ${{ secrets.HOST }}
+                  username: ${{ secrets.USERNAME }}
+                  key: ${{ secrets.SSH_KEY }}
+                  port: ${{ secrets.PORT }}
+                  script: cd /home/dangoweb/domains/faisaln.com/southern-bell && git pull && cloudlinux-selector restart --json --interpreter nodejs --app-root "/home/dangoweb/domains/faisaln.com/southern-bell"
