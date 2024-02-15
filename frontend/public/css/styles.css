@@ -356,14 +356,15 @@ header .socials {
 	top: 70px;
 	left: 30px;
 	display: grid;
-	grid-template-columns: repeat(2, minmax(10px, 1fr));
+	grid-template-columns: repeat(1, minmax(10px, 1fr));
 	gap: 10px;
 	justify-items: start;
 	align-items: start;
 }
 
 header:has(.announcement) .social {
-	top: 150px;
+	top: 150px !important;
+	grid-template-columns: repeat(2, minmax(10px, 1fr)) !important;
 }
 
 header .socials i {
