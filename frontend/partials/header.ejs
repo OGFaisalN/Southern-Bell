@@ -3,6 +3,8 @@
 	<div class="announcement">Latest Newspaper</div>
 	<% } else { %>
 	<div class="alert"><a href="<%- vars.domain %>/newspapers/<%= cms.newspapers[cms.newspapers.length - 1].slug %>" title="Latest Newspaper">Latest — <%= cms.newspapers[cms.newspapers.length - 1].title %></a></div>
+	<br />
+	<br />
 	<% } %>
 	<div class="socials">
 		<%- include('socials.ejs') %>

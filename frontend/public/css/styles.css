@@ -263,13 +263,13 @@
 }
 
 html {
-	background: -moz-linear-gradient(150deg, var(--theme) 0%, transparent 10%);
+	background: -moz-linear-gradient(150deg, var(--theme) 0%, var(--background) 300px);
 	background: -webkit-linear-gradient(
 		150deg,
 		var(--theme) 0%,
-		transparent 10%
+		var(--background) 300px
 	);
-	background: linear-gradient(150deg, var(--theme) 0%, transparent 10%);
+	background: linear-gradient(150deg, var(--theme) 0%, var(--background) 300px);
 	background-color: var(--background);
 	color: var(--text);
 	font-family: Montserrat, sans-serif;
@@ -353,13 +353,18 @@ header .announcement {
 
 header .socials {
 	position: fixed;
-	top: 150px;
+	top: 70px;
 	left: 30px;
 	display: grid;
-	grid-template-columns: repeat(2, minmax(10px, 1fr));
+	grid-template-columns: repeat(1, minmax(10px, 1fr));
 	gap: 10px;
 	justify-items: start;
 	align-items: start;
+}
+
+header:has(.announcement) .socials {
+	top: 150px !important;
+	grid-template-columns: repeat(2, minmax(10px, 1fr)) !important;
 }
 
 header .socials i {
@@ -375,7 +380,7 @@ header .socials i {
 	font-size: 20px;
 }
 
-header .socials a:nth-child(even) i {
+header:has(.announcement) .socials a:nth-child(even) i {
 	margin-top: -30px;
 }
 
@@ -1218,7 +1223,7 @@ footer .inner .bottom .socials i:hover {
 }
 
 .images {
-    margin-bottom: 40px !important;
+    margin: 40px 0 !important;
 }
 
 .images .splide__track {
