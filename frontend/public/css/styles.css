@@ -263,13 +263,13 @@
 }
 
 html {
-	background: -moz-linear-gradient(150deg, var(--theme) 0%, transparent 10%);
+	background: -moz-linear-gradient(150deg, var(--theme) 0%, transparent 400px);
 	background: -webkit-linear-gradient(
 		150deg,
 		var(--theme) 0%,
-		transparent 10%
+		transparent 400px
 	);
-	background: linear-gradient(150deg, var(--theme) 0%, transparent 10%);
+	background: linear-gradient(150deg, var(--theme) 0%, transparent 400px);
 	background-color: var(--background);
 	color: var(--text);
 	font-family: Montserrat, sans-serif;
