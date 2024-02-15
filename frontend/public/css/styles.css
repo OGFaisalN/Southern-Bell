@@ -263,13 +263,13 @@
 }
 
 html {
-	background: -moz-linear-gradient(150deg, var(--theme) 0%, transparent 400px);
+	background: -moz-linear-gradient(150deg, var(--theme) 0%, transparent 300px);
 	background: -webkit-linear-gradient(
 		150deg,
 		var(--theme) 0%,
-		transparent 400px
+		transparent 300px
 	);
-	background: linear-gradient(150deg, var(--theme) 0%, transparent 400px);
+	background: linear-gradient(150deg, var(--theme) 0%, transparent 300px);
 	background-color: var(--background);
 	color: var(--text);
 	font-family: Montserrat, sans-serif;
@@ -353,13 +353,17 @@ header .announcement {
 
 header .socials {
 	position: fixed;
-	top: 150px;
+	top: 70px;
 	left: 30px;
 	display: grid;
 	grid-template-columns: repeat(2, minmax(10px, 1fr));
 	gap: 10px;
 	justify-items: start;
 	align-items: start;
+}
+
+header:has(.announcement) .social {
+	top: 150px;
 }
 
 header .socials i {
