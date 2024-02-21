@@ -856,6 +856,14 @@ header .alert a {
 	font-weight: bold;
 }
 
+.article-i .content p:first-child::first-letter {
+	font-weight: bold;
+	font-size: 50px;
+	float: left;
+	line-height: 30px;
+	margin-right: 5px;
+}
+
 .article-i .content *:not(.images *) {
 	margin: 10px 0;
 	font-weight: revert !important;
