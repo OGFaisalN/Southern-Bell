@@ -78,8 +78,12 @@ app.use((req, res, next) => {
             res.status(500).render('error', { error: 'error retrieving page views; database connection failed' });
             return;
         };
-        if (results.length === 1) {
-            req.pageViews = results[0].count;
+        if (results) {
+            if (results.length === 1) {
+                req.pageViews = results[0].count;
+            } else {
+                req.pageViews = 0;
+            };
         } else {
             req.pageViews = 0;
         };
