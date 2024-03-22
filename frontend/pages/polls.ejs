@@ -7,13 +7,13 @@
 		yesterday.setDate(yesterday.getDate() - 1);
 		return date.toDateString() === yesterday.toDateString();
 	}; %>
+	<link rel="preload" as="image" href="<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>">
 </head>
 
 <body>
 	<%- include('../partials/header.ejs'); %>
 	<div class="banner" style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>');">
-		<i class="fa-solid fa-poll"></i>
-		<h1>All Polls</h1>
+		<h1>Polls</h1>
 		<h3><%- cms.polls.length %> Poll<% if (cms.polls.length != 1) { %>s<% } %></h3>
 	</div>
 	<% if (cms.polls.length > 0) { %>
@@ -31,7 +31,7 @@
 		</div>
 	</div>
 	<% } else { %>
-	<h3>There's nothing here yet!</h3>
+	<h3 style="padding: 50px 0">There's nothing here yet!</h3>
 	<% } %>
 	<%- include('../partials/footer.ejs'); %>
 </body>

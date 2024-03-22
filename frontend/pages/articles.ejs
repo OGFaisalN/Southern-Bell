@@ -7,13 +7,14 @@
 		yesterday.setDate(yesterday.getDate() - 1);
 		return date.toDateString() === yesterday.toDateString();
 	}; %>
+	<link rel="preload" as="image" href="<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>">
+	<% if (cms.articles.filter(article => !article.unlisted).length > 0) { const articles = cms.articles.sort((a, b) => new Date(b.date) - new Date(a.date)).filter(article => !article.unlisted); for (let i = 0; i < articles.length; i++) { const article = articles[i]; if (article.images[0] != null) { %><link rel="preload" as="image" href="<%- vars.asset_prefix %><%= article.images[0].path %>"><% }}} %>
 </head>
 
 <body>
 	<%- include('../partials/header.ejs'); %>
 	<div class="banner" style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>');">
-		<i class="fa-solid fa-pager"></i>
-		<h1>All Articles</h1>
+		<h1>Articles</h1>
 		<h3><%- cms.articles.filter(article => !article.unlisted).length %> Article<% if (cms.articles.filter(article => !article.unlisted).length != 1) { %>s<% } %></h3>
 	</div>
 	<% if (cms.articles.filter(article => !article.unlisted).length > 0) { %>
@@ -32,7 +33,7 @@
 		</div>
 	</div>
 	<% } else { %>
-	<h3>There's nothing here yet!</h3>
+	<h3 style="padding: 50px 0">There's nothing here yet!</h3>
 	<% } %>
 	<%- include('../partials/footer.ejs'); %>
 </body>

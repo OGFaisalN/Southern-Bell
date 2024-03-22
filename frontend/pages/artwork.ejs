@@ -12,6 +12,8 @@
 			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 		});
 	}; %>
+	<link rel="preload" as="image" href="<%- vars.asset_prefix %><% if ((artwork.author != "") && (artwork.author != null)) { %><%= cms.siteDetails[0].unknown.path %><% } else { %><%= cms.siteDetails[0].favicon.path %><% } %>">
+	<link rel="preload" as="image" href="<%- vars.asset_prefix %><%= artwork.artwork.path %>">
 </head>
 
 <body>

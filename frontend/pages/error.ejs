@@ -47,6 +47,16 @@
 			margin-right: 5px;
 			text-align: end;
 		}
+
+		a {
+			color: black;
+			text-decoration: none;
+		}
+
+		a img {
+			height: 20px;
+			margin-bottom: -4px;
+		}
 	</style>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -61,6 +71,7 @@
 			<li><i class="fa-solid fa-server"></i> CMS: <% if (error.includes("CMS")) { %>Server may be down, subscription may be expired, or API access denied.<% } else { %>Checks passed, all looks good!<% } %></li>
 			<li><i class="fa-solid fa-chart-simple"></i> Google Analytics: <% if (error.includes("page views")) { %>Monthly limit may be reached, or property ID changed.<% } else { %>Checks passed, all looks good!<% } %></li>
 		</ul>
+		<p>Powered by <a href="https://dangoweb.com/?from=error"><img src="https://dangoweb.com/favicon.png" alt="Dango Web Solutions"> Dango Web Solutions</a></p>
 	</div>
 </body>
 

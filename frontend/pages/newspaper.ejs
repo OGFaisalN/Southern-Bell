@@ -7,6 +7,8 @@
 		yesterday.setDate(yesterday.getDate() - 1);
 		return date.toDateString() === yesterday.toDateString();
 	}; %>
+	<link rel="preload" as="image" href="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>">
+	<% if (newspaper.articles.length != 0) { for (article of newspaper.articles) { article = cms.articles.find(a => a._id === article._id); if (article) { if (article.images[0] != null) { for (image of article.images) { %><link rel="preload" as="image" href="<%- vars.asset_prefix %><%= image.path %>"><% }}}}} %>
 </head>
 
 <body>

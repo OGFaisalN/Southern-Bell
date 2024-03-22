@@ -7,13 +7,14 @@
 		yesterday.setDate(yesterday.getDate() - 1);
 		return date.toDateString() === yesterday.toDateString();
 	}; %>
+	<link rel="preload" as="image" href="<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>">
+	<% if (cms.artworks.length > 0) { const artworks = cms.artworks.sort((a, b) => new Date(b.date) - new Date(a.date)); for (let i = 0; i < artworks.length; i++) { const artwork = artworks[i]; if (artwork.artwork != null) { %><link rel="preload" as="image" href="<%- vars.asset_prefix %><%= artwork.artwork.path %>"><% }}} %>
 </head>
 
 <body>
 	<%- include('../partials/header.ejs'); %>
 	<div class="banner" style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>');">
-		<i class="fa-solid fa-palette"></i>
-		<h1>All Artwork</h1>
+		<h1>Artwork</h1>
 		<h3><%- cms.artworks.length %> Artwork</h3>
 	</div>
 	<% if (cms.artworks.length > 0) { %>
@@ -32,7 +33,7 @@
 		</div>
 	</div>
 	<% } else { %>
-	<h3>There's nothing here yet!</h3>
+	<h3 style="padding: 50px 0">There's nothing here yet!</h3>
 	<% } %>
 	<%- include('../partials/footer.ejs'); %>
 </body>

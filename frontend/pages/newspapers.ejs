@@ -7,13 +7,14 @@
 		yesterday.setDate(yesterday.getDate() - 1);
 		return date.toDateString() === yesterday.toDateString();
 	} %>
+	<link rel="preload" as="image" href="<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>">
+	<% if (cms.newspapers.length > 0) { for (let i = 0; i < cms.newspapers.length; i++) { const newspaper = cms.newspapers.sort((a, b) => new Date(b.date) - new Date(a.date))[i]; %><link rel="preload" as="image" href="<%- vars.asset_prefix %><%= newspaper.image.path %>"><% }} %>
 </head>
 
 <body>
 	<%- include('../partials/header.ejs'); %>
 	<div class="banner" style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>');">
-		<i class="fa-solid fa-newspaper"></i>
-		<h1>All Newspapers</h1>
+		<h1>Newspapers</h1>
 		<h3><%- cms.newspapers.length %> Newspaper<% if (cms.newspapers.length != 1) { %>s<% } %></h3>
 	</div>
 	<% if (cms.newspapers.length > 0) { %>
@@ -31,7 +32,7 @@
 		</div>
 	</div>
 	<% } else { %>
-	<h3>There's nothing here yet!</h3>
+	<h3 style="padding: 50px 0">There's nothing here yet!</h3>
 	<% } %>
 	<%- include('../partials/footer.ejs'); %>
 </body>

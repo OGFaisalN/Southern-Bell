@@ -14,12 +14,13 @@
 		yesterday.setDate(yesterday.getDate() - 1);
 		return date.toDateString() === yesterday.toDateString();
 	}; %>
+	<link rel="preload" as="image" href="<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>">
+	<% if (filteredArticles.length != 0) { const articles = filteredArticles.sort((a, b) => b._created - a._created); for (let i = 0; i < articles.length; i++) { const article = articles[i]; if (article.images[0] != null) { %><link rel="preload" as="image" href="<%- vars.asset_prefix %><%= article.images[0].path %>"><% }}} %>
 </head>
 
 <body>
 	<%- include('../partials/header.ejs'); %>
 	<div class="banner" style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>');">
-		<i class="fa-solid fa-tag"></i>
 		<h1>#<%- tag %></h1>
 		<h3><%- filteredArticles.length %> Articles</h3>
 	</div>
