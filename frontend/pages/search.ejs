@@ -42,12 +42,15 @@
 		yesterday.setDate(yesterday.getDate() - 1);
 		return date.toDateString() === yesterday.toDateString();
 	}; %>
+	<link rel="preload" as="image" href="<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>">
+	<% filteredNewspapers.sort((a, b) => b._created - a._created).forEach(newspaper => { %><link rel="preload" as="image" href="<%- vars.asset_prefix %><%= newspaper.image.path %>"><% }) %>
+	<% filteredArticles.sort((a, b) => new Date(b.date) - new Date(a.date)).filter(article => !article.unlisted).forEach(article => { if (article.images[0] != null) { %><link rel="preload" as="image" href="<%- vars.asset_prefix %><%= article.images[0].path %>"><% }}) %>
+	<% filteredArtworks.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(artwork => { %><link rel="preload" as="image" href="<%- vars.asset_prefix %><%= artwork.artwork.path %>"><% }) %>
 </head>
 
 <body>
 	<%- include('../partials/header.ejs'); %>
 	<div class="banner" style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>');">
-		<i class="fa-solid fa-magnifying-glass"></i>
 		<h1>Search results for '<%- query %>'</h1>
 		<h3><%- filteredNewspapers.length + filteredArticles.length + filteredTags.length + filteredPolls.length %> Results</h3>
 	</div>
@@ -104,7 +107,7 @@
 	</div>
 	</div>
 	<% } else { %>
-	<h3>There's nothing here yet!</h3>
+	<h3 style="padding: 50px 0">There's nothing here yet!</h3>
 	<% } %>
 	<%- include('../partials/footer.ejs'); %>
 </body>

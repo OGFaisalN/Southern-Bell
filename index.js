@@ -172,7 +172,7 @@ async function startApp() {
 
     app.get('/newspapers', async (req, res) => {
         await allRoutes(req, res);
-        res.render('newspapers', { vars: defaults, title: 'All Newspapers', cms, pageviews: req.pageViews });
+        res.render('newspapers', { vars: defaults, title: 'Newspapers', cms, pageviews: req.pageViews });
     });
 
     app.get('/newspapers/:newspaper', async (req, res) => {
@@ -197,7 +197,7 @@ async function startApp() {
 
     app.get('/articles', async (req, res) => {
         await allRoutes(req, res);
-        res.render('articles', { vars: defaults, title: 'All Articles', cms, pageviews: req.pageViews });
+        res.render('articles', { vars: defaults, title: 'Articles', cms, pageviews: req.pageViews });
     });
 
     app.get('/tags', async (req, res) => {
@@ -214,7 +214,7 @@ async function startApp() {
         await allRoutes(req, res);
         db.query(`SELECT * FROM poll_responses`,
             function (err, responses, fields) {
-                res.render('polls', { vars: defaults, title: 'All Polls', cms, pageviews: req.pageViews, responses });
+                res.render('polls', { vars: defaults, title: 'Polls', cms, pageviews: req.pageViews, responses });
             });
     });
 
@@ -277,7 +277,7 @@ async function startApp() {
 
     app.get('/artworks', async (req, res) => {
         await allRoutes(req, res);
-        res.render('artworks', { vars: defaults, title: 'All Artworks', cms, pageviews: req.pageViews });
+        res.render('artworks', { vars: defaults, title: 'Artworks', cms, pageviews: req.pageViews });
     });
 
     app.get('/artworks/:artwork', async (req, res) => {

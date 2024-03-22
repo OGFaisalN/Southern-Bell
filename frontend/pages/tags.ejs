@@ -29,13 +29,13 @@
 			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 		});
 	}; %>
+	<link rel="preload" as="image" href="<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>">
 </head>
 
 <body>
 	<%- include('../partials/header.ejs'); %>
 	<div class="banner" style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>');">
-		<i class="fa-solid fa-tags"></i>
-		<h1>All Tags</h1>
+		<h1>Tags</h1>
 		<h3><%= Object.keys(tags).length %> Tag<% if (Object.keys(tags).length != 1) { %>s<% } %></h3>
 	</div>
 	<% if (Object.keys(tags).length != 0) { %>
@@ -52,7 +52,7 @@
 		</div>
 	</div>
 	<% } else { %>
-	<h3>There's nothing here yet!</h3>
+	<h3 style="padding: 50px 0">There's nothing here yet!</h3>
 	<% } %>
 	<%- include('../partials/footer.ejs'); %>
 </body>

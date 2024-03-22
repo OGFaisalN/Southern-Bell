@@ -7,6 +7,11 @@
 		yesterday.setDate(yesterday.getDate() - 1);
 		return date.toDateString() === yesterday.toDateString();
 	}; %>
+	<% if (cms.newspapers[cms.newspapers.length - 1]) { %><link rel="preload" as="image" href="<%= vars.asset_prefix %><%= cms.newspapers[cms.newspapers.length - 1].image.path %>"><% } %>
+	<% if (cms.newspapers[cms.newspapers.length - 2]) { %><link rel="preload" as="image" href="<%= vars.asset_prefix %><%= cms.newspapers[cms.newspapers.length - 2].image.path %>"><% } %>
+	<% if (cms.newspapers[cms.newspapers.length - 3]) { %><link rel="preload" as="image" href="<%= vars.asset_prefix %><%= cms.newspapers[cms.newspapers.length - 3].image.path %>"><% } %>
+	<% if (cms.articles.length > 0) { for (let i = 0; i < 3 && i < cms.articles.length; i++) { const article = cms.articles.sort((a, b) => new Date(b.date) - new Date(a.date)).filter(article => !article.unlisted)[i]; if (article.images[0] != null) { %><link rel="preload" as="image" href="<%- vars.asset_prefix %><%= article.images[0].path %>"><% }}} %>
+	<% if (cms.artworks.length > 0) { for (let i = 0; i < 3 && i < cms.artworks.length; i++) { const article = cms.artworks.sort((a, b) => new Date(b.date) - new Date(a.date)).filter(article => !article.unlisted)[i]; if (article.images[0] != null) { %><link rel="preload" as="image" href="<%- vars.asset_prefix %><%= article.images[0].path %>"><% }}} %>
 </head>
 
 <body>
@@ -50,7 +55,8 @@
 			<% } %>
 		</div>
 	</div>
-	<% }; if (cms.artworks.length > 0) { %>
+	<% } %>
+	<% if (cms.artworks.length > 0) { %>
 	<div class=" articles">
 					<h2>Latest Artwork</h2>
 					<hr>
