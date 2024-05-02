@@ -12,8 +12,10 @@
 			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 		});
 	}; %>
-	<% if (article.images[0] != null) { for (image of article.images) { %><link rel="preload" as="image" href="<%- vars.asset_prefix %><% if ((article.author != "") && (article.author != null)) { %><%= cms.siteDetails[0].unknown.path %><% } else { %><%= cms.siteDetails[0].favicon.path %><% } %>"><% }} %>
-	<% if (article.images[0] != null) { for (image of article.images) { %><link rel="preload" as="image" href="<%- vars.asset_prefix %><%= image.path %>"><% }} %>
+	<% if (article.images[0] != null) { for (image of article.images) { %>
+	<link rel="preload" as="image" href="<%- vars.asset_prefix %><% if ((article.author != "") && (article.author != null)) { %><%= cms.siteDetails[0].unknown.path %><% } else { %><%= cms.siteDetails[0].favicon.path %><% } %>"><% }} %>
+	<% if (article.images[0] != null) { for (image of article.images) { %>
+	<link rel="preload" as="image" href="<%- vars.asset_prefix %><%= image.path %>"><% }} %>
 </head>
 
 <body>
@@ -23,7 +25,7 @@
 			<div class="left">
 				<div class="info">
 					<h1><%= article.title %></h1>
-					<% if (article.description != null) { %><h3><% if (article.description.length > 50) { %><%= article.description.slice(0, 47) %>...<% } else { %><%= article.description %><% } %></h3><% } %>
+					<% if (article.description != null) { %><h3><%= article.description %></h3><% } %>
 					<h5><%= pageviews %> Views | Published <% var date = new Date(article.date); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article._created != article._modified) && (date < (new Date(article._modified * 1000)))) { %> | Edited <% var date = new Date(article._modified * 1000); if (date.isToday()) { %>today<% } else if (ifYesterday(date)) { %>yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } } %></h5>
 					<% if (article.tags != null) { %><p>Tags: <% for (tag of article.tags) { %><a href="<%- vars.domain %>/tags/<%= tag.replaceAll(" ", "-") %>" title="#<%= tag.toLowerCase().replaceAll(" ", "-") %>">#<%= tag.toLowerCase().replaceAll(" ", "-") %></a> <% } %></p><% } %>
 				</div>
@@ -62,12 +64,10 @@
 			</div>
 		</section>
 		<% } %>
-		<style>
-			.article-i .content:before {
-				content: '(<% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %>) — '
-			}
-		</style>
-		<div class="content"><%- article.content.replaceAll('/.spaces/', vars.asset_url) %></div>
+		<div class="content">
+			<b><% if (article.content.replaceAll('<p>', '').replaceAll('</p>', '').replaceAll('&nbsp;', '').replaceAll(' ', '') != '') { %>(<% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %>) —<% } else { %><% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %><% } %></b>
+			<%- article.content.replaceAll('/.spaces/', vars.asset_url) %>
+		</div>
 	</div>
 	<%- include('../partials/suggested.ejs'); %>
 	<%- include('../partials/footer.ejs'); %>

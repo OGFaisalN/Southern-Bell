@@ -24,3 +24,19 @@
 		</div>
 	</div>
 </header>
+<% if (cms.siteDetails[0].loader.enabled) { %>
+<% if (cms.siteDetails[0].loader.text) { %>
+<style>
+	.loader.text {
+		section#\32::before {
+			content: "Loading <%= cms.siteDetails[0].title %>...";
+		}
+	}
+</style>
+<% } %>
+<div class="loader <% if (cms.siteDetails[0].loader.logo) { %>bordered<% } %> <% if (cms.siteDetails[0].loader.text) { %>text<% } %>">
+	<section id="1"></section>
+	<img src="<%- vars.asset_prefix %><%= cms.siteDetails[0].logo.path %>" alt="<%= cms.siteDetails[0].title %>">
+	<section id="2"></section>
+</div>
+<% } %>
