@@ -66,7 +66,7 @@ window.onload = () => {
     setTimeout(reveal, 1000);
 };
 
-document.querySelectorAll('a').forEach((link) => {
+document.querySelectorAll('a').filter(link => link.href[0] != "#").forEach((link) => {
     link.addEventListener('click', (event) => {
         event.preventDefault();
         reveal();

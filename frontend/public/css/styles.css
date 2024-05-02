@@ -260,18 +260,18 @@ header .alert a {
 	transition: 1s;
 
 	section {
-		height: calc(50% - 5px);
+		height: calc(50% - 2px);
 		background: var(--background);
 		margin: 0;
 		transition: 1s cubic-bezier(0.65, 0, 1, 1);
 	}
 
 	section#\31 {
-		border-bottom: 5px solid var(--theme);
+		border-bottom: 2px solid var(--theme);
 	}
 
 	section#\32 {
-		border-top: 5px solid var(--theme);
+		border-top: 2px solid var(--theme);
 	}
 
 	img {
