@@ -64,10 +64,12 @@ function reveal() {
 
 window.onload = () => {
     setTimeout(reveal, 1000);
+    setTimeout(document.querySelector('section#\\32').classList.add('hide-before'), 1000);
 };
 
-document.querySelectorAll('a').filter(link => link.href[0] != "#").forEach((link) => {
+document.querySelectorAll('a').forEach((link) => {
     link.addEventListener('click', (event) => {
+        if (link.getAttribute('href').startsWith('#')) return;
         event.preventDefault();
         reveal();
         setTimeout(() => {
@@ -75,3 +77,5 @@ document.querySelectorAll('a').filter(link => link.href[0] != "#").forEach((link
         }, 1500);
     });
 });
+
+document.querySelector('footer').style.paddingTop = `calc(100vh - ${document.querySelector('footer .inner').clientHeight}px)`;
