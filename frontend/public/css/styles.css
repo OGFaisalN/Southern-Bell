@@ -272,7 +272,18 @@ header .alert a {
 	}
 
 	img {
-		display: none;
+		opacity: 0;
+		transition: 1s;
+		width: 200px;
+		height: 200px;
+		background: var(--theme);
+		border-radius: 100%;
+		position: absolute;
+		top: calc(50% - 100px);
+		left: calc(50% - 100px);
+		transition: 1s;
+		transition-delay: 1s;
+		z-index: 1;
 	}
 }
 
@@ -295,8 +306,9 @@ header .alert a {
 	}
 
 	img {
-		opacity: 0;
+		opacity: 0 !important;
 		transition: 1s;
+		transition-delay: 0s;
 	}
 }
 
@@ -314,18 +326,7 @@ header .alert a {
 	}
 
 	img {
-		display: unset;
 		opacity: 1;
-		width: 200px;
-		height: 200px;
-		background: var(--theme);
-		border-radius: 100%;
-		position: absolute;
-		top: calc(50% - 100px);
-		left: calc(50% - 100px);
-		transition: 1s;
-		transition-delay: 1s;
-		z-index: 1;
 	}
 }
 
