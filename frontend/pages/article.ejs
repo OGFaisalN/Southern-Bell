@@ -64,10 +64,12 @@
 			</div>
 		</section>
 		<% } %>
+		<% if ((article.content != null) && (article.content != '')) { %>
 		<div class="content">
 			<b><% if (article.content.replaceAll('<p>', '').replaceAll('</p>', '').replaceAll('&nbsp;', '').replaceAll(' ', '') != '') { %>(<% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %>) —<% } else { %><% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %><% } %></b>
 			<%- article.content.replaceAll('<img src="/', '<img src="' + vars.asset_url) %>
 		</div>
+		<% } %>
 	</div>
 	<%- include('../partials/suggested.ejs'); %>
 	<%- include('../partials/footer.ejs'); %>

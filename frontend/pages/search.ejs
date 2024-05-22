@@ -4,7 +4,7 @@
 	<%- include('../partials/head.ejs'); %>
 	<% const filteredArticles = cms.articles.filter(article => {
 		const title = article.title.toLowerCase();
-		const content = article.content.toLowerCase();
+		const content = ((article.content != null) && (article.content != '')) ? article.content.toLowerCase() : '';
 		const author = (((article.author != "") && (article.author != null)) ? article.author : cms.siteDetails[0].title).toLowerCase();
 		return title.includes(query) || content.includes(query) || author.includes(query);
 	});

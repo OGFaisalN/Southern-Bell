@@ -66,8 +66,10 @@
 					</section>
 					<% } %>
 					<h2><%= article.title %></h2>
+					<% if ((article.content != null) && (article.content != '')) { %>
 					<b><% if (article.content.replaceAll('<p>', '').replaceAll('</p>', '').replaceAll('&nbsp;', '').replaceAll(' ', '') != '') { %>(<% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %>) —<% } else { %><% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %><% } %></b>
 					<%- article.content.replaceAll('<img src="/', '<img src="' + vars.asset_url) %>
+					<% } %>
 				</div>
 				<br />
 				<% } } %>
@@ -96,8 +98,10 @@
 				</section>
 				<% } %>
 				<h2><%= article.title %></h2>
+				<% if ((article.content != null) && (article.content != '')) { %>
 				<b><% if (article.content.replaceAll('<p>', '').replaceAll('</p>', '').replaceAll('&nbsp;', '').replaceAll(' ', '') != '') { %>(<% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %>) —<% } else { %><% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %><% } %></b>
 				<%- article.content.replaceAll('<img src="/', '<img src="' + vars.asset_url) %>
+				<% } %>
 			</div>
 			<br />
 			<% } } %>
