@@ -716,7 +716,7 @@ header .alert a {
 	font-weight: bold;
 }
 
-.article-i .content p:first-child::first-letter {
+.article-i .content > p:first-of-type::first-letter {
 	font-weight: bold;
 	font-size: 50px;
 	float: left;
