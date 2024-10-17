@@ -165,11 +165,27 @@ header .main a {
 
 header .main a img {
 	height: 39px;
-	padding-right: 10px;
+	padding-right: 15px;
 }
 
 header .main.home a img {
 	height: 50px !important;
+}
+
+header .main .logo {
+    display: flex;
+    align-items: center;
+}
+
+header .main.home .logo {
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: -10px;
+}
+
+header .main .logo h2 {
+    margin: 0px;
+    font-weight: 700;
 }
 
 header .main .links {
@@ -887,7 +903,14 @@ footer .inner .top h1 {
 	font-size: 24px;
 	font-weight: bold;
 	margin: 0;
+}
+
+footer .inner .top h2 {
+	font-size: 15px;
+	font-weight: bold;
+	margin: 0;
 	margin-bottom: 20px;
+    margin-top: -15px;
 }
 
 footer .inner .top .links {
