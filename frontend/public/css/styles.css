@@ -292,8 +292,8 @@ header .alert a {
 		transition: 1s;
 		width: 200px;
 		height: 200px;
-		background: var(--theme);
-		border-radius: 100%;
+		/* background: var(--theme);
+		border-radius: 100%; */
 		position: absolute;
 		top: calc(50% - 100px);
 		left: calc(50% - 100px);
