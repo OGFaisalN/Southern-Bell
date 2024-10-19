@@ -241,7 +241,7 @@ async function startApp() {
         await allRoutes(req, res);
         var poll = cms.polls.find(poll => poll.slug === req.params.poll);
         if (poll && req.body.id && (req.body.name.length > 0) && (req.body.answer)) {
-            db.query(`SELECT * FROM poll_responses WHERE session_id = '${req.cookies.voteId}' AND poll_id = '${poll._id}'`,
+            db.query(`SELECT * FROM poll_responses WHERE session_id = ? AND poll_id = ?`, [req.cookies.voteId, poll._id],
                 function (err, responses, fields) {
                     if (err) {
                         console.log(err);
