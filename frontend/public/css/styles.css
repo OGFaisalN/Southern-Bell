@@ -150,13 +150,13 @@ header .main {
 	justify-content: space-between;
 	gap: 5px;
 	width: 75%;
-	padding: 50px 0 20px 0;
+	padding: 40px 0 20px 0;
 	border-bottom: 1px solid lightgray;
 }
 
 header .main.home {
 	flex-direction: column !important;
-	padding-top: 80px;
+	padding-top: 65px;
 }
 
 header .main a {
@@ -364,6 +364,51 @@ header .alert a {
 	section#\32::before {
 		top: 150px;
 	}
+}
+
+.pcontent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    width: -webkit-fill-available;
+}
+
+.Animated {
+    animation-duration: 0.75s;
+    animation-fill-mode: both;
+}
+
+.Animate--fadeIn {
+    animation-name: fadeIn;
+}
+
+.Animate--fadeOut {
+    animation-name: fadeOut;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.loading {
+    position: fixed;
+    top: 7.5px;
+    right: 7.5px;
+    height: 25px;
+    width: 25px;
+    z-index: 101;
+}
+
+body:has(.alert) .loading {
+    filter: invert(1);
 }
 
 .hero {
@@ -1291,6 +1336,11 @@ footer .inner .bottom .socials i:hover {
 	header .main a img,
 	footer .inner .top img {
 		max-width: 70vw;
+	}
+
+	header .main .logo {
+		flex-direction: column;
+		gap: 15px;
 	}
 
 	header .main .links,
