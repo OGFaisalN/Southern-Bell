@@ -12,10 +12,6 @@
 			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 		});
 	}; %>
-	<% if (article.images[0] != null) { for (image of article.images) { %>
-	<link rel="preload" as="image" href="<%- vars.asset_prefix %><% if ((article.author != "") && (article.author != null)) { %><%= cms.siteDetails[0].unknown.path %><% } else { %><%= cms.siteDetails[0].favicon.path %><% } %>"><% }} %>
-	<% if (article.images[0] != null) { for (image of article.images) { %>
-	<link rel="preload" as="image" href="<%- vars.asset_prefix %><%= image.path %>"><% }} %>
 </head>
 
 <body>
@@ -54,7 +50,7 @@
 				<ul class="splide__list">
 					<% for (image of article.images) { %>
 					<a class="splide__slide" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>">
-						<img src="<%- vars.asset_prefix %><%= image.path %>" alt="<%= image.description %>">
+						<img loading="lazy" src="<%- vars.asset_prefix %><%= image.path %>" alt="<%= image.description %>">
 						<div>
 							<%= image.description %>
 						</div>
@@ -67,7 +63,7 @@
 		<% if ((article.content != null) && (article.content != '')) { %>
 		<div class="content">
 			<b><% if (article.content.replaceAll('<p>', '').replaceAll('</p>', '').replaceAll('&nbsp;', '').replaceAll(' ', '') != '') { %>(<% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %>) —<% } else { %><% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %><% } %></b>
-			<%- article.content.replaceAll('<img src="/', '<img src="' + vars.asset_url) %>
+			<%- article.content.replaceAll('<img src="/', '<img loading="lazy" src="' + vars.asset_url) %>
 		</div>
 		<% } %>
 	</div>

@@ -42,10 +42,6 @@
 		yesterday.setDate(yesterday.getDate() - 1);
 		return date.toDateString() === yesterday.toDateString();
 	}; %>
-	<link rel="preload" as="image" href="<%- vars.asset_prefix %><%= cms.siteDetails[0].background.path %>">
-	<% filteredNewspapers.sort((a, b) => b._created - a._created).forEach(newspaper => { %><link rel="preload" as="image" href="<%- vars.asset_prefix %><%= newspaper.image.path %>"><% }) %>
-	<% filteredArticles.sort((a, b) => new Date(b.date) - new Date(a.date)).filter(article => !article.unlisted).forEach(article => { if (article.images[0] != null) { %><link rel="preload" as="image" href="<%- vars.asset_prefix %><%= article.images[0].path %>"><% }}) %>
-	<% filteredArtworks.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(artwork => { %><link rel="preload" as="image" href="<%- vars.asset_prefix %><%= artwork.artwork.path %>"><% }) %>
 </head>
 
 <body>
@@ -68,7 +64,7 @@
 			<% }); %>
 			<% filteredArticles.sort((a, b) => new Date(b.date) - new Date(a.date)).filter(article => !article.unlisted).forEach(article => { %>
 			<a class="article" href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>" title="Article: <%= article.title %>">
-				<img src="<% if (article.images[0] != null) { %><%- vars.asset_prefix %><%= article.images[0].path %>" <% if (article.images[0].description != "") { %>alt="<%= article.images[0].description %>" <% } %><% } else { %> "<% } %> />
+				<img loading="lazy" src="<% if (article.images[0] != null) { %><%- vars.asset_prefix %><%= article.images[0].path %>" <% if (article.images[0].description != "") { %>alt="<%= article.images[0].description %>" <% } %><% } else { %> "<% } %> />
 				<div class=" inner">
 				<h3>Article: <%= article.title %></h3>
 				<% if (article.description != null) { %><h4><% if (article.description.length > 50) { %><%= article.description.slice(0, 47) %>...<% } else { %><%= article.description %><% } %></h4><% } %>
@@ -97,7 +93,7 @@
 		<% }); %>
 		<% filteredArtworks.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(artwork => { %>
 		<a class="article" href="<%- vars.domain %>/artworks/<%= artwork.slug %>" title="Artwork: <%= artwork.title %>">
-			<img src="<%- vars.asset_prefix %><%= artwork.artwork.path %>" <% if (artwork.artwork.description != "") { %>alt="<%= artwork.artwork.description %>" <% } %> />
+			<img loading="lazy" src="<%- vars.asset_prefix %><%= artwork.artwork.path %>" <% if (artwork.artwork.description != "") { %>alt="<%= artwork.artwork.description %>" <% } %> />
 			<div class="inner">
 				<h3>Artwork: <%= artwork.title %></h3>
 				<p><% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %><% if ((article.author != "") && (article.author != null)) { %> / <%= article.author %><% } %></p>
