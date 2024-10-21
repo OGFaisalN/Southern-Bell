@@ -290,6 +290,17 @@ async function startApp() {
         };
     });
 
+    app.get('/authors/:author', async (req, res) => {
+        await allRoutes(req, res);
+        var articles = cms.articles.filter(article => article.author === req.params.author.replaceAll('+', ' ')).filter(article => !article.unlisted);
+        var artworks = cms.artworks.filter(artwork => artwork.author === req.params.author.replaceAll('+', ' ')).filter(article => !article.unlisted);
+        if ((articles.length > 0) || (artworks.length > 0)) {
+            res.render('author', { vars: defaults, title: req.params.author.replaceAll('+', ' '), cms, pageviews: req.pageViews, articles, artworks });
+        } else {
+            res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
+        };
+    });
+
     app.get('/search', async (req, res) => {
         await allRoutes(req, res);
         if (req.query.query) {

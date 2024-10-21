@@ -740,6 +740,7 @@ body:has(.alert) .loading {
 	height: 63px;
 	width: 63px;
 	border-radius: 100%;
+	cursor: pointer;
 }
 
 .article-i .split .left .author .info {
