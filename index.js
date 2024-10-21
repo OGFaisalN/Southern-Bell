@@ -116,6 +116,7 @@ function cmsdata() {
                 about: content(model: "about")
                 polls: content(model: "polls")
                 artworks: content(model: "artworks")
+                authors: content(model: "authors")
             }`
         }),
     })
@@ -288,6 +289,15 @@ async function startApp() {
         } else {
             res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
         };
+    });
+
+    app.get('/authors/:author', async (req, res) => {
+        await allRoutes(req, res);
+        var author = cms.authors.find(author => (author.name.toLowerCase() === req.params.author.replaceAll('-', ' ').toLowerCase()) && (!author.unlisted));
+        var articles = cms.articles.filter(article => article.author && (article.author.toLowerCase() === req.params.author.replaceAll('-', ' ').toLowerCase()) && !article.unlisted);
+        var artworks = cms.artworks.filter(artwork => artwork.author && (artwork.author.toLowerCase() === req.params.author.replaceAll('-', ' ').toLowerCase()) && !artwork.unlisted);
+        if ((articles.length > 0) || (artworks.length > 0)) return res.render('author', { vars: defaults, title: (articles[0] || artworks[0]).author, cms, pageviews: req.pageViews, author, articles, artworks });
+        return res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
     });
 
     app.get('/search', async (req, res) => {

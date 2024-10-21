@@ -1,0 +1,43 @@
+<html lang="en">
+
+<head>
+	<%- include('../partials/head.ejs'); %>
+	<% function ifYesterday(date) { 
+		var yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
+		return date.toDateString() === yesterday.toDateString();
+	}; %>
+	<link rel="preload" as="image" href="<%- vars.asset_prefix %><%= cms.siteDetails[0].authorBanner.path %>">
+	<link rel="preload" as="image" href="<%- vars.asset_prefix %><% if (author && (author.image != null)) { %><%= author.image.path %><% } else { %><%= cms.siteDetails[0].favicon.path %><% } %>">
+</head>
+
+<body>
+	<%- include('../partials/header.ejs'); %>
+	<div class="banner" style="background-image: url('<%- vars.asset_prefix %><%= cms.siteDetails[0].authorBanner.path %>');">
+		<% if (author && (author.image != null)) { %><img src="<%- vars.asset_prefix %><%= author.image.path %>" alt="<%= (articles[0] || artworks[0]).author %>" /><% } %>
+		<h1><%= (articles[0] || artworks[0]).author %></h1>
+		<h3><%- (articles.length === 0) ? 'No' : articles.length %> Article<% if (articles.length != 1) { %>s<% } %> | <%- (artworks.length === 0) ? 'No' : artworks.length %> Artwork<% if (artworks.length != 1) { %>s<% } %></h3>
+	</div>
+	<% if (articles.length > 0) { %>
+	<div class="articles">
+		<div class="grid hideBorder<%= articles.length % 3 %>">
+			<% articles = articles.sort((a, b) => new Date(b.date) - new Date(a.date)).filter(article => !article.unlisted); for (let i = 0; i < articles.length; i++) { const article = articles[i]; %>
+			<a class="article<% if (i % 3 === 0) { %> left<% } else if (i === 1 || (i - 1) % 3 === 0) { %> middle<% } else if ((i - 2) % 3 === 0) { %> right<% } %>" href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>" title="<%= article.title %>">
+				<div class="inner">
+					<img loading="lazy" src="<% if (article.images[0] != null) { %><%- vars.asset_prefix %><%= article.images[0].path %>" <% if ((article.images[0].height / article.images[0].width) > 0.60) { %>style="width: min-content;" <% if (article.images[0].description != "") { %>alt="<%= article.images[0].description %>" <% } %><% } } else { %> "<% } %> />
+					<h3><%= article.title %></h3>
+					<% if (article.description != null) { %><h4><% if (article.description.length > 50) { %><%= article.description.slice(0, 47) %>...<% } else { %><%= article.description %><% } %></h4><% } %>
+					<p><% var date = new Date(article.date); if (date.isToday()) { %>Today<% } else if (ifYesterday(date)) { %>Yesterday<% } else { %><%= date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %><% } %></p>
+				</div>
+			</a>
+			<% } %>
+		</div>
+	</div>
+	<% } else { %>
+	<h3 style="padding: 50px 0">There's nothing here yet!</h3>
+	<% } %>
+	<%- include('../partials/footer.ejs'); %>
+</body>
+<%- include('../partials/foot.ejs'); %>
+
+</html>
