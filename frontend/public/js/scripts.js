@@ -53,7 +53,11 @@ function load() {
                 heightRatio: 0.5,
             }).mount();
         });
+    } catch { };
+    try {
         jQuery(".article-i .split .left .info h1").fitText(1.4);
+    } catch { };
+    try {
         document.querySelector('.loading').remove();
     } catch { };
     document.querySelector('footer').style.paddingTop = `calc(100vh - ${document.querySelector('footer .inner').clientHeight}px)`;
