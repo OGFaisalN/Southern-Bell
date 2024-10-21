@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
     pjax = new Pjax({
         selectors: ["title", "header", ".pcontent", "[live-pageviews]"],
         switches: {
-            "header": Pjax.switches.outerHTML,
+            "title": Pjax.switches.outerHTML,
             "header": Pjax.switches.outerHTML,
             ".pcontent": Pjax.switches.sideBySide,
             "[live-pageviews]": Pjax.switches.outerHTML
