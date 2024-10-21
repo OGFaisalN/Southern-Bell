@@ -88,11 +88,12 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-document.addEventListener('pjax:send', () => {
+document.addEventListener('pjax:send', (a) => {
     loading = document.createElement('img');
     loading.classList = "loading";
     loading.src = domain + "/images/loading.png";
     document.body.appendChild(loading);
+    if (a.triggerElement.href.includes('admin')) window.open(a.triggerElement.href, '_blank');
 });
 
 document.addEventListener('pjax:complete', load);
