@@ -116,6 +116,7 @@ function cmsdata() {
                 about: content(model: "about")
                 polls: content(model: "polls")
                 artworks: content(model: "artworks")
+                authors: content(model: "authors")
             }`
         }),
     })
@@ -292,10 +293,11 @@ async function startApp() {
 
     app.get('/authors/:author', async (req, res) => {
         await allRoutes(req, res);
+        var author = cms.authors.find(author => (author.name === req.params.author.replaceAll('+', ' ') && (!author.unlisted)));
         var articles = cms.articles.filter(article => article.author === req.params.author.replaceAll('+', ' ')).filter(article => !article.unlisted);
         var artworks = cms.artworks.filter(artwork => artwork.author === req.params.author.replaceAll('+', ' ')).filter(article => !article.unlisted);
         if ((articles.length > 0) || (artworks.length > 0)) {
-            res.render('author', { vars: defaults, title: req.params.author.replaceAll('+', ' '), cms, pageviews: req.pageViews, articles, artworks });
+            res.render('author', { vars: defaults, title: req.params.author.replaceAll('+', ' '), cms, pageviews: req.pageViews, author, articles, artworks });
         } else {
             res.render('404', { vars: defaults, title: '404', cms, pageviews: req.pageViews });
         };
