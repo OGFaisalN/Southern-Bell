@@ -656,6 +656,12 @@ body:has(.alert) .loading {
 	font-size: 48px;
 }
 
+.banner img {
+	height: 75px;
+	width: 75px;
+	border-radius: 100%;
+}
+
 .article-i {
 	display: flex;
 	flex-direction: column;
@@ -740,6 +746,7 @@ body:has(.alert) .loading {
 	height: 63px;
 	width: 63px;
 	border-radius: 100%;
+	cursor: pointer;
 }
 
 .article-i .split .left .author .info {

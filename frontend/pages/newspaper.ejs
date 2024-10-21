@@ -7,9 +7,7 @@
 		yesterday.setDate(yesterday.getDate() - 1);
 		return date.toDateString() === yesterday.toDateString();
 	}; %>
-	<link rel="preload" as="image" href="<%- vars.asset_prefix %><%= cms.siteDetails[0].favicon.path %>">
-	<% if (newspaper.articles.length != 0) { for (article of newspaper.articles) { article = cms.articles.find(a => a._id === article._id); if (article) { if (article.images[0] != null) { for (image of article.images) { %>
-	<link rel="preload" as="image" href="<%- vars.asset_prefix %><%= image.path %>"><% }}}}} %>
+	<% if (newspaper.articles.length != 0) { article = cms.articles.find(a => a._id === newspaper.articles[0]._id); if (article) { if (article.images[0] != null) { %><link rel="preload" as="image" href="<%- vars.asset_prefix %><%= article.images[0].path %>"><% }}} %>
 </head>
 
 <body>
@@ -55,7 +53,7 @@
 							<ul class="splide__list">
 								<% for (image of article.images) { %>
 								<a class="splide__slide" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>">
-									<img src="<%- vars.asset_prefix %><%= image.path %>" alt="<%= image.description %>">
+									<img loading="lazy" src="<%- vars.asset_prefix %><%= image.path %>" alt="<%= image.description %>">
 									<div>
 										<%= image.description %>
 									</div>
@@ -68,7 +66,7 @@
 					<h2><%= article.title %></h2>
 					<% if ((article.content != null) && (article.content != '')) { %>
 					<b><% if (article.content.replaceAll('<p>', '').replaceAll('</p>', '').replaceAll('&nbsp;', '').replaceAll(' ', '') != '') { %>(<% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %>) —<% } else { %><% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %><% } %></b>
-					<%- article.content.replaceAll('<img src="/', '<img src="' + vars.asset_url) %>
+					<%- article.content.replaceAll('<img src="/', '<img loading="lazy" src="' + vars.asset_url) %>
 					<% } %>
 				</div>
 				<br />
@@ -87,7 +85,7 @@
 						<ul class="splide__list">
 							<% for (image of article.images) { %>
 							<a class="splide__slide" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>">
-								<img src="<%- vars.asset_prefix %><%= image.path %>" alt="<%= image.description %>">
+								<img loading="lazy" src="<%- vars.asset_prefix %><%= image.path %>" alt="<%= image.description %>">
 								<div>
 									<%= image.description %>
 								</div>
@@ -100,7 +98,7 @@
 				<h2><%= article.title %></h2>
 				<% if ((article.content != null) && (article.content != '')) { %>
 				<b><% if (article.content.replaceAll('<p>', '').replaceAll('</p>', '').replaceAll('&nbsp;', '').replaceAll(' ', '') != '') { %>(<% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %>) —<% } else { %><% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %><% } %></b>
-				<%- article.content.replaceAll('<img src="/', '<img src="' + vars.asset_url) %>
+				<%- article.content.replaceAll('<img src="/', '<img loading="lazy" src="' + vars.asset_url) %>
 				<% } %>
 			</div>
 			<br />
