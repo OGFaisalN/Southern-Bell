@@ -17,11 +17,22 @@
 		<div class="links">
 			<%- include('links.ejs') %>
 		</div>
-		<div class="search">
-			<img src="<%- vars.domain %>/images/search.svg" alt="Search" onClick="document.querySelector('.search').classList.toggle('active'); document.querySelector('.search form input').focus();">
+		<div class="search" onmouseover="document.querySelector('.search').classList.add('active'); document.querySelector('.search form input').focus();" onmouseleave="document.querySelector('.search').classList.remove('active');">
+			<img src="<%- vars.domain %>/images/search.svg" alt="Search">
 			<form action="/search">
 				<input type="text" placeholder="Search" name="query">
 			</form>
+		</div>
+		<div class="widget" widgetId="1">
+			<h1>📅</h1>
+			<div class="inner">
+				<% weekday = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'long' }) %>
+				<% month = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', month: 'short' }) %>
+				<% day = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', day: 'numeric' }) %>
+				<% ordinal = (day === 1 || day === 21 || day === 31) ? 'st' : (day === 2 || day === 22) ? 'nd' : (day === 3 || day === 23) ? 'rd' : 'th' %>
+				<h2><%= weekday %>, <%= month %>. <%= day %><%= ordinal %></h2>
+				<% if (weekday === 'Thursday') { %><h5>Weekly Meeting @ 3:15, Rm. 213</h5><% } %>
+			</div>
 		</div>
 	</div>
 </header>
