@@ -23,7 +23,7 @@
 				<input type="text" placeholder="Search" name="query">
 			</form>
 		</div>
-		<div class="widget" widgetId="1">
+		<div class="widget active" widgetId="1">
 			<h1>📅</h1>
 			<div class="inner">
 				<% weekday = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'long' });
@@ -75,7 +75,7 @@
 				<h5>Valley Stream, NY</h5>
 			</div>
 		</div>
-		<div class="widget active" widgetId="3">
+		<div class="widget" widgetId="3">
 			<% var icon = '🕖';
 			var schedule = [
 				["07:50", "08:38"],
