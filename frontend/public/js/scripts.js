@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
     pjax = new Pjax({
         selectors: ["title", "header", ".pcontent", "[live-pageviews]"],
         switches: {
-            "header": Pjax.switches.outerHTML,
+            "title": Pjax.switches.outerHTML,
             "header": Pjax.switches.outerHTML,
             ".pcontent": Pjax.switches.sideBySide,
             "[live-pageviews]": Pjax.switches.outerHTML
@@ -88,11 +88,12 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-document.addEventListener('pjax:send', () => {
+document.addEventListener('pjax:send', (a) => {
     loading = document.createElement('img');
     loading.classList = "loading";
     loading.src = domain + "/images/loading.png";
     document.body.appendChild(loading);
+    if (a.triggerElement.href.includes('admin')) window.open(a.triggerElement.href, '_blank');
 });
 
 document.addEventListener('pjax:complete', load);
