@@ -133,10 +133,8 @@ async function startApp() {
     var weather = {};
     try {
         weather = await fs.readFile('weather.json', 'utf8');
-    } catch {
-        fs.writeFile('weather.json', '{}', (err) => { });
-        weather = {};
-    };
+    } catch { };
+    if (weather.toString() === '{}') getWeather();
 
     var defaults = {
         environment: process.env.NODE_ENV || 'testing',
@@ -167,6 +165,22 @@ async function startApp() {
         return this.getDate() === today.getDate() &&
             this.getMonth() === today.getMonth() &&
             this.getFullYear() === today.getFullYear()
+    };
+
+    async function getWeather() {
+        await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=40.654039379957354&lon=-73.71347345977551&appid=${process.env.OPENWEATHERMAP_API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            }
+        })
+            .then(w => w.json())
+            .then(async w => {
+                await fs.writeFile('weather.json', JSON.stringify(w), 'utf8');
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                defaults.weather = JSON.stringify(w);
+            });
     };
 
     // Routes
@@ -418,20 +432,8 @@ async function startApp() {
 
     app.get('/cron', async function (req, res) {
         if (!req.query.weather || (req.query.weather != process.env.OPENWEATHERMAP_API_KEY)) return res.send('INVALID');
-        await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=40.654039379957354&lon=-73.71347345977551&appid=${req.query.weather}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            }
-        })
-            .then(w => w.json())
-            .then(async w => {
-                await fs.writeFile('weather.json', JSON.stringify(w), 'utf8');
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                defaults.weather = JSON.stringify(w);
-                res.send('OK');
-            });
+        await getWeather();
+        return res.send('OK');
     });
 
     app.use(async (req, res, next) => {
