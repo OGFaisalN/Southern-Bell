@@ -17,11 +17,145 @@
 		<div class="links">
 			<%- include('links.ejs') %>
 		</div>
-		<div class="search">
-			<img src="<%- vars.domain %>/images/search.svg" alt="Search" onClick="document.querySelector('.search').classList.toggle('active'); document.querySelector('.search form input').focus();">
+		<div class="search" onmouseover="document.querySelector('.search').classList.add('active'); document.querySelector('.search form input').focus();" onmouseleave="document.querySelector('.search').classList.remove('active');">
+			<img src="<%- vars.domain %>/images/search.svg" alt="Search">
 			<form action="/search">
 				<input type="text" placeholder="Search" name="query">
 			</form>
+		</div>
+		<div class="widget" widgetId="1">
+			<h1>📅</h1>
+			<div class="inner">
+				<% weekday = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'long' });
+				month = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', month: 'long' });
+				day = parseInt((new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', day: 'numeric' }));
+				ordinal = (day === 1 || day === 21 || day === 31) ? 'st' : (day === 2 || day === 22) ? 'nd' : (day === 3 || day === 23) ? 'rd' : 'th'; 
+				year = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', year: 'numeric' }); %>
+				<h2><%= weekday %>, <%= day %><%= ordinal %></h2>
+				<h5><% if (weekday === 'Thursday') { %>Weekly Meeting @ 3:15, Rm. 213<% } else { %><%= month %> <%= year %><% } %></h5>
+			</div>
+		</div>
+		<div class="widget" widgetId="2">
+			<% var icon = '☀️';
+			switch (JSON.parse(vars.weather).weather[0].icon) {
+				case '01d' || '01n':
+					icon = '☀️';
+					break;
+				case '02d' || '02n':
+					icon = '🌤️';
+					break;
+				case '03d' || '03n':
+					icon = '☁️';
+					break;
+				case '04d' || '04n':
+					icon = '';
+					break;
+				case '09d' || '09n':
+					icon = '🌧️';
+					break;
+				case '10d' || '10n':
+					icon = '🌦️';
+					break;
+				case '11d' || '11n':
+					icon = '🌩️';
+					break;
+				case '13d' || '13n':
+					icon = '❄️';
+					break;
+				case '50d' || '50n':
+					icon = '🌫️';
+					break;
+				default:
+					icon = '☀️';
+					break;
+			} %>
+			<h1><%= icon %></h1>
+			<div class="inner">
+				<h2><%= Math.round(((JSON.parse(vars.weather).main.temp - 273.15) * (9/5)) + 32) %>°F • <%= JSON.parse(vars.weather).weather[0].main %></h2>
+				<h5>Valley Stream, NY</h5>
+			</div>
+		</div>
+		<div class="widget active" widgetId="3">
+			<% var icon = '🕖';
+			var schedule = [
+				["07:50", "08:38"],
+				["08:42", "09:23"],
+				["09:27", "10:09"],
+				["10:13", "10:55"],
+				["10:59", "11:41"],
+				["11:45", "12:27"],
+				["12:31", "13:13"],
+				["13:17", "13:58"],
+				["14:02", "14:43"]
+			];
+			function getCurrentTimeInNewYork() {
+				const now = new Date();
+				const options = {
+					timeZone: 'America/New_York',
+					hour: '2-digit',
+					minute: '2-digit',
+					hour12: false
+				};
+				const formatter = new Intl.DateTimeFormat('en-US', options);
+				const [hour, minute] = formatter.formatToParts(now).reduce((a, b) => {
+					if (b.type === 'hour') {
+						a[0] = b.value;
+					} else if (b.type === 'minute') {
+						a[1] = b.value;
+					};
+					return a;
+				}, ['', '']);
+				return { hour, minute };
+			};
+			const currentTimeInNY = getCurrentTimeInNewYork();
+			period = schedule.findIndex(period => {
+				const [startHour, startMinute] = period[0].split(':');
+				const [endHour, endMinute] = period[1].split(':');
+				return currentTimeInNY.hour >= startHour && currentTimeInNY.hour <= endHour && currentTimeInNY.minute >= startMinute && currentTimeInNY.minute <= endMinute;
+			});
+			switch (period) {
+				case 0: icon = '🕗'; break;
+				case 1: icon = '🕘'; break;
+				case 2: icon = '🕤'; break;
+				case 3: icon = '🕙'; break;
+				case 4: icon = '🕚'; break;
+				case 5: icon = '🕛'; break;
+				case 6: icon = '🕧'; break;
+				case 7: icon = '🕐'; break;
+				case 8: icon = '🕝'; break;
+				default: icon = '🕖'; break;
+			};
+			isExtraHelp = currentTimeInNY.hour >= 14 && currentTimeInNY.hour <= 15 && currentTimeInNY.minute >= 45;
+			isClubs = currentTimeInNY.hour == 15;
+			isSports = currentTimeInNY.hour == 16;
+			if (period === -1) {
+				const startHour = parseInt(schedule[0][0].split(':')[0]);
+				const endHour = parseInt(schedule[schedule.length - 1][1].split(':')[0]);
+				const startMinute = schedule[0][0].split(':')[1];
+				const endMinute = schedule[schedule.length - 1][1].split(':')[1];
+				dayStart = (startHour >= 12 ? (startHour - 12).toString() : startHour).toString() + ":" + startMinute;
+				dayEnd = (endHour >= 12 ? (endHour - 12).toString() : endHour).toString() + ":" + endMinute;
+				dayStartAPm = startHour >= 12 ? 'PM' : 'AM';
+				dayEndAPm = endHour >= 12 ? 'PM' : 'AM';
+			} else {
+				const startHour = parseInt(schedule[period][0].split(':')[0]);
+				const endHour = parseInt(schedule[period][1].split(':')[0]);
+				const startMinute = schedule[period][0].split(':')[1];
+				const endMinute = schedule[period][1].split(':')[1];
+				start = (startHour >= 12 ? (startHour - 12).toString() : startHour).toString() + ":" + startMinute;
+				end = (endHour >= 12 ? (endHour - 12).toString() : endHour).toString() + ":" + endMinute;
+				startAPm = startHour >= 12 ? 'PM' : 'AM';
+				endAPm = endHour >= 12 ? 'PM' : 'AM';
+			} %>
+			<h1><%= (isExtraHelp) ? '📖' : (isClubs) ? '📰' : (isSports) ? '🏈' : icon %></h1>
+			<div class="inner">
+				<% if ((day === 'Saturday') || (day === 'Sunday')) { %>
+				<h2>No School</h2>
+				<% } else { %>
+				<h2><%= (new Date()).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: 'numeric' }) %><% if (period !== -1) { %> • Period <%= period + 1 %><% } else if (isExtraHelp) { %> • Extra Help<% } else if (isClubs) { %> • Clubs<% } else if (isSports) { %> • Sports<% } %></h2>
+				<h5><% if (period !== -1) { %>Period <%= period + 1 %>: <%= start %> <%= startAPm %> - <%= end %> <%= endAPm %><% } else if (isExtraHelp) { %>2:43 PM - 3:15 PM<% } else if (isClubs) { %>3:15 PM - 4:00 PM<% } else if (isSports) { %>4:00 PM - 5:00 PM<% } else { %><%= dayStart %> <%= dayStartAPm %> - <%= dayEnd %> <%= dayEndAPm %><% } %></h5>
+				<% } %>
+			</div>
 		</div>
 	</div>
 </header>

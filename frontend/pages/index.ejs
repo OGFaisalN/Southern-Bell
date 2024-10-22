@@ -75,5 +75,15 @@
 				<%- include('../partials/footer.ejs'); %>
 </body>
 <%- include('../partials/foot.ejs'); %>
+<script>
+	setInterval(() => {
+		var widgets = document.querySelectorAll('.widget');
+		var currentWidget = document.querySelector('.widget.active') || widgets[0];
+		var currentWidgetId = Array.prototype.indexOf.call(widgets, currentWidget);
+		currentWidget.classList.remove('active');		
+		var nextWidgetId = (currentWidgetId + 1) % widgets.length;
+		widgets[nextWidgetId].classList.add('active');
+	}, 4500);
+</script>
 
 </html>
