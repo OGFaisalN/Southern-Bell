@@ -133,7 +133,8 @@ async function startApp() {
         environment: process.env.NODE_ENV || 'testing',
         domain: process.env.NODE_ENV === 'production' ? cms.siteDetails[0]['domain-production'] : process.env.NODE_ENV === 'development' ? cms.siteDetails[0]['domain-development'] : '../../../../..',
         asset_prefix: process.env.CMS_ASSET_PREFIX,
-        asset_url: process.env.CMS_ASSET_URL
+        asset_url: process.env.CMS_ASSET_URL,
+        weather: await getWeather()
     };
 
     // Functions
@@ -157,6 +158,16 @@ async function startApp() {
         return this.getDate() === today.getDate() &&
             this.getMonth() === today.getMonth() &&
             this.getFullYear() === today.getFullYear()
+    };
+
+    async function getWeather() {
+        return fetch(`https://api.openweathermap.org/data/2.5/weather?lat=40.654039379957354&lon=-73.71347345977551&appid=${process.env.OPENWEATHERMAP_API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            }
+        })
     };
 
     // Routes

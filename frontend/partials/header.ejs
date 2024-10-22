@@ -34,6 +34,17 @@
 				<% if (weekday === 'Thursday') { %><h5>Weekly Meeting @ 3:15, Rm. 213</h5><% } %>
 			</div>
 		</div>
+		<div class="widget" widgetId="2">
+			<h1>X</h1>
+			<div class="inner">
+				<% weekday = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'long' }) %>
+				<% month = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', month: 'short' }) %>
+				<% day = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', day: 'numeric' }) %>
+				<% ordinal = (day === 1 || day === 21 || day === 31) ? 'st' : (day === 2 || day === 22) ? 'nd' : (day === 3 || day === 23) ? 'rd' : 'th' %>
+				<h2><%= weekday %>, <%= month %>. <%= day %><%= ordinal %></h2>
+				<% if (weekday === 'Thursday') { %><h5>Weekly Meeting @ 3:15, Rm. 213</h5><% } %>
+			</div>
+		</div>
 	</div>
 </header>
 <div class="pcontent">
