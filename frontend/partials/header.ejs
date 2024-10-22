@@ -23,15 +23,56 @@
 				<input type="text" placeholder="Search" name="query">
 			</form>
 		</div>
-		<div class="widget" widgetId="1">
+		<div class="widget active" widgetId="1">
 			<h1>📅</h1>
 			<div class="inner">
-				<% weekday = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'long' }) %>
-				<% month = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', month: 'short' }) %>
-				<% day = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', day: 'numeric' }) %>
-				<% ordinal = (day === 1 || day === 21 || day === 31) ? 'st' : (day === 2 || day === 22) ? 'nd' : (day === 3 || day === 23) ? 'rd' : 'th' %>
-				<h2><%= weekday %>, <%= month %>. <%= day %><%= ordinal %></h2>
-				<% if (weekday === 'Thursday') { %><h5>Weekly Meeting @ 3:15, Rm. 213</h5><% } %>
+				<% weekday = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'long' });
+				month = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', month: 'long' });
+				day = parseInt((new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', day: 'numeric' }));
+				ordinal = (day === 1 || day === 21 || day === 31) ? 'st' : (day === 2 || day === 22) ? 'nd' : (day === 3 || day === 23) ? 'rd' : 'th'; 
+				year = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', year: 'numeric' }); %>
+				<h2><%= weekday %>, <%= day %><%= ordinal %></h2>
+				<h5><% if (weekday === 'Thursday') { %>Weekly Meeting @ 3:15, Rm. 213<% } else { %><%= month %> <%= year %><% } %></h5>
+			</div>
+		</div>
+		<div class="widget" widgetId="2">
+			<% var icon = '☀️';
+			switch (JSON.parse(vars.weather).weather[0].icon) {
+				case '01d' || '01n':
+					icon = '☀️';
+					break;
+				case '02d' || '02n':
+					icon = '🌤️';
+					break;
+				case '03d' || '03n':
+					icon = '☁️';
+					break;
+				case '04d' || '04n':
+					icon = '';
+					break;
+				case '09d' || '09n':
+					icon = '🌧️';
+					break;
+				case '10d' || '10n':
+					icon = '🌦️';
+					break;
+				case '11d' || '11n':
+					icon = '🌩️';
+					break;
+				case '13d' || '13n':
+					icon = '❄️';
+					break;
+				case '50d' || '50n':
+					icon = '🌫️';
+					break;
+				default:
+					icon = '☀️';
+					break;
+			} %>
+			<h1><%= icon %></h1>
+			<div class="inner">
+				<h2><%= Math.round(((JSON.parse(vars.weather).main.temp - 273.15) * (9/5)) + 32) %>°F • <%= JSON.parse(vars.weather).weather[0].main %></h2>
+				<h5>Valley Stream, NY</h5>
 			</div>
 		</div>
 	</div>
