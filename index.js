@@ -429,6 +429,7 @@ async function startApp() {
             .then(async w => {
                 await fs.writeFile('weather.json', JSON.stringify(w), 'utf8');
                 await new Promise(resolve => setTimeout(resolve, 2000));
+                defaults.weather = JSON.stringify(w);
                 res.send('OK');
             });
     });
