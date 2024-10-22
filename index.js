@@ -8,6 +8,7 @@ const Feed = require('feed').Feed;
 const mysql = require('mysql2');
 const uuid = require('uuid');
 const cookieParser = require('cookie-parser');
+const fs = require('fs').promises;
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 const db = mysql.createPool({
@@ -129,12 +130,20 @@ async function startApp() {
 
     // Defaults & Environment Variables
 
+    var weather = {};
+    try {
+        weather = await fs.readFile('weather.json', 'utf8');
+    } catch {
+        fs.writeFile('weather.json', '{}', (err) => { });
+        weather = {};
+    };
+
     var defaults = {
         environment: process.env.NODE_ENV || 'testing',
         domain: process.env.NODE_ENV === 'production' ? cms.siteDetails[0]['domain-production'] : process.env.NODE_ENV === 'development' ? cms.siteDetails[0]['domain-development'] : '../../../../..',
         asset_prefix: process.env.CMS_ASSET_PREFIX,
         asset_url: process.env.CMS_ASSET_URL,
-        weather: await getWeather()
+        weather
     };
 
     // Functions
@@ -158,16 +167,6 @@ async function startApp() {
         return this.getDate() === today.getDate() &&
             this.getMonth() === today.getMonth() &&
             this.getFullYear() === today.getFullYear()
-    };
-
-    async function getWeather() {
-        return fetch(`https://api.openweathermap.org/data/2.5/weather?lat=40.654039379957354&lon=-73.71347345977551&appid=${process.env.OPENWEATHERMAP_API_KEY}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            }
-        })
     };
 
     // Routes
@@ -415,6 +414,22 @@ async function startApp() {
     app.get('/robots.txt', function (req, res) {
         res.type('text/plain');
         res.send((defaults.environment === 'production') ? "User-agent: *\nAllow: /" : "User-agent: *\nDisallow: /");
+    });
+
+    app.get('/cron', async function (req, res) {
+        await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=40.654039379957354&lon=-73.71347345977551&appid=${process.env.OPENWEATHERMAP_API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            }
+        })
+            .then(w => w.json())
+            .then(async w => {
+                await fs.writeFile('weather.json', JSON.stringify(w), 'utf8');
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                res.send('OK');
+            });
     });
 
     app.use(async (req, res, next) => {
