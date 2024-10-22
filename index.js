@@ -417,7 +417,8 @@ async function startApp() {
     });
 
     app.get('/cron', async function (req, res) {
-        await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=40.654039379957354&lon=-73.71347345977551&appid=${process.env.OPENWEATHERMAP_API_KEY}`, {
+        if (!req.query.weather || (req.query.weather != process.env.OPENWEATHERMAP_API_KEY)) return res.send('INVALID');
+        await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=40.654039379957354&lon=-73.71347345977551&appid=${req.query.weather}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
