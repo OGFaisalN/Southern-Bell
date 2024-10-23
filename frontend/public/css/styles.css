@@ -262,18 +262,27 @@ header .alert a {
 	color: var(--background);
 }
 
+header .main .widgets {
+    position: absolute;
+    top: 70px;
+    left: 100px;
+    width: -webkit-fill-available;
+    display: flex;
+    justify-content: center;
+}
+
 header .main .widget {
 	display: none;
 }
 
 header .main:has(.search.active) .widget {
-	top: 125px;
+	top: 65px;
 	transition: top 1s, opacity 1.5s;
 }
 
 header .main.home .widget {
 	position: absolute;
-	top: 70px;
+	top: 10px;
 	right: 100px;
 	display: flex;
 	align-items: center;
@@ -1416,8 +1425,15 @@ footer .inner .bottom .socials i:hover {
 		width: 50vw !important;
 	}
 
-	header .main.home .widget {
+	header .main .widgets {
 		position: relative !important;
+		top: 0 !important;
+        left: unset !important;
+		height: 50px;
+	}
+
+	header .main.home .widget {
+		position: absolute !important;
 		top: 0px !important;
 		right: unset !important;
 		margin-top: 10px;
