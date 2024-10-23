@@ -23,20 +23,21 @@
 				<input type="text" placeholder="Search" name="query">
 			</form>
 		</div>
-		<div class="widget active" widgetId="1">
-			<h1>📅</h1>
-			<div class="inner">
-				<% weekday = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'long' });
+		<div class="widgets">
+			<div class="widget active" widgetId="1">
+				<h1>📅</h1>
+				<div class="inner">
+					<% weekday = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'long' });
 				month = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', month: 'long' });
 				day = parseInt((new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', day: 'numeric' }));
 				ordinal = (day === 1 || day === 21 || day === 31) ? 'st' : (day === 2 || day === 22) ? 'nd' : (day === 3 || day === 23) ? 'rd' : 'th'; 
 				year = (new Date()).toLocaleDateString('en-US', { timeZone: 'America/New_York', year: 'numeric' }); %>
-				<h2><%= weekday %>, <%= day %><%= ordinal %></h2>
-				<h5><% if (weekday === 'Thursday') { %>Weekly Meeting @ 3:15, Rm. 213<% } else { %><%= month %> <%= year %><% } %></h5>
+					<h2><%= weekday %>, <%= day %><%= ordinal %></h2>
+					<h5><% if (weekday === 'Thursday') { %>Weekly Meeting @ 3:15, Rm. 213<% } else { %><%= month %> <%= year %><% } %></h5>
+				</div>
 			</div>
-		</div>
-		<div class="widget" widgetId="2">
-			<% var icon = '☀️';
+			<div class="widget" widgetId="2">
+				<% var icon = '☀️';
 			switch (JSON.parse(vars.weather).weather[0].icon) {
 				case '01d' || '01n':
 					icon = '☀️';
@@ -69,14 +70,14 @@
 					icon = '☀️';
 					break;
 			} %>
-			<h1><%= icon %></h1>
-			<div class="inner">
-				<h2><%= Math.round(((JSON.parse(vars.weather).main.temp - 273.15) * (9/5)) + 32) %>°F • <%= JSON.parse(vars.weather).weather[0].main %></h2>
-				<h5>Valley Stream, NY</h5>
+				<h1><%= icon %></h1>
+				<div class="inner">
+					<h2><%= Math.round(((JSON.parse(vars.weather).main.temp - 273.15) * (9/5)) + 32) %>°F • <%= JSON.parse(vars.weather).weather[0].main %></h2>
+					<h5>Valley Stream, NY</h5>
+				</div>
 			</div>
-		</div>
-		<div class="widget" widgetId="3">
-			<% var icon = '🕖';
+			<div class="widget" widgetId="3">
+				<% var icon = '🕖';
 			var schedule = [
 				["07:50", "08:38"],
 				["08:42", "09:23"],
@@ -147,14 +148,15 @@
 				startAPm = startHour >= 12 ? 'PM' : 'AM';
 				endAPm = endHour >= 12 ? 'PM' : 'AM';
 			} %>
-			<h1><%= (isExtraHelp) ? '📖' : (isClubs) ? '📰' : (isSports) ? '🏈' : icon %></h1>
-			<div class="inner">
-				<% if ((day === 'Saturday') || (day === 'Sunday')) { %>
-				<h2>No School</h2>
-				<% } else { %>
-				<h2><%= (new Date()).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: 'numeric' }) %><% if (period !== -1) { %> • Period <%= period + 1 %><% } else if (isExtraHelp) { %> • Extra Help<% } else if (isClubs) { %> • Clubs<% } else if (isSports) { %> • Sports<% } %></h2>
-				<h5><% if (period !== -1) { %>Period <%= period + 1 %>: <%= start %> <%= startAPm %> - <%= end %> <%= endAPm %><% } else if (isExtraHelp) { %>2:43 PM - 3:15 PM<% } else if (isClubs) { %>3:15 PM - 4:00 PM<% } else if (isSports) { %>4:00 PM - 5:00 PM<% } else { %><%= dayStart %> <%= dayStartAPm %> - <%= dayEnd %> <%= dayEndAPm %><% } %></h5>
-				<% } %>
+				<h1><%= (isExtraHelp) ? '📖' : (isClubs) ? '📰' : (isSports) ? '🏈' : icon %></h1>
+				<div class="inner">
+					<% if ((day === 'Saturday') || (day === 'Sunday')) { %>
+					<h2>No School</h2>
+					<% } else { %>
+					<h2 live-time><%= (new Date()).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: 'numeric' }) %><% if (period !== -1) { %> • Period <%= period + 1 %><% } else if (isExtraHelp) { %> • Extra Help<% } else if (isClubs) { %> • Clubs<% } else if (isSports) { %> • Sports<% } %></h2>
+					<h5><% if (period !== -1) { %>Period <%= period + 1 %>: <%= start %> <%= startAPm %> - <%= end %> <%= endAPm %><% } else if (isExtraHelp) { %>2:43 PM - 3:15 PM<% } else if (isClubs) { %>3:15 PM - 4:00 PM<% } else if (isSports) { %>4:00 PM - 5:00 PM<% } else { %><%= dayStart %> <%= dayStartAPm %> - <%= dayEnd %> <%= dayEndAPm %><% } %></h5>
+					<% } %>
+				</div>
 			</div>
 		</div>
 	</div>
