@@ -83,7 +83,7 @@
 		currentWidget.classList.remove('active');		
 		var nextWidgetId = (currentWidgetId + 1) % widgets.length;
 		widgets[nextWidgetId].classList.add('active');
-		if (currentWidget.querySelector('[live-time]')) currentWidget.querySelector('[live-time]').innerHTML = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: 'numeric' }) + ((currentWidget.querySelector('[live-time]').innerHTML.split(' • ')[1] && currentWidget.querySelector('[live-time]').innerHTML.split(' • ')[1] != '') ? ' • ' + currentWidget.querySelector('[live-time]').innerHTML.split(' • ')[1] : '');
+		if (widgets[nextWidgetId].querySelector('[live-time]')) widgets[nextWidgetId].querySelector('[live-time]').innerHTML = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: 'numeric' }) + ((widgets[nextWidgetId].querySelector('[live-time]').innerHTML.split(' • ')[1] && widgets[nextWidgetId].querySelector('[live-time]').innerHTML.split(' • ')[1] != '') ? ' • ' + widgets[nextWidgetId].querySelector('[live-time]').innerHTML.split(' • ')[1] : '');
 	}, 4500);
 </script>
 
