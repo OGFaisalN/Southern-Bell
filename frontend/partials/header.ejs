@@ -153,7 +153,7 @@
 					<% if ((day === 'Saturday') || (day === 'Sunday')) { %>
 					<h2>No School</h2>
 					<% } else { %>
-					<h2><%= (new Date()).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: 'numeric' }) %><% if (period !== -1) { %> • Period <%= period + 1 %><% } else if (isExtraHelp) { %> • Extra Help<% } else if (isClubs) { %> • Clubs<% } else if (isSports) { %> • Sports<% } %></h2>
+					<h2 live-time><%= (new Date()).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: 'numeric' }) %><% if (period !== -1) { %> • Period <%= period + 1 %><% } else if (isExtraHelp) { %> • Extra Help<% } else if (isClubs) { %> • Clubs<% } else if (isSports) { %> • Sports<% } %></h2>
 					<h5><% if (period !== -1) { %>Period <%= period + 1 %>: <%= start %> <%= startAPm %> - <%= end %> <%= endAPm %><% } else if (isExtraHelp) { %>2:43 PM - 3:15 PM<% } else if (isClubs) { %>3:15 PM - 4:00 PM<% } else if (isSports) { %>4:00 PM - 5:00 PM<% } else { %><%= dayStart %> <%= dayStartAPm %> - <%= dayEnd %> <%= dayEndAPm %><% } %></h5>
 					<% } %>
 				</div>
