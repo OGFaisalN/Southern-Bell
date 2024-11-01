@@ -2,7 +2,7 @@
 
 ![Banner](banner.png)
 
-Comprehensive online school newspaper portal website
+Valley Stream South High School's online school newspaper website
 
 - Articles & PDF Newspapers
 - Artwork & Anonymous Polls
