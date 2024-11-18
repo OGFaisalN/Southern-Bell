@@ -109,10 +109,18 @@
 				return { hour, minute };
 			};
 			const currentTimeInNY = getCurrentTimeInNewYork();
+			currentTimeInNY.hour = parseInt(currentTimeInNY.hour);
+			currentTimeInNY.minute = parseInt(currentTimeInNY.minute);
+			function timeToMinutes(hour, minute) {
+				return parseInt(hour) * 60 + parseInt(minute);
+			};
+			const currentTimeInMinutes = timeToMinutes(currentTimeInNY.hour, currentTimeInNY.minute);
 			period = schedule.findIndex(period => {
 				const [startHour, startMinute] = period[0].split(':');
 				const [endHour, endMinute] = period[1].split(':');
-				return currentTimeInNY.hour >= startHour && currentTimeInNY.hour <= endHour && currentTimeInNY.minute >= startMinute && currentTimeInNY.minute <= endMinute;
+				const startTimeInMinutes = timeToMinutes(startHour, startMinute);
+				const endTimeInMinutes = timeToMinutes(endHour, endMinute);
+				return currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes <= endTimeInMinutes;
 			});
 			switch (period) {
 				case 0: icon = '🕗'; break;
@@ -162,3 +170,4 @@
 	</div>
 </header>
 <div class="pcontent">
+	<page-title><% if (title != '') { %><%- title %> | <% } %><%= cms.siteDetails[0].title %></page-title>

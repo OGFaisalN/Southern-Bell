@@ -37,6 +37,13 @@ html {
 	scrollbar-width: none;
 }
 
+page-title {
+    width: 0px;
+    height: 0px;
+    overflow: hidden;
+    padding: 0 !important;
+}
+
 button,
 a,
 input[type="submit"] {
