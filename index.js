@@ -136,12 +136,19 @@ async function startApp() {
     } catch { };
     if (weather.toString() === '{}') getWeather();
 
+    var districtNews = {};
+    try {
+        districtNews = await fs.readFile('district.json', 'utf8');
+    } catch { };
+    if (districtNews.toString() === '{}') getDistrictNews();
+
     var defaults = {
         environment: process.env.NODE_ENV || 'testing',
         domain: process.env.NODE_ENV === 'production' ? cms.siteDetails[0]['domain-production'] : process.env.NODE_ENV === 'development' ? cms.siteDetails[0]['domain-development'] : '../../../../..',
         asset_prefix: process.env.CMS_ASSET_PREFIX,
         asset_url: process.env.CMS_ASSET_URL,
-        weather
+        weather,
+        districtNews,
     };
 
     // Functions
@@ -177,9 +184,29 @@ async function startApp() {
         })
             .then(w => w.json())
             .then(async w => {
-                await fs.writeFile('weather.json', JSON.stringify(w), 'utf8');
+                await fs.writeFile('weather.json', JSON.stringify(w), (err) => {
+                    if (err) return console.error(err);
+                });
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 defaults.weather = JSON.stringify(w);
+            });
+    };
+
+    async function getDistrictNews() {
+        await fetch(`https://vschsd.org/wp-json/wp/v2/posts?search=south`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            }
+        })
+            .then(w => w.json())
+            .then(async w => {
+                await fs.writeFile('district.json', JSON.stringify(w), (err) => {
+                    if (err) return console.error(err);
+                });
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                defaults.districtNews = JSON.stringify(w);
             });
     };
 
@@ -433,6 +460,7 @@ async function startApp() {
     app.get('/cron', async function (req, res) {
         if (!req.query.weather || (req.query.weather != process.env.OPENWEATHERMAP_API_KEY)) return res.send('INVALID');
         await getWeather();
+        await getDistrictNews();
         return res.send('OK');
     });
 
