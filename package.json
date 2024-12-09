@@ -4,7 +4,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.10",
-    "express": "^4.21.1",
+    "express": "^4.21.2",
     "express-rate-limit": "^7.1.0",
     "express-session": "^1.18.1",
     "feed": "^4.2.2",
