@@ -104,7 +104,7 @@
         widgets[nextWidgetId].classList.add('active');
         if (widgets[nextWidgetId].querySelector('[live-time]')) {
             widgets[nextWidgetId].querySelector('[live-time]').innerHTML = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: 'numeric' }) + ((widgets[nextWidgetId].querySelector('[live-time]').innerHTML.split(' • ')[1] && widgets[nextWidgetId].querySelector('[live-time]').innerHTML.split(' • ')[1] != '') ? ' • ' + widgets[nextWidgetId].querySelector('[live-time]').innerHTML.split(' • ')[1] : '');
-        }
+        };
     };
 
     function startSwitchInterval() {

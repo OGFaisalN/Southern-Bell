@@ -158,11 +158,11 @@
 			} %>
 				<h1><%= (isExtraHelp) ? '📖' : (isClubs) ? '📰' : (isSports) ? '🏈' : icon %></h1>
 				<div class="inner">
-					<% if ((day === 'Saturday') || (day === 'Sunday')) { %>
+					<% if ((weekday === 'Saturday') || (weekday === 'Sunday')) { %>
 					<h2>No School</h2>
 					<% } else { %>
-					<h2 live-time><%= (new Date()).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: 'numeric' }) %><% if (period !== -1) { %> • Period <%= period + 1 %><% } else if (isExtraHelp) { %> • Extra Help<% } else if (isClubs) { %> • Clubs<% } else if (isSports) { %> • Sports<% } %></h2>
-					<h5><% if (period !== -1) { %>Period <%= period + 1 %>: <%= start %> <%= startAPm %> - <%= end %> <%= endAPm %><% } else if (isExtraHelp) { %>2:43 PM - 3:15 PM<% } else if (isClubs) { %>3:15 PM - 4:00 PM<% } else if (isSports) { %>4:00 PM - 5:00 PM<% } else { %><%= dayStart %> <%= dayStartAPm %> - <%= dayEnd %> <%= dayEndAPm %><% } %></h5>
+					<h2 live-time><%= (new Date()).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: 'numeric' }).replace('00:', '12:') %><% if (period !== -1) { %> • Period <%= period + 1 %><% } else if (isExtraHelp) { %> • Extra Help<% } else if (isClubs) { %> • Clubs<% } else if (isSports) { %> • Sports<% } %></h2>
+					<h5><% if (period !== -1) { %>Period <%= period + 1 %>: <%= start.replace('00:', '12:') %> <%= startAPm %> - <%= end.replace('00:', '12:') %> <%= endAPm %><% } else if (isExtraHelp) { %>2:43 PM - 3:15 PM<% } else if (isClubs) { %>3:15 PM - 4:00 PM<% } else if (isSports) { %>4:00 PM - 5:00 PM<% } else { %><%= dayStart.replace('00:', '12:') %> <%= dayStartAPm %> - <%= dayEnd.replace('00:', '12:') %> <%= dayEndAPm %><% } %></h5>
 					<% } %>
 				</div>
 			</div>
