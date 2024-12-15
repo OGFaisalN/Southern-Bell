@@ -93,15 +93,35 @@
 </body>
 <%- include('../partials/foot.ejs'); %>
 <script>
-	setInterval(() => {
-		var widgets = document.querySelectorAll('.widget');
-		var currentWidget = document.querySelector('.widget.active') || widgets[0];
-		var currentWidgetId = Array.prototype.indexOf.call(widgets, currentWidget);
-		currentWidget.classList.remove('active');		
-		var nextWidgetId = (currentWidgetId + 1) % widgets.length;
-		widgets[nextWidgetId].classList.add('active');
-		if (widgets[nextWidgetId].querySelector('[live-time]')) widgets[nextWidgetId].querySelector('[live-time]').innerHTML = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: 'numeric' }) + ((widgets[nextWidgetId].querySelector('[live-time]').innerHTML.split(' • ')[1] && widgets[nextWidgetId].querySelector('[live-time]').innerHTML.split(' • ')[1] != '') ? ' • ' + widgets[nextWidgetId].querySelector('[live-time]').innerHTML.split(' • ')[1] : '');
-	}, 4500);
+    var switchInterval;
+
+    function switchWidget() {
+        var widgets = document.querySelectorAll('.widget');
+        var currentWidget = document.querySelector('.widget.active') || widgets[0];
+        var currentWidgetId = Array.prototype.indexOf.call(widgets, currentWidget);
+        currentWidget.classList.remove('active');
+        var nextWidgetId = (currentWidgetId + 1) % widgets.length;
+        widgets[nextWidgetId].classList.add('active');
+        if (widgets[nextWidgetId].querySelector('[live-time]')) {
+            widgets[nextWidgetId].querySelector('[live-time]').innerHTML = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: 'numeric' }) + ((widgets[nextWidgetId].querySelector('[live-time]').innerHTML.split(' • ')[1] && widgets[nextWidgetId].querySelector('[live-time]').innerHTML.split(' • ')[1] != '') ? ' • ' + widgets[nextWidgetId].querySelector('[live-time]').innerHTML.split(' • ')[1] : '');
+        };
+    };
+
+    function startSwitchInterval() {
+        clearInterval(switchInterval);
+        switchInterval = setInterval(switchWidget, 4500);
+    };
+
+    document.addEventListener("DOMContentLoaded", function () {
+        startSwitchInterval();
+        document.querySelectorAll('.widget').forEach(widget => {
+            widget.addEventListener('click', function () {
+                clearInterval(switchInterval);
+                switchWidget();
+                setTimeout(startSwitchInterval, 4500);
+            });
+        });
+    });
 </script>
 
 </html>
