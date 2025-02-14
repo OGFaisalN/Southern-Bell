@@ -45,7 +45,7 @@
 			<p>Unable to display PDF file, you may have Javascript disabled. <a href="<%- vars.asset_prefix %><%= newspaper.pdf.path %>" title="Download the PDF version">Click here to download the PDF version.</a></p>
 			<% if (newspaper.articles.length != 0) { %>
 			<div class="content">
-				<% for (article of newspaper.articles) { article = cms.articles.find(a => a._id === article._id); if (article) { %>
+				<% n = 0; for (article of newspaper.articles) { article = cms.articles.find(a => a._id === article._id); if (article) { %>
 				<div class="article <%= article._id %>">
 					<% if (article.images[0] != null) { %>
 					<section class="images splide <%= article.slug %>" aria-label="Image gallery for <%= article.title %>">
@@ -53,7 +53,7 @@
 							<ul class="splide__list">
 								<% for (image of article.images) { %>
 								<a class="splide__slide" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>">
-									<img loading="lazy" src="<%- vars.asset_prefix %><%= image.path %>" alt="<%= image.description %>">
+									<img <% if (n > 2) { %>loading="lazy"<% } %> src="<%- vars.asset_prefix %><%= image.path %>" alt="<%= image.description %>">
 									<div>
 										<%= image.description %>
 									</div>
@@ -66,18 +66,18 @@
 					<h2><%= article.title %></h2>
 					<% if ((article.content != null) && (article.content != '')) { %>
 					<b><% if (article.content.replaceAll('<p>', '').replaceAll('</p>', '').replaceAll('&nbsp;', '').replaceAll(' ', '') != '') { %>(<% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %>) —<% } else { %><% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %><% } %></b>
-					<%- article.content.replaceAll('<img src="/', '<img loading="lazy" src="' + vars.asset_url) %>
+					<%- article.content.replaceAll('<img src="/', `<img ${(n > 2) ? 'loading="lazy"' : ''} src="${vars.asset_url}`) %>
 					<% } %>
 				</div>
 				<br />
-				<% } } %>
+				<% } n++; } %>
 			</div>
 			<% } %>
 		</object>
 		<a href="<%- vars.asset_prefix %><%= newspaper.pdf.path %>" class="mobileOnly" title="Open the PDF file">Click here to open the PDF file.</a>
 		<% } else if (newspaper.articles.length != 0) { %>
 		<div class="content">
-			<% for (article of newspaper.articles) { article = cms.articles.find(a => a._id === article._id); if (article) { %>
+			<% n = 0; for (article of newspaper.articles) { article = cms.articles.find(a => a._id === article._id); if (article) { %>
 			<div class="article <%= article._id %>">
 				<% if (article.images[0] != null) { %>
 				<section class="images splide <%= article.slug %>" aria-label="Image gallery for <%= article.title %>">
@@ -85,7 +85,7 @@
 						<ul class="splide__list">
 							<% for (image of article.images) { %>
 							<a class="splide__slide" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>">
-								<img loading="lazy" src="<%- vars.asset_prefix %><%= image.path %>" alt="<%= image.description %>">
+								<img <% if (n > 2) { %>loading="lazy"<% } %> src="<%- vars.asset_prefix %><%= image.path %>" alt="<%= image.description %>">
 								<div>
 									<%= image.description %>
 								</div>
@@ -98,11 +98,11 @@
 				<h2><%= article.title %></h2>
 				<% if ((article.content != null) && (article.content != '')) { %>
 				<b><% if (article.content.replaceAll('<p>', '').replaceAll('</p>', '').replaceAll('&nbsp;', '').replaceAll(' ', '') != '') { %>(<% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %>) —<% } else { %><% if ((article.author != "") && (article.author != null)) { %><%- article.author %><% } else { %><%= cms.siteDetails[0].title %> Writers<% } %><% } %></b>
-				<%- article.content.replaceAll('<img src="/', '<img loading="lazy" src="' + vars.asset_url) %>
+				<%- article.content.replaceAll('<img src="/', `<img ${(n > 2) ? 'loading="lazy"' : ''} src="${vars.asset_url}`) %>
 				<% } %>
 			</div>
 			<br />
-			<% } } %>
+			<% } n++; } %>
 		</div>
 		<% } %>
 	</div>

@@ -48,14 +48,14 @@
 		<section class="images splide <%= article.slug %>" aria-label="Image gallery for <%= article.title %>">
 			<div class="splide__track">
 				<ul class="splide__list">
-					<% for (image of article.images) { %>
+					<% n = 0; for (image of article.images) { %>
 					<a class="splide__slide" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>">
-						<img loading="lazy" src="<%- vars.asset_prefix %><%= image.path %>" alt="<%= image.description %>">
+						<img <% if (n > 2) { %>loading="lazy"<% } %> src="<%- vars.asset_prefix %><%= image.path %>" alt="<%= image.description %>">
 						<div>
 							<%= image.description %>
 						</div>
 					</a>
-					<% } %>
+					<% n++; } %>
 				</ul>
 			</div>
 		</section>

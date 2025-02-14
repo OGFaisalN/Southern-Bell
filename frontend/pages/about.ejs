@@ -8,12 +8,12 @@
 	<%- include('../partials/header.ejs'); %>
 	<div class="about">
 		<div class="split">
-			<% if (cms.about[0].image != null) { %><img loading="lazy" src="<%- vars.asset_prefix %><%= cms.about[0].image.path %>" <% if (cms.about[0].image.description != "") { %>alt="<%= cms.about[0].image.description %>" <% } %> /><% } %>
+			<% if (cms.about[0].image != null) { %><img src="<%- vars.asset_prefix %><%= cms.about[0].image.path %>" <% if (cms.about[0].image.description != "") { %>alt="<%= cms.about[0].image.description %>" <% } %> /><% } %>
 			<div class="content">
 				<%- cms.about[0].content %>
 			</div>
 		</div>
-		<% if (cms.about[0].image-2 != null) { %><img loading="lazy" src="<%- vars.asset_prefix %><%= cms.about[0]['image-2'].path %>" <% if (cms.about[0]['image-2'].description != "") { %>alt="<%= cms.about[0]['image-2'].description %>" <% } %> /><% } %>
+		<% if (cms.about[0].image-2 != null) { %><img src="<%- vars.asset_prefix %><%= cms.about[0]['image-2'].path %>" <% if (cms.about[0]['image-2'].description != "") { %>alt="<%= cms.about[0]['image-2'].description %>" <% } %> /><% } %>
 	</div>
 	<%- include('../partials/footer.ejs'); %>
 </body>
