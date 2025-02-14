@@ -1464,12 +1464,11 @@ footer .inner .bottom .socials i:hover {
 
 	.hero {
 		height: fit-content !important;
-        min-height: 500px;
 		width: 85% !important;
 	}
 	
     .hero .newspaper:first-of-type {
-        height: 25vh !important;
+        height: 50vh !important;
     }
 
 	.articles .grid {
