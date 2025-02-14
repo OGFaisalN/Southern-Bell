@@ -55,7 +55,7 @@ function load() {
         });
     } catch { };
     try {
-        jQuery(".article-i .split .left .info h1").fitText(1.4);
+        jQuery(".article-i .split .left .info h1").fitText(1.75);
     } catch { };
     try {
         document.querySelector('.loading').remove();
