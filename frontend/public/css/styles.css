@@ -193,6 +193,7 @@ header .main.home .logo {
 header .main .logo h2 {
     margin: 0px;
     font-weight: 700;
+    text-align: center;
 }
 
 header .main .links {
