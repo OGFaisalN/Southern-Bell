@@ -89,6 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener('pjax:send', (a) => {
+    document.querySelectorAll('.loading').forEach(e => e.remove());
     loading = document.createElement('img');
     loading.classList = "loading";
     loading.src = domain + "/images/loading.png";
