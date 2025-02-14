@@ -263,10 +263,17 @@ header .alert {
 	z-index: 10;
 	height: 40px;
 	position: fixed;
+	text-align: center;
 }
 
 header .alert a {
 	color: var(--background);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    text-overflow: ellipsis;
 }
 
 header .main .widgets {
@@ -1377,6 +1384,7 @@ footer .inner .bottom .socials i:hover {
 	header .alert {
 		position: relative !important;
 		width: max-content !important;
+		max-width: 90%;
 		rotate: unset !important;
 		top: 36px !important;
 		left: 0px !important;
