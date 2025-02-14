@@ -48,7 +48,7 @@
 				<% n = 0; for (article of newspaper.articles) { article = cms.articles.find(a => a._id === article._id); if (article) { %>
 				<div class="article <%= article._id %>">
 					<% if (article.images[0] != null) { %>
-					<section class="images splide <%= article.slug %>" aria-label="Image gallery for <%= article.title %>">
+					<section class="images splide <%= vars.slugify(article.slug) %>" aria-label="Image gallery for <%= article.title %>">
 						<div class="splide__track">
 							<ul class="splide__list">
 								<% for (image of article.images) { %>
@@ -80,7 +80,7 @@
 			<% n = 0; for (article of newspaper.articles) { article = cms.articles.find(a => a._id === article._id); if (article) { %>
 			<div class="article <%= article._id %>">
 				<% if (article.images[0] != null) { %>
-				<section class="images splide <%= article.slug %>" aria-label="Image gallery for <%= article.title %>">
+				<section class="images splide <%= vars.slugify(article.slug) %>" aria-label="Image gallery for <%= article.title %>">
 					<div class="splide__track">
 						<ul class="splide__list">
 							<% for (image of article.images) { %>

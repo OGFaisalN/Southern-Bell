@@ -3,7 +3,7 @@
 	<h3>Recent Articles</h3>
 	<ul>
 		<% for (let i = 0; i < 5 && i < cms.articles.sort((a, b) => new Date(b.date) - new Date(a.date)).filter(article => !article.unlisted).length; i++) { const article = cms.articles.sort((a, b) => new Date(b.date) - new Date(a.date)).filter(article => !article.unlisted)[i]; %>
-		<li><a href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>"><%= article.title %></a></li>
+		<li><a href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= vars.slugify(article.slug) %>"><%= article.title %></a></li>
 		<% } %>
 	</ul>
 	<% } %>

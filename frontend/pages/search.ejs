@@ -54,7 +54,7 @@
 	<div class="articles searchResults">
 		<div class="grid">
 			<% filteredNewspapers.sort((a, b) => b._created - a._created).forEach(newspaper => { %>
-			<a class="article" href="<%- vars.domain %>/newspaper/<%= newspaper.slug %>" title="Newspaper: <%= newspaper.title %>">
+			<a class="article" href="<%- vars.domain %>/newspaper/<%= vars.slugify(newspaper.slug) %>" title="Newspaper: <%= newspaper.title %>">
 				<img src="<%- vars.asset_prefix %><%= newspaper.image.path %>" <% if (newspaper.image.description != "") { %>alt="<%= newspaper.image.description %>" <% } %> />
 				<div class="inner">
 					<h3>Newspaper: <%= newspaper.title %></h3>
@@ -63,7 +63,7 @@
 			</a>
 			<% }); %>
 			<% filteredArticles.sort((a, b) => new Date(b.date) - new Date(a.date)).filter(article => !article.unlisted).forEach(article => { %>
-			<a class="article" href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= article.slug %>" title="Article: <%= article.title %>">
+			<a class="article" href="<%- vars.domain %>/articles/<%= new Date(article.date).getFullYear() %>/<%= vars.slugify(article.slug) %>" title="Article: <%= article.title %>">
 				<img loading="lazy" src="<% if (article.images[0] != null) { %><%- vars.asset_prefix %><%= article.images[0].path %>" <% if (article.images[0].description != "") { %>alt="<%= article.images[0].description %>" <% } %><% } else { %> "<% } %> />
 				<div class=" inner">
 				<h3>Article: <%= article.title %></h3>
@@ -82,7 +82,7 @@
 		</a>
 		<% }); %>
 		<% filteredPolls.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(poll => { %>
-		<a class="article" href="<%- vars.domain %>/polls/<%= poll.slug %>" title="Poll: <%= poll.question %>">
+		<a class="article" href="<%- vars.domain %>/polls/<%= vars.slugify(poll.slug) %>" title="Poll: <%= poll.question %>">
 			<img src=" " alt="">
 			<div class="inner">
 				<h3>Poll: <%= poll.question %></h3>
@@ -92,7 +92,7 @@
 		</a>
 		<% }); %>
 		<% filteredArtworks.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(artwork => { %>
-		<a class="article" href="<%- vars.domain %>/artworks/<%= artwork.slug %>" title="Artwork: <%= artwork.title %>">
+		<a class="article" href="<%- vars.domain %>/artworks/<%= vars.slugify(artwork.slug) %>" title="Artwork: <%= artwork.title %>">
 			<img loading="lazy" src="<%- vars.asset_prefix %><%= artwork.artwork.path %>" <% if (artwork.artwork.description != "") { %>alt="<%= artwork.artwork.description %>" <% } %> />
 			<div class="inner">
 				<h3>Artwork: <%= artwork.title %></h3>

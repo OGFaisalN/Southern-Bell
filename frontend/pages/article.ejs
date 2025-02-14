@@ -45,7 +45,7 @@
 			</div>
 		</div>
 		<% if ((article.images[0] != null) && (article.hideCoverImages != true)) { %>
-		<section class="images splide <%= article.slug %>" aria-label="Image gallery for <%= article.title %>">
+		<section class="images splide <%= vars.slugify(article.slug) %>" aria-label="Image gallery for <%= article.title %>">
 			<div class="splide__track">
 				<ul class="splide__list">
 					<% n = 0; for (image of article.images) { %>

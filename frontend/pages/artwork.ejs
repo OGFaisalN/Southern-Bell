@@ -44,7 +44,7 @@
 				</div>
 			</div>
 		</div>
-		<section class="images splide <%= article.slug %>" aria-label="Image gallery for <%= artwork.title %>">
+		<section class="images splide <%= vars.slugify(article.slug) %>" aria-label="Image gallery for <%= artwork.title %>">
 			<div class="splide__track">
 				<ul class="splide__list">
 					<a class="splide__slide" href="<%- vars.asset_prefix %><%= artwork.artwork.path %>" data-lightbox="<%= artwork.artwork._id %>">
