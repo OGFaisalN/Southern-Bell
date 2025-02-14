@@ -1264,7 +1264,8 @@ footer .inner .bottom .socials i:hover {
 .images .splide__slide img {
 	width: 100%;
 	height: 100%;
-	object-fit: cover;
+    object-fit: contain;
+    object-position: left;
 }
 
 .images .splide__slide div {
