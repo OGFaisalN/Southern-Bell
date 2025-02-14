@@ -2,7 +2,7 @@
 	<% sortedNews = cms.newspapers.sort((a, b) => new Date(b.date) - new Date(a.date)); if (title === sortedNews[0].title) { %>
 	<div class="announcement">Latest Newspaper</div>
 	<% } else { %>
-	<div class="alert"><a href="<%- vars.domain %>/newspapers/<%= sortedNews[0].slug %>" title="Latest Newspaper">Latest — <%= sortedNews[0].title %></a></div>
+	<div class="alert"><a href="<%- vars.domain %>/newspapers/<%= vars.slugify(sortedNews[0].slug) %>" title="Latest Newspaper">Latest — <%= sortedNews[0].title %></a></div>
 	<br />
 	<br />
 	<% } %>

@@ -45,17 +45,17 @@
 			</div>
 		</div>
 		<% if ((article.images[0] != null) && (article.hideCoverImages != true)) { %>
-		<section class="images splide <%= article.slug %>" aria-label="Image gallery for <%= article.title %>">
+		<section class="images splide <%= vars.slugify(article.slug) %>" aria-label="Image gallery for <%= article.title %>">
 			<div class="splide__track">
 				<ul class="splide__list">
-					<% for (image of article.images) { %>
-					<a class="splide__slide" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>">
-						<img loading="lazy" src="<%- vars.asset_prefix %><%= image.path %>" alt="<%= image.description %>">
+					<% n = 0; for (image of article.images) { %>
+					<a class="splide__slide" href="<%- vars.asset_prefix %><%= image.path %>" data-lightbox="<%= image._id %>" style="max-height: 600px;">
+						<img <% if (n > 2) { %>loading="lazy"<% } %> src="<%- vars.asset_prefix %><%= image.path %>" alt="<%= image.description %>">
 						<div>
 							<%= image.description %>
 						</div>
 					</a>
-					<% } %>
+					<% n++; } %>
 				</ul>
 			</div>
 		</section>

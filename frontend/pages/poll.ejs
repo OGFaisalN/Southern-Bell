@@ -56,11 +56,11 @@
 		<div class="poll">
 			<div class="results">
 				<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-				<canvas id="<%= poll.slug %>-chart" style="width: 100%;"></canvas>
-				<canvas id="<%= poll.slug %>-chart-pie" style="width: 100%;"></canvas>
+				<canvas id="<%= vars.slugify(poll.slug) %>-chart" style="width: 100%;"></canvas>
+				<canvas id="<%= vars.slugify(poll.slug) %>-chart-pie" style="width: 100%;"></canvas>
 				<script>
 					barColors = ["#FF4136", "#2ECC40", "#0074D9", "#FF851B", "#B10DC9", "#FFDC00", "#7FDBFF", "#39CCCC", "#3D9970", "#85144b", "#F012BE", "#01FF70", "#FF4136", "#2ECC40", "#0074D9", "#FF851B", "#B10DC9", "#FFDC00", "#7FDBFF", "#39CCCC"];
-					new Chart("<%= poll.slug %>-chart", {
+					new Chart("<%= vars.slugify(poll.slug) %>-chart", {
 						type: "bar",
 						data: {
 							labels: <%- JSON.stringify(poll.answers) %>,
@@ -91,7 +91,7 @@
 							},
 						}
 					});
-					new Chart("<%= poll.slug %>-chart-pie", {
+					new Chart("<%= vars.slugify(poll.slug) %>-chart-pie", {
 						type: "pie",
 						data: {
 							labels: <%- JSON.stringify(poll.answers) %>,

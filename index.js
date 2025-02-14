@@ -149,6 +149,7 @@ async function startApp() {
         asset_url: process.env.CMS_ASSET_URL,
         weather,
         districtNews,
+        slugify: function (str) { return String(str).normalize('NFKD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-') },
     };
 
     // Functions
@@ -229,7 +230,7 @@ async function startApp() {
 
     app.get('/newspapers/:newspaper', async (req, res) => {
         await allRoutes(req, res);
-        var newspaper = cms.newspapers.find(newspaper => newspaper.slug === req.params.newspaper);
+        var newspaper = cms.newspapers.find(newspaper => defaults.slugify(newspaper.slug) === req.params.newspaper);
         if (newspaper) {
             res.render('newspaper', { vars: defaults, title: newspaper.title, cms, pageviews: req.pageViews, newspaper });
         } else {
@@ -239,7 +240,7 @@ async function startApp() {
 
     app.get('/articles/:year/:article', async (req, res) => {
         await allRoutes(req, res);
-        var article = cms.articles.find(article => { return article.slug === req.params.article && (new Date(article.date)).getFullYear() === Number(req.params.year) });
+        var article = cms.articles.find(article => { return defaults.slugify(article.slug) === req.params.article && (new Date(article.date)).getFullYear() === Number(req.params.year) });
         if (article) {
             res.render('article', { vars: defaults, title: article.title, cms, pageviews: req.pageViews, article });
         } else {
@@ -277,7 +278,7 @@ async function startApp() {
             voteId = uuid.v4();
             res.cookie('voteId', voteId);
         };
-        var poll = cms.polls.find(poll => poll.slug === req.params.poll);
+        var poll = cms.polls.find(poll => defaults.slugify(poll.slug) === req.params.poll);
         if (poll) {
             db.query(`SELECT * FROM poll_responses WHERE poll_id = '${poll._id}'`,
                 function (err, responses, fields) {
@@ -291,7 +292,7 @@ async function startApp() {
 
     app.post('/polls/:poll', async (req, res) => {
         await allRoutes(req, res);
-        var poll = cms.polls.find(poll => poll.slug === req.params.poll);
+        var poll = cms.polls.find(poll => defaults.slugify(poll.slug) === req.params.poll);
         if (poll && req.body.id && (req.body.name.length > 0) && (req.body.answer)) {
             db.query(`SELECT * FROM poll_responses WHERE session_id = ? AND poll_id = ?`, [req.cookies.voteId, poll._id],
                 function (err, responses, fields) {
@@ -334,7 +335,7 @@ async function startApp() {
 
     app.get('/artworks/:artwork', async (req, res) => {
         await allRoutes(req, res);
-        var artwork = cms.artworks.find(artwork => artwork.slug === req.params.artwork);
+        var artwork = cms.artworks.find(artwork => defaults.slugify(artwork.slug) === req.params.artwork);
         if (artwork) {
             res.render('artwork', { vars: defaults, title: artwork.title, cms, pageviews: req.pageViews, artwork });
         } else {
@@ -391,8 +392,8 @@ async function startApp() {
         cms.newspapers.forEach(post => {
             feed.addItem({
                 title: post.title,
-                id: `${cms.siteDetails[0]['domain-production']}${post.slug}`,
-                link: `${cms.siteDetails[0]['domain-production']}${post.slug}`,
+                id: `${cms.siteDetails[0]['domain-production']}${defaults.slugify(post.slug)}`,
+                link: `${cms.siteDetails[0]['domain-production']}${defaults.slugify(post.slug)}`,
                 description: `${post.articles.length} Article(s)`,
                 content: post.content,
                 author: [
@@ -416,8 +417,8 @@ async function startApp() {
         cms.articles.filter(article => !article.unlisted).forEach(post => {
             feed.addItem({
                 title: post.title,
-                id: `${cms.siteDetails[0]['domain-production']}${post.slug}`,
-                link: `${cms.siteDetails[0]['domain-production']}${post.slug}`,
+                id: `${cms.siteDetails[0]['domain-production']}${defaults.slugify(post.slug)}`,
+                link: `${cms.siteDetails[0]['domain-production']}${defaults.slugify(post.slug)}`,
                 description: post.description,
                 content: post.content,
                 author: [

@@ -51,11 +51,12 @@ function load() {
             slider.classList.forEach(class1 => { classes += `.${class1}` });
             new Splide(classes, {
                 heightRatio: 0.5,
+                arrows: (slider.querySelectorAll('.splide__slide').length > 1) ? true : false,
             }).mount();
         });
     } catch { };
     try {
-        jQuery(".article-i .split .left .info h1").fitText(1.4);
+        jQuery(".article-i .split .left .info h1").fitText(1.75);
     } catch { };
     try {
         document.querySelector('.loading').remove();
